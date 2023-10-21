@@ -120,12 +120,16 @@ class LeggedRobot(BaseTask):
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
-            self.torques = self._compute_torques(self.actions).view(self.torques.shape)
+            self.deploy_actions = self.last_actions
+            self.deploy_actions[self.first_step] = self.actions[self.first_step]
+            self.torques = self._compute_torques(self.deploy_actions).view(self.torques.shape)
+            # self.torques = self._compute_torques(self.actions).view(self.torques.shape)
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             self.gym.simulate(self.sim)
             if self.device == 'cpu':
                 self.gym.fetch_results(self.sim, True)
             self.gym.refresh_dof_state_tensor(self.sim)
+        self.first_step[:] = False
         reset_env_ids, terminal_amp_states = self.post_physics_step(RESET_ABLED=RESET_ABLED)
         self.times += self.dt
 
@@ -196,7 +200,7 @@ class LeggedRobot(BaseTask):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
-    def reset_idx(self, env_ids, random_time = True):
+    def reset_idx(self, env_ids, random_time=True):
         """ Reset some environments.
             Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids), and self._resample_commands(env_ids)
             [Optional] calls self._update_terrain_curriculum(env_ids), self.update_command_curriculum(env_ids) and
@@ -250,6 +254,7 @@ class LeggedRobot(BaseTask):
         self.feet_air_time[env_ids] = 0.
         self.episode_length_buf[env_ids] = 0
         self.reset_buf[env_ids] = 1
+        self.deploy_actions[env_ids] = 0.
         # fill extras
         self.extras["episode"] = {}
         for key in self.episode_sums.keys():
@@ -263,6 +268,8 @@ class LeggedRobot(BaseTask):
         # send timeout info to the algorithm
         if self.cfg.env.send_timeouts:
             self.extras["time_outs"] = self.time_out_buf
+            
+        self.first_step[env_ids] = True
 
     def compute_reward(self):
         """ Compute rewards
@@ -318,7 +325,8 @@ class LeggedRobot(BaseTask):
             # self.commands[:, :3] * self.commands_scale,
             (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
             self.dof_vel * self.obs_scales.dof_vel,
-            self.actions,
+            self.deploy_actions,
+            # self.actions, 
             torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
             ),dim=-1)
         # add perceptive inputs if not blind
@@ -710,6 +718,8 @@ class LeggedRobot(BaseTask):
         self.base_ang_vel = quat_rotate_inverse(self.base_quat, self.root_states[:, 10:13])
         self.projected_gravity = quat_rotate_inverse(self.base_quat, self.gravity_vec)
         
+        self.deploy_actions = torch.zeros(self.num_envs, self.num_actions, dtype=torch.float, device=self.device, requires_grad=False)
+        self.first_step = torch.ones(self.num_envs, dtype=torch.bool, device=self.device, requires_grad=False)
 
         if self.cfg.terrain.measure_heights:
             self.height_points = self._init_height_points()
