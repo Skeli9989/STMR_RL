@@ -73,8 +73,20 @@ class Go1Deployment:
         return obs
     
     def run(self):
-        obs = self.calibrate(wait=True, low=False)
+        self.calibrate(wait=True, low=False)
         self.agent.reset()
+        obs = self.agent.get_obs()
+        obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
+        action = self.policy(obs)
+        
+        try:
+            self.agent.reset()
+            motion_q = self.motion_holder.get_q(self.agent.get_time())
+            self.agent.step(action, motion_q)
+        except Exception as e:
+            print(e)
+            self.emergeny_stop()
+            return
         
         while self.agent.get_time() < self.motion_holder.max_time - 0.002:
             try:
@@ -94,7 +106,13 @@ class Go1Deployment:
                 print(e)
                 self.emergeny_stop()
                 return
-            
-
+        
+        while True:
+            try:
+                self.agent.step(action, motion_q)
+            except Exception as e:
+                print(e)
+                self.emergeny_stop()
+                return
 
 # %%
