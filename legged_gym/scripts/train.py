@@ -48,7 +48,7 @@ if __name__ == '__main__':
     DEBUG = False
     # DEBUG = True
     if DEBUG:
-        # args.task = "go1_TMR_AMP"
+        args.task = "go1_TMR_AMP"
         for _ in range(100):
             print('WARNING: DEBUG MODE')
         

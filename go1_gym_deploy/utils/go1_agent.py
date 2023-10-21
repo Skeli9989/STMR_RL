@@ -50,6 +50,8 @@ class Go1HardwareAgent():
         # self.deploy_time = torch.zeros(1)
         # self.saved_deploy_time = torch.zeros(1)
         # self.start_time = time.time()
+        
+        self.reset()
 
         
     def get_obs(self):
@@ -76,10 +78,10 @@ class Go1HardwareAgent():
     
         return obs
     
-    def publish_action_(self, action):
-        joint_pos_tar = action[:12].detach().cpu().numpy() * self.cfg.control.action_scale
-        joint_pos_tar += self.default_dof_pos
-        joint_pos_tar = joint_pos_tar[self.se.joint_idxs]
+    def publish_action_(self, action, motion_q):
+        joint_pos_tar = action * self.cfg.control.action_scale
+        # joint_pos_tar += self.default_dof_pos
+        joint_pos_tar += motion_q
         joint_vel_tar = np.zeros(12)
         torques = (joint_pos_tar - self.dof_pos) * self.p_gains + (joint_vel_tar - self.dof_vel) * self.d_gains
         
@@ -90,6 +92,9 @@ class Go1HardwareAgent():
         self.publish_joint_target_(joint_pos_tar, joint_vel_tar)
         
     def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12)):
+        joint_pos_tar = joint_pos_tar[self.se.joint_idxs_inv]
+        joint_vel_tar = joint_vel_tar[self.se.joint_idxs_inv]
+        
         command_for_robot = pd_tau_targets_lcmt()
         command_for_robot.q_des = joint_pos_tar
         command_for_robot.qd_des = joint_vel_tar
@@ -105,11 +110,16 @@ class Go1HardwareAgent():
         self.actions[:] = 0
         self.timestep = 0
         self.time = time.time()
-        
-    def step(self, actions):
+        self.start_time = time.time()
+    
+    def get_time(self):
+        return time.time() - self.start_time
+    
+    def step(self, actions, motion_q):
         clip_actions = self.cfg.normalization.clip_actions
-        self.actions = torch.clip(actions.flatten(), -clip_actions, clip_actions).to(self.device)
-        self.publish_action_(self.actions, )
+        self.actions = torch.clip(actions.flatten(), -clip_actions, clip_actions)
+        self.actions = self.actions.detach().cpu().numpy()
+        self.publish_action_(self.actions, motion_q)
         
         time.sleep(max(self.dt - (time.time()-self.time), 0))
         self.time = time.time()

@@ -88,8 +88,10 @@ def play(args):
             
             if env.times >= env.amp_loader.trajectory_lens[0] - env.dt:
                 env.reset(random_time=False)
+                # env.reset(random_time=True)
             actions = policy(obs.detach())
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
+            # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=True)
                         
             # default_joint_angles = [] 
             # for value in env_cfg.init_state.default_joint_angles.values():

@@ -52,6 +52,7 @@ class GO1StateEstimator():
         
         # Constants
         self.joint_idxs = [3, 4, 5, 0, 1, 2, 9, 10, 11, 6, 7, 8]
+        self.joint_idxs_inv = [3, 4, 5, 0, 1, 2, 9, 10, 11, 6, 7, 8]
         self.contact_idxs = [1, 0, 3, 2]
         
         # Make buffer

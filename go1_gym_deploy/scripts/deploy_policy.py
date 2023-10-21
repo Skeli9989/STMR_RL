@@ -1,3 +1,4 @@
+# %%
 import glob
 import pickle as pkl
 import lcm
@@ -8,41 +9,64 @@ from go1_gym_deploy.utils.go1_deployment import Go1Deployment
 import pathlib
 import torch
 import numpy as np
+import time
+import json
+import sys
 lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=255")
 
-def temp():
-    for _ in range(100):
-        action = agent.se.get_dof_pos()
-        import time
-        agent.publish_joint_target_(action, np.zeros_like(action))
-        time.sleep(0.1)
+# def temp():
+#     for _ in range(100):
+#         action = agent.se.get_dof_pos()
+#         import time
+#         agent.publish_joint_target_(action, np.zeros_like(action))
+#         time.sleep(0.1)
+
+from go1_gym_deploy import BASEDIR
+print(BASEDIR.absolute())
+
+ROBOT = 'go1'.lower()
+MR = "TMR"
+MOTION = "hopturn"
+
+MOTION_FILE = BASEDIR / f"run/{MOTION}/{MR}/{MOTION}_{ROBOT}_{MR}.txt"
+POLICY_FILE = BASEDIR / f"run/{MOTION}/{MR}/policy_1.pt"
 
 
-
-def load_and_run_policy(label, experiment_name, max_vel=1.0, max_yaw_vel=1.0):
+def load_and_run_policy():
     agent = Go1HardwareAgent()
-    policy = None
-    deployment_runner = Go1Deployment(agent, policy)
-    deployment_runner.calibrate()
+    
+    if POLICY_FILE.exists():
+        policy = load_policy(POLICY_FILE)
+    else:
+        print("There is no policy file!!!")
+        sys.exit(0)
+        
+    if MOTION_FILE.exists():
+        motion_src = load_motion_file(str(MOTION_FILE))
+    else:
+        print("There is no motion file!!!")
+        sys.exit(0)
+    
+    
+    deployment_runner = Go1Deployment(agent, policy, motion_src)
+    deployment_runner.run()
 
 def load_policy(logdir):
-    body = torch.jit.load(logdir + '/checkpoints/body_latest.jit')
-    import os
-    adaptation_module = torch.jit.load(logdir + '/checkpoints/adaptation_module_latest.jit')
-
-    def policy(obs, info):
-        i = 0
-        latent = adaptation_module.forward(obs["obs_history"].to('cpu'))
-        action = body.forward(torch.cat((obs["obs_history"].to('cpu'), latent), dim=-1))
-        info['latent'] = latent
-        return action
-
+    policy = torch.jit.load(logdir)
     return policy
 
+def load_motion_file(file_path):
+    with open(file_path) as f:
+        return json.load(f)
+
+
+# %%
+
+
+
+
+
+# %%
 
 if __name__ == '__main__':
-    label = "gait-conditioned-agility/pretrain-v0/train"
-
-    experiment_name = "example_experiment"
-
-    load_and_run_policy(label, experiment_name=experiment_name, max_vel=3.5, max_yaw_vel=5.0)
+    load_and_run_policy()
