@@ -402,14 +402,23 @@ class LeggedRobot(BaseTask):
             [List[gymapi.RigidShapeProperties]]: Modified rigid shape properties
         """
         if self.cfg.domain_rand.randomize_friction:
-            if env_id==0:
-                # prepare friction randomization
-                friction_range = self.cfg.domain_rand.friction_range
-                num_buckets = 64
-                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
-                self.friction_coeffs = friction_buckets[bucket_ids]
-
+            if self.cfg.domain_rand.test_time:
+                if env_id==0:
+                    friction_range = self.cfg.domain_rand.friction_range
+                    friction_ = (friction_range[0] + friction_range[1]) / 2
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
+                    self.friction_coeffs = friction_buckets[bucket_ids]
+            else:
+                if env_id==0:
+                    # prepare friction randomization
+                    friction_range = self.cfg.domain_rand.friction_range
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
+                    self.friction_coeffs = friction_buckets[bucket_ids]
+            
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
         return props

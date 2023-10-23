@@ -48,7 +48,8 @@ def play(args):
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
-    env_cfg.domain_rand.randomize_friction = False
+    env_cfg.domain_rand.randomize_friction = True
+    env_cfg.domain_rand.test_time = True
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = False
@@ -77,7 +78,11 @@ def play(args):
     print(f'gathering {num_frames} frames')
     video = None
 
-    for i in range(num_frames):
+    # for i in range(num_frames):
+    env.reset(random_time=False)
+    while True:
+        if env.times >= env.amp_loader.trajectory_lens[0] - env.dt:
+            break
         actions = policy(obs.detach())
         obs, _, _, _, infos, _, _ = env.step(actions.detach())
 
@@ -102,7 +107,12 @@ def play(args):
     video.release()
 
 if __name__ == '__main__':
-    EXPORT_POLICY = True
-    RECORD_FRAMES = False
+    EXPORT_POLICY = False
+    RECORD_FRAMES = True
     args = get_args()
+    args.task = "go1_TMR_AMP"
+    from pyvirtualdisplay.smartdisplay import SmartDisplay
+    SCREEN_CAPTURE_RESOLUTION = (1027, 768)
+    virtual_display = SmartDisplay(size=SCREEN_CAPTURE_RESOLUTION)
+    virtual_display.start()
     play(args)
