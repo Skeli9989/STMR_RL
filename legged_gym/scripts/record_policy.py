@@ -78,6 +78,14 @@ def play(args):
     print(f'gathering {num_frames} frames')
     video = None
 
+    camera_properties = gymapi.CameraProperties()
+    camera_properties.width = 360
+    camera_properties.height = 240
+    h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
+    camera_position = gymapi.Vec3(1.5, 1, 1.5)
+    camera_target = gymapi.Vec3(0, 0, 0)
+    env.gym.set_camera_location(h1, env.envs[0], camera_position, camera_target)
+    
     # for i in range(num_frames):
     env.reset(random_time=False)
     while True:
@@ -90,15 +98,19 @@ def play(args):
         look_at = np.array(env.root_states[0, :3].cpu(), dtype=np.float64)
         camera_rot = (camera_rot + camera_rot_per_sec * env.dt) % (2 * np.pi)
         camera_relative_position = 1.2 * np.array([np.cos(camera_rot), np.sin(camera_rot), 0.45])
-        env.set_camera(look_at + camera_relative_position, look_at)
+        cam_pos = look_at + camera_relative_position
+        
+        cam_pos = gymapi.Vec3(cam_pos[0], cam_pos[1], cam_pos[2])
+        cam_target = gymapi.Vec3(look_at[0], look_at[1], look_at[2])
+        env.gym.set_camera_location(h1, env.envs[0], cam_pos, cam_target)
+
 
         if RECORD_FRAMES:
             frames_path = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'frames')
             if not os.path.isdir(frames_path):
-                os.mkdir(frames_path)
-            filename = os.path.join('logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
-            env.gym.write_viewer_image_to_file(env.viewer, filename)
-            img = cv2.imread(filename)
+                os.makedirs(frames_path, exist_ok=True)
+            # filename = os.path.join('logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
+            img = env.gym.get_camera_image(env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
             if video is None:
                 video = cv2.VideoWriter('record.mp4', cv2.VideoWriter_fourcc(*'MP4V'), int(1 / env.dt), (img.shape[1],img.shape[0]))
             video.write(img)
@@ -111,6 +123,7 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     args = get_args()
     args.task = "go1_TMR_AMP"
+    args.headless = True
     from pyvirtualdisplay.smartdisplay import SmartDisplay
     SCREEN_CAPTURE_RESOLUTION = (1027, 768)
     virtual_display = SmartDisplay(size=SCREEN_CAPTURE_RESOLUTION)
