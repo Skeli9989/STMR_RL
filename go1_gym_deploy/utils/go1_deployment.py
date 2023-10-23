@@ -73,6 +73,8 @@ class Go1Deployment:
         return obs
     
     def run(self):
+        action_list = []
+        
         self.calibrate(wait=True, low=False)
         self.agent.reset()
         obs = self.agent.get_obs()
@@ -83,6 +85,7 @@ class Go1Deployment:
             self.agent.reset()
             motion_q = self.motion_holder.get_q(self.agent.get_time())
             self.agent.step(action, motion_q)
+            action_list.append(action)
         except Exception as e:
             print(e)
             self.emergeny_stop()
@@ -95,6 +98,7 @@ class Go1Deployment:
                 # breakpoint()
                 obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
                 action = self.policy(obs)
+                action_list.append(action)
                 motion_q = self.motion_holder.get_q(self.agent.get_time())
                 self.agent.step(action, motion_q)
                 
@@ -106,7 +110,11 @@ class Go1Deployment:
                 print(e)
                 self.emergeny_stop()
                 return
-        
+
+        action_list = torch.stack(action_list)
+        # save to txt from torch tensor
+        np.savetxt("action_list.txt", action_list.detach().cpu().numpy())
+
         while True:
             try:
                 self.agent.step(action, motion_q)
