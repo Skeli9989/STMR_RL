@@ -94,9 +94,9 @@ class Cfg( LeggedRobotCfg ):
         flip_visual_attachments = False
         
     class domain_rand:
-        randomize_friction = True
+        randomize_friction = False
         friction_range = [0.25, 1.75]
-        randomize_base_mass = True
+        randomize_base_mass = False
         added_mass_range = [-1., 1.]
         push_robots = True
         push_interval_s = 15
