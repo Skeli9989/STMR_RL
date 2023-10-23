@@ -515,7 +515,7 @@ class LeggedRobot(BaseTask):
         # frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
         # frames = frames.to(self.device)
         # target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
-        target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.last_times)).to(self.device)
+        target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
 
         if control_type=="P":
             # torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
