@@ -1,0 +1,1337 @@
+{
+    "0": {
+        "joint_tracking_error": 0.14078944425089557,
+        "position_tracking_error": 0.17096684809944546,
+        "orientation_tracking_error": 0.7612725837716778
+    },
+    "50": {
+        "joint_tracking_error": 0.6043644072216692,
+        "position_tracking_error": 0.1144753898850962,
+        "orientation_tracking_error": 0.3493101238047035
+    },
+    "100": {
+        "joint_tracking_error": 0.8237068094674823,
+        "position_tracking_error": 0.20746207447886159,
+        "orientation_tracking_error": 0.2641567628360489
+    },
+    "150": {
+        "joint_tracking_error": 1.1060419515932647,
+        "position_tracking_error": 0.018434899502043335,
+        "orientation_tracking_error": 0.24385167267716046
+    },
+    "200": {
+        "joint_tracking_error": 0.9620478855608736,
+        "position_tracking_error": 0.04462069348756787,
+        "orientation_tracking_error": 0.1446917392675159
+    },
+    "250": {
+        "joint_tracking_error": 0.8439556378328684,
+        "position_tracking_error": 0.04580457695259416,
+        "orientation_tracking_error": 0.24873499036992638
+    },
+    "300": {
+        "joint_tracking_error": 1.1097855380582577,
+        "position_tracking_error": 0.07094588999829178,
+        "orientation_tracking_error": 0.17916256420820661
+    },
+    "350": {
+        "joint_tracking_error": 1.4979965055307138,
+        "position_tracking_error": 0.012273836406148424,
+        "orientation_tracking_error": 0.3996124817329703
+    },
+    "400": {
+        "joint_tracking_error": 1.6134512513441948,
+        "position_tracking_error": 0.014775389445947315,
+        "orientation_tracking_error": 0.3447614555220002
+    },
+    "450": {
+        "joint_tracking_error": 1.636930556298749,
+        "position_tracking_error": 0.01271100207004477,
+        "orientation_tracking_error": 0.15898183595786974
+    },
+    "500": {
+        "joint_tracking_error": 1.496023166960883,
+        "position_tracking_error": 0.02116550025195324,
+        "orientation_tracking_error": 0.1649175772389162
+    },
+    "550": {
+        "joint_tracking_error": 1.2283022962148906,
+        "position_tracking_error": 0.01081733737253636,
+        "orientation_tracking_error": 0.2172021142487387
+    },
+    "600": {
+        "joint_tracking_error": 0.9724465406599264,
+        "position_tracking_error": 0.011753008931971865,
+        "orientation_tracking_error": 0.09041062084216515
+    },
+    "650": {
+        "joint_tracking_error": 0.9495265424902578,
+        "position_tracking_error": 0.0161004443171867,
+        "orientation_tracking_error": 0.06803911114201962
+    },
+    "700": {
+        "joint_tracking_error": 0.8832450048292725,
+        "position_tracking_error": 0.007818132457738738,
+        "orientation_tracking_error": 0.07639590108278886
+    },
+    "750": {
+        "joint_tracking_error": 0.8213090687556174,
+        "position_tracking_error": 0.01887734932168014,
+        "orientation_tracking_error": 0.06275517732194326
+    },
+    "800": {
+        "joint_tracking_error": 0.807035036493563,
+        "position_tracking_error": 0.03431721137280212,
+        "orientation_tracking_error": 0.1025130858699095
+    },
+    "850": {
+        "joint_tracking_error": 0.689685379453365,
+        "position_tracking_error": 0.0270929516103651,
+        "orientation_tracking_error": 0.05298702983022893
+    },
+    "900": {
+        "joint_tracking_error": 0.711575075766994,
+        "position_tracking_error": 0.007487129500783975,
+        "orientation_tracking_error": 0.05929932374398685
+    },
+    "950": {
+        "joint_tracking_error": 0.7037381684244837,
+        "position_tracking_error": 0.005021433798990153,
+        "orientation_tracking_error": 0.04716455878563298
+    },
+    "1000": {
+        "joint_tracking_error": 0.6742087988164819,
+        "position_tracking_error": 0.003975720460217523,
+        "orientation_tracking_error": 0.052280916172323874
+    },
+    "1050": {
+        "joint_tracking_error": 0.6279183573731519,
+        "position_tracking_error": 0.004176394234835826,
+        "orientation_tracking_error": 0.063142915373867
+    },
+    "1100": {
+        "joint_tracking_error": 0.6311665900340937,
+        "position_tracking_error": 0.00479038180753722,
+        "orientation_tracking_error": 0.05115858790943924
+    },
+    "1150": {
+        "joint_tracking_error": 0.6648544787420231,
+        "position_tracking_error": 0.005344332953860183,
+        "orientation_tracking_error": 0.05415369179642316
+    },
+    "1200": {
+        "joint_tracking_error": 0.7156544303322591,
+        "position_tracking_error": 0.005339762397481748,
+        "orientation_tracking_error": 0.05272642269875239
+    },
+    "1250": {
+        "joint_tracking_error": 0.7196264709843304,
+        "position_tracking_error": 0.005629929479308205,
+        "orientation_tracking_error": 0.04578846056484482
+    },
+    "1300": {
+        "joint_tracking_error": 0.6983785795102131,
+        "position_tracking_error": 0.004752871893711944,
+        "orientation_tracking_error": 0.0547895038012162
+    },
+    "1350": {
+        "joint_tracking_error": 0.6445376935405928,
+        "position_tracking_error": 0.006797052789533181,
+        "orientation_tracking_error": 0.057734178107919046
+    },
+    "1400": {
+        "joint_tracking_error": 0.7161264206798187,
+        "position_tracking_error": 0.006622354852844333,
+        "orientation_tracking_error": 0.024884520225154545
+    },
+    "1450": {
+        "joint_tracking_error": 0.6420023289047977,
+        "position_tracking_error": 0.0030817367527543487,
+        "orientation_tracking_error": 0.04156259946452761
+    },
+    "1500": {
+        "joint_tracking_error": 0.6771799776594616,
+        "position_tracking_error": 0.0035675053597903736,
+        "orientation_tracking_error": 0.037516440002663624
+    },
+    "1550": {
+        "joint_tracking_error": 0.6716441534170248,
+        "position_tracking_error": 0.0035001355070527246,
+        "orientation_tracking_error": 0.026470600979999433
+    },
+    "1600": {
+        "joint_tracking_error": 0.6466546564281566,
+        "position_tracking_error": 0.004540664531322743,
+        "orientation_tracking_error": 0.02726831829663619
+    },
+    "1650": {
+        "joint_tracking_error": 0.6588523309062986,
+        "position_tracking_error": 0.003908745370405722,
+        "orientation_tracking_error": 0.05895828043372886
+    },
+    "1700": {
+        "joint_tracking_error": 0.7114425276234312,
+        "position_tracking_error": 0.0038162155475414323,
+        "orientation_tracking_error": 0.040818603872095495
+    },
+    "1750": {
+        "joint_tracking_error": 0.6915332627781097,
+        "position_tracking_error": 0.004280670710940488,
+        "orientation_tracking_error": 0.030179604743290872
+    },
+    "1800": {
+        "joint_tracking_error": 0.7140090813480534,
+        "position_tracking_error": 0.0035554138596426217,
+        "orientation_tracking_error": 0.035795943829619765
+    },
+    "1850": {
+        "joint_tracking_error": 0.7037139669133042,
+        "position_tracking_error": 0.0037514446235433654,
+        "orientation_tracking_error": 0.026550178388947424
+    },
+    "1900": {
+        "joint_tracking_error": 0.6549741582384387,
+        "position_tracking_error": 0.004716813897299219,
+        "orientation_tracking_error": 0.02917222085508328
+    },
+    "1950": {
+        "joint_tracking_error": 0.7290175179182325,
+        "position_tracking_error": 0.008379989677971766,
+        "orientation_tracking_error": 0.04231354391690597
+    },
+    "2000": {
+        "joint_tracking_error": 0.7217432440629283,
+        "position_tracking_error": 0.003525669558283995,
+        "orientation_tracking_error": 0.033998782194933845
+    },
+    "2050": {
+        "joint_tracking_error": 0.7327997039605691,
+        "position_tracking_error": 0.005106248493513739,
+        "orientation_tracking_error": 0.021556195124839115
+    },
+    "2100": {
+        "joint_tracking_error": 0.7299200519196039,
+        "position_tracking_error": 0.004338802618680418,
+        "orientation_tracking_error": 0.036567084418917165
+    },
+    "2150": {
+        "joint_tracking_error": 0.7305920488626054,
+        "position_tracking_error": 0.004602407148004469,
+        "orientation_tracking_error": 0.0682908481764562
+    },
+    "2200": {
+        "joint_tracking_error": 0.6970723147856669,
+        "position_tracking_error": 0.0038544193824422003,
+        "orientation_tracking_error": 0.035146522290498305
+    },
+    "2250": {
+        "joint_tracking_error": 0.7222295335123261,
+        "position_tracking_error": 0.00542040398615374,
+        "orientation_tracking_error": 0.05731992640541595
+    },
+    "2300": {
+        "joint_tracking_error": 0.7385332559425275,
+        "position_tracking_error": 0.004093758534915289,
+        "orientation_tracking_error": 0.027153511070510717
+    },
+    "2350": {
+        "joint_tracking_error": 0.7031289494406541,
+        "position_tracking_error": 0.0073745093009297885,
+        "orientation_tracking_error": 0.049264396857289436
+    },
+    "2400": {
+        "joint_tracking_error": 0.7285927193944605,
+        "position_tracking_error": 0.003967539122844119,
+        "orientation_tracking_error": 0.04831655569446897
+    },
+    "2450": {
+        "joint_tracking_error": 0.6730241550548562,
+        "position_tracking_error": 0.004049124660067039,
+        "orientation_tracking_error": 0.03355101474280496
+    },
+    "2500": {
+        "joint_tracking_error": 0.6836032561270646,
+        "position_tracking_error": 0.004550601157443982,
+        "orientation_tracking_error": 0.04124897024006519
+    },
+    "2550": {
+        "joint_tracking_error": 0.6654657042106089,
+        "position_tracking_error": 0.004177389909370319,
+        "orientation_tracking_error": 0.050074680916313986
+    },
+    "2600": {
+        "joint_tracking_error": 0.7003838017365887,
+        "position_tracking_error": 0.00430643023987746,
+        "orientation_tracking_error": 0.02893721883736768
+    },
+    "2650": {
+        "joint_tracking_error": 0.680594455233766,
+        "position_tracking_error": 0.0055289690871468695,
+        "orientation_tracking_error": 0.05335834130500127
+    },
+    "2700": {
+        "joint_tracking_error": 0.634641253705887,
+        "position_tracking_error": 0.0033262008637923394,
+        "orientation_tracking_error": 0.03624656478178154
+    },
+    "2750": {
+        "joint_tracking_error": 0.6837087546303434,
+        "position_tracking_error": 0.004783618296324207,
+        "orientation_tracking_error": 0.032689931901913244
+    },
+    "2800": {
+        "joint_tracking_error": 0.7158144971771726,
+        "position_tracking_error": 0.0036570791534297348,
+        "orientation_tracking_error": 0.028296650613395914
+    },
+    "2850": {
+        "joint_tracking_error": 0.6993112038206128,
+        "position_tracking_error": 0.0069786271851626225,
+        "orientation_tracking_error": 0.03663682069593263
+    },
+    "2900": {
+        "joint_tracking_error": 0.763528413311081,
+        "position_tracking_error": 0.006878846150004074,
+        "orientation_tracking_error": 0.03825912834371178
+    },
+    "2950": {
+        "joint_tracking_error": 0.7387652288109643,
+        "position_tracking_error": 0.003816613866662204,
+        "orientation_tracking_error": 0.0360373466917612
+    },
+    "3000": {
+        "joint_tracking_error": 0.7821936750223915,
+        "position_tracking_error": 0.004016690073521848,
+        "orientation_tracking_error": 0.05899188298623539
+    },
+    "3050": {
+        "joint_tracking_error": 0.812833537284321,
+        "position_tracking_error": 0.0041679500286282015,
+        "orientation_tracking_error": 0.07283269780353435
+    },
+    "3100": {
+        "joint_tracking_error": 0.7359995413752436,
+        "position_tracking_error": 0.0052889549589203895,
+        "orientation_tracking_error": 0.07318143705719883
+    },
+    "3150": {
+        "joint_tracking_error": 0.628125108706141,
+        "position_tracking_error": 0.003307030027376508,
+        "orientation_tracking_error": 0.03326332916333837
+    },
+    "3200": {
+        "joint_tracking_error": 0.7320022256050295,
+        "position_tracking_error": 0.003935173335493637,
+        "orientation_tracking_error": 0.03125428921968034
+    },
+    "3250": {
+        "joint_tracking_error": 0.8171571881049177,
+        "position_tracking_error": 0.006927769972976111,
+        "orientation_tracking_error": 0.03927725148432463
+    },
+    "3300": {
+        "joint_tracking_error": 0.7821700357045364,
+        "position_tracking_error": 0.006520522199104906,
+        "orientation_tracking_error": 0.046375854501446476
+    },
+    "3350": {
+        "joint_tracking_error": 0.6985253559298885,
+        "position_tracking_error": 0.003860239787561281,
+        "orientation_tracking_error": 0.05235975286335621
+    },
+    "3400": {
+        "joint_tracking_error": 0.7551393086470447,
+        "position_tracking_error": 0.00463712396481904,
+        "orientation_tracking_error": 0.047418288235525484
+    },
+    "3450": {
+        "joint_tracking_error": 0.808921968600559,
+        "position_tracking_error": 0.008381818595454798,
+        "orientation_tracking_error": 0.03689900590378104
+    },
+    "3500": {
+        "joint_tracking_error": 0.7846192320971523,
+        "position_tracking_error": 0.0049353668243551935,
+        "orientation_tracking_error": 0.03943460716784579
+    },
+    "3550": {
+        "joint_tracking_error": 0.7878396729531797,
+        "position_tracking_error": 0.006413027467203295,
+        "orientation_tracking_error": 0.05050994701755857
+    },
+    "3600": {
+        "joint_tracking_error": 0.7185097859575621,
+        "position_tracking_error": 0.004360925262181871,
+        "orientation_tracking_error": 0.028714462970066995
+    },
+    "3650": {
+        "joint_tracking_error": 0.675873730168904,
+        "position_tracking_error": 0.005083990317994833,
+        "orientation_tracking_error": 0.03620908561262112
+    },
+    "3700": {
+        "joint_tracking_error": 0.6965814105424921,
+        "position_tracking_error": 0.0056870534066794645,
+        "orientation_tracking_error": 0.03265678998336051
+    },
+    "3750": {
+        "joint_tracking_error": 0.7747163904957401,
+        "position_tracking_error": 0.005269892694520678,
+        "orientation_tracking_error": 0.031225654106695675
+    },
+    "3800": {
+        "joint_tracking_error": 0.7526334315285231,
+        "position_tracking_error": 0.005851866996062137,
+        "orientation_tracking_error": 0.0248545558707228
+    },
+    "3850": {
+        "joint_tracking_error": 0.7924014251064329,
+        "position_tracking_error": 0.005644497576548867,
+        "orientation_tracking_error": 0.030996814514826804
+    },
+    "3900": {
+        "joint_tracking_error": 0.8086023385030696,
+        "position_tracking_error": 0.007707585190147053,
+        "orientation_tracking_error": 0.03154794452259842
+    },
+    "3950": {
+        "joint_tracking_error": 0.762870954620896,
+        "position_tracking_error": 0.007778692750293576,
+        "orientation_tracking_error": 0.024472190917116925
+    },
+    "4000": {
+        "joint_tracking_error": 0.8151222194897608,
+        "position_tracking_error": 0.006583756964511885,
+        "orientation_tracking_error": 0.03136285416130881
+    },
+    "4050": {
+        "joint_tracking_error": 0.8393756571469955,
+        "position_tracking_error": 0.0065325800405314546,
+        "orientation_tracking_error": 0.025276889500108736
+    },
+    "4100": {
+        "joint_tracking_error": 0.8181362755741309,
+        "position_tracking_error": 0.005785062282899444,
+        "orientation_tracking_error": 0.0379700139888282
+    },
+    "4150": {
+        "joint_tracking_error": 0.7914876443089791,
+        "position_tracking_error": 0.006581110632466944,
+        "orientation_tracking_error": 0.03814387032129232
+    },
+    "4200": {
+        "joint_tracking_error": 0.7995179898819877,
+        "position_tracking_error": 0.008846021050435278,
+        "orientation_tracking_error": 0.05360829193615219
+    },
+    "4250": {
+        "joint_tracking_error": 0.7651066868339927,
+        "position_tracking_error": 0.006790890012957038,
+        "orientation_tracking_error": 0.03066603593455935
+    },
+    "4300": {
+        "joint_tracking_error": 0.8544150501561975,
+        "position_tracking_error": 0.0065331394523207,
+        "orientation_tracking_error": 0.028205527842623517
+    },
+    "4350": {
+        "joint_tracking_error": 0.8247375172174093,
+        "position_tracking_error": 0.009584179884645053,
+        "orientation_tracking_error": 0.03997757307534079
+    },
+    "4400": {
+        "joint_tracking_error": 0.7668563916338879,
+        "position_tracking_error": 0.006167440937345427,
+        "orientation_tracking_error": 0.025226495798351695
+    },
+    "4450": {
+        "joint_tracking_error": 0.809741170208865,
+        "position_tracking_error": 0.005960207129955784,
+        "orientation_tracking_error": 0.024713787639025344
+    },
+    "4500": {
+        "joint_tracking_error": 0.800543068356595,
+        "position_tracking_error": 0.009998154003855217,
+        "orientation_tracking_error": 0.03433779258172489
+    },
+    "4550": {
+        "joint_tracking_error": 0.7832746374809626,
+        "position_tracking_error": 0.007462903317750671,
+        "orientation_tracking_error": 0.030684947967529297
+    },
+    "4600": {
+        "joint_tracking_error": 0.799498028040511,
+        "position_tracking_error": 0.00975293081017263,
+        "orientation_tracking_error": 0.02995897496788247
+    },
+    "4650": {
+        "joint_tracking_error": 0.7280820538335054,
+        "position_tracking_error": 0.005962129155961114,
+        "orientation_tracking_error": 0.023066202992374458
+    },
+    "4700": {
+        "joint_tracking_error": 0.7266155223823288,
+        "position_tracking_error": 0.004348124130965251,
+        "orientation_tracking_error": 0.02303232730013653
+    },
+    "4750": {
+        "joint_tracking_error": 0.7553930004823555,
+        "position_tracking_error": 0.005016358863622813,
+        "orientation_tracking_error": 0.02634934545720665
+    },
+    "4800": {
+        "joint_tracking_error": 0.7076510883578397,
+        "position_tracking_error": 0.005797832031427426,
+        "orientation_tracking_error": 0.027079537076857483
+    },
+    "4850": {
+        "joint_tracking_error": 0.7329743501269123,
+        "position_tracking_error": 0.005783407317880808,
+        "orientation_tracking_error": 0.029149016709003633
+    },
+    "4900": {
+        "joint_tracking_error": 0.7658924796772235,
+        "position_tracking_error": 0.008681698843485844,
+        "orientation_tracking_error": 0.0274819696991189
+    },
+    "4950": {
+        "joint_tracking_error": 0.7265711745192993,
+        "position_tracking_error": 0.005566253609889191,
+        "orientation_tracking_error": 0.02377674012508207
+    },
+    "5000": {
+        "joint_tracking_error": 0.7519122222890553,
+        "position_tracking_error": 0.008093822983054567,
+        "orientation_tracking_error": 0.026837948456551266
+    },
+    "5050": {
+        "joint_tracking_error": 0.7646782876905597,
+        "position_tracking_error": 0.007939928173620448,
+        "orientation_tracking_error": 0.04729100280595057
+    },
+    "5100": {
+        "joint_tracking_error": 0.7865015080614576,
+        "position_tracking_error": 0.00578621911191273,
+        "orientation_tracking_error": 0.02741274613778568
+    },
+    "5150": {
+        "joint_tracking_error": 0.7972504518998479,
+        "position_tracking_error": 0.006834512675851832,
+        "orientation_tracking_error": 0.03338425714992783
+    },
+    "5200": {
+        "joint_tracking_error": 0.8209069737965621,
+        "position_tracking_error": 0.010179339243973339,
+        "orientation_tracking_error": 0.045121120017709085
+    },
+    "5250": {
+        "joint_tracking_error": 0.7712378319967719,
+        "position_tracking_error": 0.0101114908195563,
+        "orientation_tracking_error": 0.04019981506958749
+    },
+    "5300": {
+        "joint_tracking_error": 0.756008529764356,
+        "position_tracking_error": 0.010599639290111316,
+        "orientation_tracking_error": 0.043024236716113044
+    },
+    "5350": {
+        "joint_tracking_error": 0.8333632898634499,
+        "position_tracking_error": 0.005733374843684147,
+        "orientation_tracking_error": 0.033557041756157736
+    },
+    "5400": {
+        "joint_tracking_error": 0.8315797317592264,
+        "position_tracking_error": 0.010161512086941585,
+        "orientation_tracking_error": 0.05158998549563214
+    },
+    "5450": {
+        "joint_tracking_error": 0.8300842825070168,
+        "position_tracking_error": 0.006323471491819008,
+        "orientation_tracking_error": 0.04145212659558046
+    },
+    "5500": {
+        "joint_tracking_error": 0.8486812343658174,
+        "position_tracking_error": 0.006441643956562083,
+        "orientation_tracking_error": 0.04760079129228314
+    },
+    "5550": {
+        "joint_tracking_error": 0.8656947201533803,
+        "position_tracking_error": 0.006512937805170614,
+        "orientation_tracking_error": 0.0338400770159601
+    },
+    "5600": {
+        "joint_tracking_error": 0.8432615232988468,
+        "position_tracking_error": 0.006281525825048023,
+        "orientation_tracking_error": 0.03751529131120848
+    },
+    "5650": {
+        "joint_tracking_error": 0.8693743724990817,
+        "position_tracking_error": 0.005387811167027182,
+        "orientation_tracking_error": 0.03664905643000186
+    },
+    "5700": {
+        "joint_tracking_error": 0.9033876352229164,
+        "position_tracking_error": 0.004853300345627573,
+        "orientation_tracking_error": 0.03984217215510248
+    },
+    "5750": {
+        "joint_tracking_error": 0.875571022605867,
+        "position_tracking_error": 0.007864658671978848,
+        "orientation_tracking_error": 0.029116070386275505
+    },
+    "5800": {
+        "joint_tracking_error": 0.8696286969465538,
+        "position_tracking_error": 0.005364747952290662,
+        "orientation_tracking_error": 0.03433057000336138
+    },
+    "5850": {
+        "joint_tracking_error": 0.845346426898704,
+        "position_tracking_error": 0.005143643737752533,
+        "orientation_tracking_error": 0.032750034795224085
+    },
+    "5900": {
+        "joint_tracking_error": 0.882575281109046,
+        "position_tracking_error": 0.007635091469090237,
+        "orientation_tracking_error": 0.028958127336594666
+    },
+    "5950": {
+        "joint_tracking_error": 0.8669100669257849,
+        "position_tracking_error": 0.005985202923096667,
+        "orientation_tracking_error": 0.030990617946513647
+    },
+    "6000": {
+        "joint_tracking_error": 0.8523285569785868,
+        "position_tracking_error": 0.006373326752650737,
+        "orientation_tracking_error": 0.03864807295567781
+    },
+    "6050": {
+        "joint_tracking_error": 0.867061718140991,
+        "position_tracking_error": 0.005376207701701081,
+        "orientation_tracking_error": 0.028159542569836365
+    },
+    "6100": {
+        "joint_tracking_error": 0.8500721370349231,
+        "position_tracking_error": 0.006499689923798851,
+        "orientation_tracking_error": 0.02797607542241661
+    },
+    "6150": {
+        "joint_tracking_error": 0.8098583253986628,
+        "position_tracking_error": 0.005222102291828352,
+        "orientation_tracking_error": 0.028271237044658476
+    },
+    "6200": {
+        "joint_tracking_error": 0.8680834205079715,
+        "position_tracking_error": 0.0064706952370860325,
+        "orientation_tracking_error": 0.027078402273863263
+    },
+    "6250": {
+        "joint_tracking_error": 0.8536022741673062,
+        "position_tracking_error": 0.005962341980335023,
+        "orientation_tracking_error": 0.02565155272344941
+    },
+    "6300": {
+        "joint_tracking_error": 0.8671071141668893,
+        "position_tracking_error": 0.006923657693988892,
+        "orientation_tracking_error": 0.028618199154011256
+    },
+    "6350": {
+        "joint_tracking_error": 0.8974423233817503,
+        "position_tracking_error": 0.006071629547963294,
+        "orientation_tracking_error": 0.038670795056426406
+    },
+    "6400": {
+        "joint_tracking_error": 0.8717767155720192,
+        "position_tracking_error": 0.0062618753407291785,
+        "orientation_tracking_error": 0.032658676499301945
+    },
+    "6450": {
+        "joint_tracking_error": 0.8694950867697452,
+        "position_tracking_error": 0.005219924970412993,
+        "orientation_tracking_error": 0.02673140949415929
+    },
+    "6500": {
+        "joint_tracking_error": 0.798779127160901,
+        "position_tracking_error": 0.005164466449077206,
+        "orientation_tracking_error": 0.02927192090784462
+    },
+    "6550": {
+        "joint_tracking_error": 0.8213659190726512,
+        "position_tracking_error": 0.005808446497980785,
+        "orientation_tracking_error": 0.029558964145993724
+    },
+    "6600": {
+        "joint_tracking_error": 0.7846402787757152,
+        "position_tracking_error": 0.005957238605651141,
+        "orientation_tracking_error": 0.029108818294932542
+    },
+    "6650": {
+        "joint_tracking_error": 0.832991805072259,
+        "position_tracking_error": 0.005630085216871875,
+        "orientation_tracking_error": 0.03163380183062507
+    },
+    "6700": {
+        "joint_tracking_error": 0.78723578735535,
+        "position_tracking_error": 0.005926743054887375,
+        "orientation_tracking_error": 0.026818924737208098
+    },
+    "6750": {
+        "joint_tracking_error": 0.8062465149656083,
+        "position_tracking_error": 0.0060527581275521,
+        "orientation_tracking_error": 0.02830549351219992
+    },
+    "6800": {
+        "joint_tracking_error": 0.8344837875259155,
+        "position_tracking_error": 0.0072832755836713566,
+        "orientation_tracking_error": 0.028784286628649073
+    },
+    "6850": {
+        "joint_tracking_error": 0.7747696401207771,
+        "position_tracking_error": 0.005422651069168141,
+        "orientation_tracking_error": 0.031643789370083115
+    },
+    "6900": {
+        "joint_tracking_error": 0.7766643211390208,
+        "position_tracking_error": 0.0051405266940226955,
+        "orientation_tracking_error": 0.031563538370780575
+    },
+    "6950": {
+        "joint_tracking_error": 0.7568788077429082,
+        "position_tracking_error": 0.006599622106804621,
+        "orientation_tracking_error": 0.030000160041364653
+    },
+    "7000": {
+        "joint_tracking_error": 0.7836385151389443,
+        "position_tracking_error": 0.007481130150198209,
+        "orientation_tracking_error": 0.03438759370914941
+    },
+    "7050": {
+        "joint_tracking_error": 0.8010318886344004,
+        "position_tracking_error": 0.007219362584718625,
+        "orientation_tracking_error": 0.03385228670916511
+    },
+    "7100": {
+        "joint_tracking_error": 0.8366571972960407,
+        "position_tracking_error": 0.007101333432322825,
+        "orientation_tracking_error": 0.032839510047320025
+    },
+    "7150": {
+        "joint_tracking_error": 0.8360780016745178,
+        "position_tracking_error": 0.006444008364463655,
+        "orientation_tracking_error": 0.03383694401065123
+    },
+    "7200": {
+        "joint_tracking_error": 0.8639302576883036,
+        "position_tracking_error": 0.0072523797604394395,
+        "orientation_tracking_error": 0.031014629359384184
+    },
+    "7250": {
+        "joint_tracking_error": 0.8682657760179159,
+        "position_tracking_error": 0.006644497868603262,
+        "orientation_tracking_error": 0.037489869062182976
+    },
+    "7300": {
+        "joint_tracking_error": 0.8579579059179258,
+        "position_tracking_error": 0.007230431522489683,
+        "orientation_tracking_error": 0.033239773176248794
+    },
+    "7350": {
+        "joint_tracking_error": 0.8260404201568041,
+        "position_tracking_error": 0.0064463326821213324,
+        "orientation_tracking_error": 0.02927665745170371
+    },
+    "7400": {
+        "joint_tracking_error": 0.8532409826745686,
+        "position_tracking_error": 0.006724705267542164,
+        "orientation_tracking_error": 0.036933708538129495
+    },
+    "7450": {
+        "joint_tracking_error": 0.8592473273934091,
+        "position_tracking_error": 0.00578675562174238,
+        "orientation_tracking_error": 0.03791660533368009
+    },
+    "7500": {
+        "joint_tracking_error": 0.8716872449674942,
+        "position_tracking_error": 0.006160174275862022,
+        "orientation_tracking_error": 0.037359211051348346
+    },
+    "7550": {
+        "joint_tracking_error": 0.8426116144158018,
+        "position_tracking_error": 0.005535292178287863,
+        "orientation_tracking_error": 0.03305941704407479
+    },
+    "7600": {
+        "joint_tracking_error": 0.881395938761026,
+        "position_tracking_error": 0.0066361866822297845,
+        "orientation_tracking_error": 0.03525009201568307
+    },
+    "7650": {
+        "joint_tracking_error": 0.8126759476670362,
+        "position_tracking_error": 0.0062570249243188445,
+        "orientation_tracking_error": 0.02942795487283503
+    },
+    "7700": {
+        "joint_tracking_error": 0.7768722821786566,
+        "position_tracking_error": 0.0066853442301525,
+        "orientation_tracking_error": 0.03766229893397359
+    },
+    "7750": {
+        "joint_tracking_error": 0.7730669876723324,
+        "position_tracking_error": 0.007238535118021989,
+        "orientation_tracking_error": 0.04203771213883335
+    },
+    "7800": {
+        "joint_tracking_error": 0.7878530380741051,
+        "position_tracking_error": 0.008306743349731353,
+        "orientation_tracking_error": 0.030341945805595915
+    },
+    "7850": {
+        "joint_tracking_error": 0.8016621352905787,
+        "position_tracking_error": 0.006134732627014299,
+        "orientation_tracking_error": 0.03774842648830229
+    },
+    "7900": {
+        "joint_tracking_error": 0.7811267038680685,
+        "position_tracking_error": 0.006056025994854563,
+        "orientation_tracking_error": 0.031978616436708324
+    },
+    "7950": {
+        "joint_tracking_error": 0.753083927376033,
+        "position_tracking_error": 0.008998288811923081,
+        "orientation_tracking_error": 0.03333908145867505
+    },
+    "8000": {
+        "joint_tracking_error": 0.7600739217064914,
+        "position_tracking_error": 0.007297241786430992,
+        "orientation_tracking_error": 0.03163809220767715
+    },
+    "8050": {
+        "joint_tracking_error": 0.7784815509577544,
+        "position_tracking_error": 0.008777400716425493,
+        "orientation_tracking_error": 0.032330933126431066
+    },
+    "8100": {
+        "joint_tracking_error": 0.7802903953469494,
+        "position_tracking_error": 0.006582686032416656,
+        "orientation_tracking_error": 0.03144556226082219
+    },
+    "8150": {
+        "joint_tracking_error": 0.7643195838188228,
+        "position_tracking_error": 0.006846855173084672,
+        "orientation_tracking_error": 0.03457076167597354
+    },
+    "8200": {
+        "joint_tracking_error": 0.7720155661509743,
+        "position_tracking_error": 0.006912594285239217,
+        "orientation_tracking_error": 0.03316876957717451
+    },
+    "8250": {
+        "joint_tracking_error": 0.7477743791922637,
+        "position_tracking_error": 0.00656108591061038,
+        "orientation_tracking_error": 0.03549405324806287
+    },
+    "8300": {
+        "joint_tracking_error": 0.7297094516202952,
+        "position_tracking_error": 0.008140964056401925,
+        "orientation_tracking_error": 0.03562930776077567
+    },
+    "8350": {
+        "joint_tracking_error": 0.7646425180860514,
+        "position_tracking_error": 0.006818515415802412,
+        "orientation_tracking_error": 0.03869526652456487
+    },
+    "8400": {
+        "joint_tracking_error": 0.8005618510532726,
+        "position_tracking_error": 0.006567935615077782,
+        "orientation_tracking_error": 0.03326698124987408
+    },
+    "8450": {
+        "joint_tracking_error": 0.7837529104854007,
+        "position_tracking_error": 0.0066501168711184415,
+        "orientation_tracking_error": 0.030928807929881567
+    },
+    "8500": {
+        "joint_tracking_error": 0.7599570705076155,
+        "position_tracking_error": 0.006417162739346821,
+        "orientation_tracking_error": 0.032853496884836735
+    },
+    "8550": {
+        "joint_tracking_error": 0.7355548821715185,
+        "position_tracking_error": 0.0062151752637379385,
+        "orientation_tracking_error": 0.028341335000343693
+    },
+    "8600": {
+        "joint_tracking_error": 0.7683003943919846,
+        "position_tracking_error": 0.009647432686515193,
+        "orientation_tracking_error": 0.03252937550683623
+    },
+    "8650": {
+        "joint_tracking_error": 0.8473580965718019,
+        "position_tracking_error": 0.007191247115258096,
+        "orientation_tracking_error": 0.03669387333601424
+    },
+    "8700": {
+        "joint_tracking_error": 0.7960344449191996,
+        "position_tracking_error": 0.005879663699603238,
+        "orientation_tracking_error": 0.03593049755374205
+    },
+    "8750": {
+        "joint_tracking_error": 0.7916886793648444,
+        "position_tracking_error": 0.008194411552448428,
+        "orientation_tracking_error": 0.03842878978229263
+    },
+    "8800": {
+        "joint_tracking_error": 0.8091669907630648,
+        "position_tracking_error": 0.009083076402444948,
+        "orientation_tracking_error": 0.03855829736561451
+    },
+    "8850": {
+        "joint_tracking_error": 0.7668543487823415,
+        "position_tracking_error": 0.007869463171445407,
+        "orientation_tracking_error": 0.03413089444336382
+    },
+    "8900": {
+        "joint_tracking_error": 0.7666187178054191,
+        "position_tracking_error": 0.008693222603345294,
+        "orientation_tracking_error": 0.04037048342158493
+    },
+    "8950": {
+        "joint_tracking_error": 0.7404791959154519,
+        "position_tracking_error": 0.007886557512957878,
+        "orientation_tracking_error": 0.03325524665776965
+    },
+    "9000": {
+        "joint_tracking_error": 0.7298407548839606,
+        "position_tracking_error": 0.00918020611199114,
+        "orientation_tracking_error": 0.03839616810233848
+    },
+    "9050": {
+        "joint_tracking_error": 0.7280703364573058,
+        "position_tracking_error": 0.010083785124540723,
+        "orientation_tracking_error": 0.03541975692637916
+    },
+    "9100": {
+        "joint_tracking_error": 0.7263471471344672,
+        "position_tracking_error": 0.009214891737835025,
+        "orientation_tracking_error": 0.0325037559259285
+    },
+    "9150": {
+        "joint_tracking_error": 0.7353477029184114,
+        "position_tracking_error": 0.007546410707910026,
+        "orientation_tracking_error": 0.03936395888189668
+    },
+    "9200": {
+        "joint_tracking_error": 0.7396904153080242,
+        "position_tracking_error": 0.008286965838918865,
+        "orientation_tracking_error": 0.03381921307554523
+    },
+    "9250": {
+        "joint_tracking_error": 0.7106386755674499,
+        "position_tracking_error": 0.008125620714354315,
+        "orientation_tracking_error": 0.0393648286467617
+    },
+    "9300": {
+        "joint_tracking_error": 0.7323030514588345,
+        "position_tracking_error": 0.007338399934066455,
+        "orientation_tracking_error": 0.03810206258181229
+    },
+    "9350": {
+        "joint_tracking_error": 0.7205600275034175,
+        "position_tracking_error": 0.00824433736421464,
+        "orientation_tracking_error": 0.03675523197766647
+    },
+    "9400": {
+        "joint_tracking_error": 0.7253394448605267,
+        "position_tracking_error": 0.010094452971969483,
+        "orientation_tracking_error": 0.033793286212439676
+    },
+    "9450": {
+        "joint_tracking_error": 0.7462822319487634,
+        "position_tracking_error": 0.00677924938320501,
+        "orientation_tracking_error": 0.03401900900220408
+    },
+    "9500": {
+        "joint_tracking_error": 0.7356909380014082,
+        "position_tracking_error": 0.007314674125278473,
+        "orientation_tracking_error": 0.036983092433040585
+    },
+    "9550": {
+        "joint_tracking_error": 0.6938709598757977,
+        "position_tracking_error": 0.007069429334151916,
+        "orientation_tracking_error": 0.03719217279582348
+    },
+    "9600": {
+        "joint_tracking_error": 0.725555386466598,
+        "position_tracking_error": 0.00839177669963779,
+        "orientation_tracking_error": 0.03716626560803756
+    },
+    "9650": {
+        "joint_tracking_error": 0.7290742411413818,
+        "position_tracking_error": 0.007877812475783782,
+        "orientation_tracking_error": 0.0377614145140046
+    },
+    "9700": {
+        "joint_tracking_error": 0.744526863514075,
+        "position_tracking_error": 0.007743806906343433,
+        "orientation_tracking_error": 0.039389417009446225
+    },
+    "9750": {
+        "joint_tracking_error": 0.733535105778465,
+        "position_tracking_error": 0.0075399784912503305,
+        "orientation_tracking_error": 0.04193141101633461
+    },
+    "9800": {
+        "joint_tracking_error": 0.8220742343047869,
+        "position_tracking_error": 0.007563359165059525,
+        "orientation_tracking_error": 0.03780185481877003
+    },
+    "9850": {
+        "joint_tracking_error": 0.7495779001054544,
+        "position_tracking_error": 0.007756358640337955,
+        "orientation_tracking_error": 0.042207291404020436
+    },
+    "9900": {
+        "joint_tracking_error": 0.8025152001674604,
+        "position_tracking_error": 0.007059221928676441,
+        "orientation_tracking_error": 0.03822161561077081
+    },
+    "9950": {
+        "joint_tracking_error": 0.8203835518470088,
+        "position_tracking_error": 0.009120624750562677,
+        "orientation_tracking_error": 0.041590704501253885
+    },
+    "10000": {
+        "joint_tracking_error": 0.8483045821810521,
+        "position_tracking_error": 0.006936645571205164,
+        "orientation_tracking_error": 0.042200436869871266
+    },
+    "10050": {
+        "joint_tracking_error": 0.829666775135884,
+        "position_tracking_error": 0.00779884285780938,
+        "orientation_tracking_error": 0.042462493030770314
+    },
+    "10100": {
+        "joint_tracking_error": 0.8064952651490864,
+        "position_tracking_error": 0.0069324010292953105,
+        "orientation_tracking_error": 0.041424951507049855
+    },
+    "10150": {
+        "joint_tracking_error": 0.8156963489696528,
+        "position_tracking_error": 0.008592707376310588,
+        "orientation_tracking_error": 0.04145025859758692
+    },
+    "10200": {
+        "joint_tracking_error": 0.8387053527968745,
+        "position_tracking_error": 0.009204811424831295,
+        "orientation_tracking_error": 0.04051330309469723
+    },
+    "10250": {
+        "joint_tracking_error": 0.8179661244587991,
+        "position_tracking_error": 0.009194504368122898,
+        "orientation_tracking_error": 0.03983930650266629
+    },
+    "10300": {
+        "joint_tracking_error": 0.8014298865155688,
+        "position_tracking_error": 0.008357052987052051,
+        "orientation_tracking_error": 0.03880250280343213
+    },
+    "10350": {
+        "joint_tracking_error": 0.8297738158189266,
+        "position_tracking_error": 0.007515998282348307,
+        "orientation_tracking_error": 0.0387835618361686
+    },
+    "10400": {
+        "joint_tracking_error": 0.82154552837454,
+        "position_tracking_error": 0.008377739111398396,
+        "orientation_tracking_error": 0.0444592486307459
+    },
+    "10450": {
+        "joint_tracking_error": 0.791691924743716,
+        "position_tracking_error": 0.009310338403665103,
+        "orientation_tracking_error": 0.04439410017532052
+    },
+    "10500": {
+        "joint_tracking_error": 0.8030564599462504,
+        "position_tracking_error": 0.0084078944260927,
+        "orientation_tracking_error": 0.045264315836637925
+    },
+    "10550": {
+        "joint_tracking_error": 0.8109367307528709,
+        "position_tracking_error": 0.008636503534132131,
+        "orientation_tracking_error": 0.040518362545272676
+    },
+    "10600": {
+        "joint_tracking_error": 0.8358881336465044,
+        "position_tracking_error": 0.010580282169719141,
+        "orientation_tracking_error": 0.041263735410079216
+    },
+    "10650": {
+        "joint_tracking_error": 0.8110496170854974,
+        "position_tracking_error": 0.0073084467911083495,
+        "orientation_tracking_error": 0.04486487964981968
+    },
+    "10700": {
+        "joint_tracking_error": 0.8220008078564718,
+        "position_tracking_error": 0.0083397689501634,
+        "orientation_tracking_error": 0.04650326029768268
+    },
+    "10750": {
+        "joint_tracking_error": 0.8204916630265782,
+        "position_tracking_error": 0.008805041980222705,
+        "orientation_tracking_error": 0.04658282208211214
+    },
+    "10800": {
+        "joint_tracking_error": 0.8585069205575776,
+        "position_tracking_error": 0.007285424434617772,
+        "orientation_tracking_error": 0.04497196026218748
+    },
+    "10850": {
+        "joint_tracking_error": 0.8644586920340374,
+        "position_tracking_error": 0.007967567280343467,
+        "orientation_tracking_error": 0.04592647309442168
+    },
+    "10900": {
+        "joint_tracking_error": 0.8299837653950146,
+        "position_tracking_error": 0.00685799834017531,
+        "orientation_tracking_error": 0.043373757774390065
+    },
+    "10950": {
+        "joint_tracking_error": 0.8900805515897217,
+        "position_tracking_error": 0.00869954444146749,
+        "orientation_tracking_error": 0.039191957237651044
+    },
+    "11000": {
+        "joint_tracking_error": 0.8538738828586433,
+        "position_tracking_error": 0.007988816079074965,
+        "orientation_tracking_error": 0.04774914378101386
+    },
+    "11050": {
+        "joint_tracking_error": 0.866405600663817,
+        "position_tracking_error": 0.008874107297530819,
+        "orientation_tracking_error": 0.048639164387601096
+    },
+    "11100": {
+        "joint_tracking_error": 0.8541102663351638,
+        "position_tracking_error": 0.00836418162263055,
+        "orientation_tracking_error": 0.04150733612116101
+    },
+    "11150": {
+        "joint_tracking_error": 0.8600668367631372,
+        "position_tracking_error": 0.007113583383048111,
+        "orientation_tracking_error": 0.04235710681063458
+    },
+    "11200": {
+        "joint_tracking_error": 0.834034203994766,
+        "position_tracking_error": 0.007465299499688503,
+        "orientation_tracking_error": 0.04405097128118126
+    },
+    "11250": {
+        "joint_tracking_error": 0.905852123552445,
+        "position_tracking_error": 0.0082831141061813,
+        "orientation_tracking_error": 0.045284337210423735
+    },
+    "11300": {
+        "joint_tracking_error": 0.8942977457479077,
+        "position_tracking_error": 0.009851506334580866,
+        "orientation_tracking_error": 0.051142878902768626
+    },
+    "11350": {
+        "joint_tracking_error": 0.8977727486290833,
+        "position_tracking_error": 0.012884072727793308,
+        "orientation_tracking_error": 0.05705856351019109
+    },
+    "11400": {
+        "joint_tracking_error": 0.9256651268060346,
+        "position_tracking_error": 0.00892378673096158,
+        "orientation_tracking_error": 0.047320314981405015
+    },
+    "11450": {
+        "joint_tracking_error": 0.9001669550983651,
+        "position_tracking_error": 0.008658513588617777,
+        "orientation_tracking_error": 0.04373765512577538
+    },
+    "11500": {
+        "joint_tracking_error": 0.8686762344526145,
+        "position_tracking_error": 0.00778930379961927,
+        "orientation_tracking_error": 0.052801015886288244
+    },
+    "11550": {
+        "joint_tracking_error": 0.8962575510795255,
+        "position_tracking_error": 0.009722428938932829,
+        "orientation_tracking_error": 0.05017115537402699
+    },
+    "11600": {
+        "joint_tracking_error": 0.8753864670407425,
+        "position_tracking_error": 0.008828857854204772,
+        "orientation_tracking_error": 0.04773767654178212
+    },
+    "11650": {
+        "joint_tracking_error": 0.9134590752892991,
+        "position_tracking_error": 0.009704606373666094,
+        "orientation_tracking_error": 0.044968855612486314
+    },
+    "11700": {
+        "joint_tracking_error": 0.867805159894876,
+        "position_tracking_error": 0.009119125263575008,
+        "orientation_tracking_error": 0.04772497728032973
+    },
+    "11750": {
+        "joint_tracking_error": 0.8813683424976845,
+        "position_tracking_error": 0.007925304463056924,
+        "orientation_tracking_error": 0.03719979177400904
+    },
+    "11800": {
+        "joint_tracking_error": 0.8494985843601736,
+        "position_tracking_error": 0.009637795040229656,
+        "orientation_tracking_error": 0.04724509970655719
+    },
+    "11850": {
+        "joint_tracking_error": 0.8904033188608665,
+        "position_tracking_error": 0.009966658351666552,
+        "orientation_tracking_error": 0.04962480762629833
+    },
+    "11900": {
+        "joint_tracking_error": 0.8917690458644217,
+        "position_tracking_error": 0.008457835952655833,
+        "orientation_tracking_error": 0.04300071834360512
+    },
+    "11950": {
+        "joint_tracking_error": 0.8719060027664437,
+        "position_tracking_error": 0.008500718558334307,
+        "orientation_tracking_error": 0.04238978057231718
+    },
+    "12000": {
+        "joint_tracking_error": 0.874530883903787,
+        "position_tracking_error": 0.009468856446563098,
+        "orientation_tracking_error": 0.04690695156171484
+    },
+    "12050": {
+        "joint_tracking_error": 0.8919560605099479,
+        "position_tracking_error": 0.008407647230872065,
+        "orientation_tracking_error": 0.04504285622568964
+    },
+    "12100": {
+        "joint_tracking_error": 0.8845650658047605,
+        "position_tracking_error": 0.009197348696775893,
+        "orientation_tracking_error": 0.05681863456096464
+    },
+    "12150": {
+        "joint_tracking_error": 0.8281024804754743,
+        "position_tracking_error": 0.0075812579590507365,
+        "orientation_tracking_error": 0.05024587066428175
+    },
+    "12200": {
+        "joint_tracking_error": 0.8545449450612068,
+        "position_tracking_error": 0.007884658794458481,
+        "orientation_tracking_error": 0.04687554049260408
+    },
+    "12250": {
+        "joint_tracking_error": 0.8630513633302983,
+        "position_tracking_error": 0.00876073467578271,
+        "orientation_tracking_error": 0.05110784063061464
+    },
+    "12300": {
+        "joint_tracking_error": 0.8621020234072382,
+        "position_tracking_error": 0.007300049472725679,
+        "orientation_tracking_error": 0.04856770478405999
+    },
+    "12350": {
+        "joint_tracking_error": 0.8099908045701032,
+        "position_tracking_error": 0.009688066828160126,
+        "orientation_tracking_error": 0.058486354003832175
+    },
+    "12400": {
+        "joint_tracking_error": 0.8117298987666959,
+        "position_tracking_error": 0.008176614677528421,
+        "orientation_tracking_error": 0.051561069141313864
+    },
+    "12450": {
+        "joint_tracking_error": 0.8272590367756423,
+        "position_tracking_error": 0.00862541958909805,
+        "orientation_tracking_error": 0.05136089880489609
+    },
+    "12500": {
+        "joint_tracking_error": 0.7988178918626413,
+        "position_tracking_error": 0.008834920511696855,
+        "orientation_tracking_error": 0.04967624122656665
+    },
+    "12550": {
+        "joint_tracking_error": 0.7811162628558943,
+        "position_tracking_error": 0.008605053540060944,
+        "orientation_tracking_error": 0.058011162049562026
+    },
+    "12600": {
+        "joint_tracking_error": 0.7815950233308435,
+        "position_tracking_error": 0.007827872667618172,
+        "orientation_tracking_error": 0.06158361562247415
+    },
+    "12650": {
+        "joint_tracking_error": 0.8000078010870125,
+        "position_tracking_error": 0.008461500504390377,
+        "orientation_tracking_error": 0.05917604745013043
+    },
+    "12700": {
+        "joint_tracking_error": 0.8069068260707901,
+        "position_tracking_error": 0.008050161161591657,
+        "orientation_tracking_error": 0.05695211945228206
+    },
+    "12750": {
+        "joint_tracking_error": 0.7765736501953266,
+        "position_tracking_error": 0.007995764590340364,
+        "orientation_tracking_error": 0.05528354297563868
+    },
+    "12800": {
+        "joint_tracking_error": 0.8127887536346623,
+        "position_tracking_error": 0.010096599189584365,
+        "orientation_tracking_error": 0.0682163597310631
+    },
+    "12850": {
+        "joint_tracking_error": 0.7948847814888051,
+        "position_tracking_error": 0.010021003689015063,
+        "orientation_tracking_error": 0.0650052335655805
+    },
+    "12900": {
+        "joint_tracking_error": 0.8064599131297284,
+        "position_tracking_error": 0.00807884755580815,
+        "orientation_tracking_error": 0.0652508475248096
+    },
+    "12950": {
+        "joint_tracking_error": 0.8246358391982549,
+        "position_tracking_error": 0.00808510442725801,
+        "orientation_tracking_error": 0.06427395980334977
+    },
+    "13000": {
+        "joint_tracking_error": 0.8322309196284674,
+        "position_tracking_error": 0.008508769902601292,
+        "orientation_tracking_error": 0.06565510995179705
+    },
+    "13050": {
+        "joint_tracking_error": 0.8451957567730575,
+        "position_tracking_error": 0.008271671004338501,
+        "orientation_tracking_error": 0.04842863210196634
+    },
+    "13100": {
+        "joint_tracking_error": 0.8340123556735157,
+        "position_tracking_error": 0.009656776463795449,
+        "orientation_tracking_error": 0.052735976802492604
+    },
+    "13150": {
+        "joint_tracking_error": 0.80167820027948,
+        "position_tracking_error": 0.010279624486605984,
+        "orientation_tracking_error": 0.05676270630753156
+    },
+    "13200": {
+        "joint_tracking_error": 0.8031407797944199,
+        "position_tracking_error": 0.009286255077207439,
+        "orientation_tracking_error": 0.05672487934816231
+    },
+    "13250": {
+        "joint_tracking_error": 0.7664967714401992,
+        "position_tracking_error": 0.009720691435168457,
+        "orientation_tracking_error": 0.059911156742318165
+    },
+    "13300": {
+        "joint_tracking_error": 0.7843683311191288,
+        "position_tracking_error": 0.011852245957766393,
+        "orientation_tracking_error": 0.05425600114377957
+    }
+}
