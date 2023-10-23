@@ -58,6 +58,8 @@ def play(args):
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     obs = env.get_observations()
+    env.reset(random_time=False)
+    
     # load policy
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
@@ -82,9 +84,6 @@ def play(args):
     camera_properties.width = 360
     camera_properties.height = 240
     h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
-    camera_position = gymapi.Vec3(1.5, 1, 1.5)
-    camera_target = gymapi.Vec3(0, 0, 0)
-    env.gym.set_camera_location(h1, env.envs[0], camera_position, camera_target)
     
     # for i in range(num_frames):
     env.reset(random_time=False)
@@ -124,8 +123,7 @@ if __name__ == '__main__':
     args = get_args()
     args.task = "go1_TMR_AMP"
     args.headless = True
-    from pyvirtualdisplay.smartdisplay import SmartDisplay
-    SCREEN_CAPTURE_RESOLUTION = (1027, 768)
-    virtual_display = SmartDisplay(size=SCREEN_CAPTURE_RESOLUTION)
-    virtual_display.start()
+    args.use_gpu_pipeline = False
+    args.sim_device='cpu'
+    args.rl_device='cpu'
     play(args)
