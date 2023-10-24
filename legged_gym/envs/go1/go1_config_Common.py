@@ -82,7 +82,8 @@ class Cfg( LeggedRobotCfg ):
         mesh_type = 'plane'
         measure_heights = False
         curriculum = False
-
+        restitution = 0.5
+        
     class asset( LeggedRobotCfg.asset ):
         file = f'{LEGGED_GYM_ROOT_DIR}/resources/robots/{ROBOT}/urdf/{ROBOT}.urdf'
         foot_name = "foot"
