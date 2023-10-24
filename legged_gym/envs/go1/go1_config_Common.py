@@ -97,12 +97,12 @@ class Cfg( LeggedRobotCfg ):
     class domain_rand:
         test_time = False
         randomize_friction = True
-        friction_range = [0.2, 0.4]
+        friction_range = [0.25, 1.00]
         randomize_base_mass = True
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 0.1
-        max_push_vel_xy = 0.001
+        max_push_vel_xy = 0.05
         randomize_gains = True
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
