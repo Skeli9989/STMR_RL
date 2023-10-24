@@ -42,22 +42,19 @@ def load_and_run_policy():
         sys.exit(0)
         
     if MOTION_FILE.exists():
-        motion_src = load_motion_file(str(MOTION_FILE))
+        motion_file = str(MOTION_FILE)
     else:
         print("There is no motion file!!!")
         sys.exit(0)
     
-    
-    deployment_runner = Go1Deployment(agent, policy, motion_src)
+    deployment_runner = Go1Deployment(agent, policy, motion_file)
     deployment_runner.run()
 
 def load_policy(logdir):
     policy = torch.jit.load(logdir)
     return policy
 
-def load_motion_file(file_path):
-    with open(file_path) as f:
-        return json.load(f)
+
 
 
 # %%

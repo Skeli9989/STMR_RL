@@ -49,7 +49,8 @@ def play(args):
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
-    env_cfg.domain_rand.randomize_friction = False
+    env_cfg.domain_rand.randomize_friction = True
+    env_cfg.domain_rand.test_time = True
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = False
@@ -81,6 +82,7 @@ def play(args):
     camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
     img_idx = 0
 
+    env.reset(random_time=False)
     for repeat_n in range(100):
         for i in range(int(env.max_episode_length)):
             # env.reset()
@@ -168,7 +170,7 @@ def play(args):
 
 if __name__ == '__main__':
     EXPORT_POLICY = True
-    RECORD_FRAMES = False
+    RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
     args.task = "go1_TMR_AMP"

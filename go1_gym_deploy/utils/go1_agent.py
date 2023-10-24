@@ -113,7 +113,8 @@ class Go1HardwareAgent():
         self.start_time = time.time()
     
     def get_time(self):
-        return time.time() - self.start_time
+        # return time.time() - self.start_time
+        return self.timestep * self.dt
     
     def step(self, actions, motion_q):
         clip_actions = self.cfg.normalization.clip_actions

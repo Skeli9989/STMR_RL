@@ -46,7 +46,7 @@ if __name__ == '__main__':
     args = get_args()
     
     DEBUG = False
-    # DEBUG = True
+    DEBUG = True
     if DEBUG:
         args.task = "go1_TMR_AMP"
         for _ in range(100):

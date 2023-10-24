@@ -48,8 +48,9 @@ from legged_gym.utils.terrain import Terrain
 from legged_gym.utils.math import quat_apply_yaw, wrap_to_pi, torch_rand_sqrt_float
 from legged_gym.utils.helpers import class_to_dict
 import legged_gym.utils.kinematics.urdf as pk
-from .legged_robot_config import LeggedRobotCfg
+from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg
 from rsl_rl.datasets.motion_loader import AMPLoader
+from go1_gym_deploy.utils.motion_holder import MotionHolder
 
 
 class LeggedRobot(BaseTask):
@@ -91,6 +92,7 @@ class LeggedRobot(BaseTask):
 
         # if self.cfg.env.reference_state_initialization:
         self.amp_loader = AMPLoader(motion_files=self.cfg.env.amp_motion_files, device=self.device, time_between_frames=self.dt)
+        self.motion_holder = MotionHolder(self.cfg.env.amp_motion_files)
 
         if not self.headless:
             self.set_camera(self.cfg.viewer.pos, self.cfg.viewer.lookat)
@@ -131,6 +133,7 @@ class LeggedRobot(BaseTask):
             self.gym.refresh_dof_state_tensor(self.sim)
         self.first_step[:] = False
         reset_env_ids, terminal_amp_states = self.post_physics_step(RESET_ABLED=RESET_ABLED)
+        self.last_times = self.times
         self.times += self.dt
 
         # return clipped obs, clipped states (None), rewards, dones and infos
@@ -231,6 +234,7 @@ class LeggedRobot(BaseTask):
             times = np.zeros(num_frames)
         self.traj_idxs[env_ids.cpu().numpy()] = traj_idxs
         self.times[env_ids.cpu().numpy()]     =  times
+        self.last_times[env_ids.cpu().numpy()] =  times
         
         if self.cfg.env.reference_state_initialization:
             frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
@@ -398,14 +402,23 @@ class LeggedRobot(BaseTask):
             [List[gymapi.RigidShapeProperties]]: Modified rigid shape properties
         """
         if self.cfg.domain_rand.randomize_friction:
-            if env_id==0:
-                # prepare friction randomization
-                friction_range = self.cfg.domain_rand.friction_range
-                num_buckets = 64
-                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
-                self.friction_coeffs = friction_buckets[bucket_ids]
-
+            if self.cfg.domain_rand.test_time:
+                if env_id==0:
+                    friction_range = self.cfg.domain_rand.friction_range
+                    friction_ = (friction_range[0] + friction_range[1]) / 2
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
+                    self.friction_coeffs = friction_buckets[bucket_ids]
+            else:
+                if env_id==0:
+                    # prepare friction randomization
+                    friction_range = self.cfg.domain_rand.friction_range
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
+                    self.friction_coeffs = friction_buckets[bucket_ids]
+            
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
         return props
@@ -508,10 +521,10 @@ class LeggedRobot(BaseTask):
 
         self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
         
-        frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
-        frames = frames.to(self.device)
-        
-        target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
+        # frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
+        # frames = frames.to(self.device)
+        # target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
+        target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
 
         if control_type=="P":
             # torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
@@ -605,7 +618,7 @@ class LeggedRobot(BaseTask):
         """ Random pushes the robots. Emulates an impulse by setting a randomized base velocity.
         """
         max_vel = self.cfg.domain_rand.max_push_vel_xy
-        self.root_states[:, 7:9] = torch_rand_float(-max_vel, max_vel, (self.num_envs, 2), device=self.device) # lin vel x/y
+        self.root_states[:, 7:9] += torch_rand_float(-max_vel, max_vel, (self.num_envs, 2), device=self.device) # lin vel x/y
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
     # def _update_terrain_curriculum(self, env_ids):
@@ -696,6 +709,7 @@ class LeggedRobot(BaseTask):
         
         self.traj_idxs = traj_idxs
         self.times     = times
+        self.last_times = times
 
         # initialize some data used later on
         self.common_step_counter = 0

@@ -48,7 +48,8 @@ def play(args):
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
-    env_cfg.domain_rand.randomize_friction = False
+    env_cfg.domain_rand.randomize_friction = True
+    env_cfg.domain_rand.test_time = True
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = False
@@ -57,6 +58,8 @@ def play(args):
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     obs = env.get_observations()
+    env.reset(random_time=False)
+    
     # load policy
     train_cfg.runner.resume = True
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
@@ -77,7 +80,16 @@ def play(args):
     print(f'gathering {num_frames} frames')
     video = None
 
-    for i in range(num_frames):
+    camera_properties = gymapi.CameraProperties()
+    camera_properties.width = 360
+    camera_properties.height = 240
+    h1 = env.gym.create_camera_sensor(env.envs[0], camera_properties)
+    
+    # for i in range(num_frames):
+    env.reset(random_time=False)
+    while True:
+        if env.times >= env.amp_loader.trajectory_lens[0] - env.dt:
+            break
         actions = policy(obs.detach())
         obs, _, _, _, infos, _, _ = env.step(actions.detach())
 
@@ -101,8 +113,16 @@ def play(args):
 
     video.release()
 
+
+    video.release()
+
 if __name__ == '__main__':
-    EXPORT_POLICY = True
-    RECORD_FRAMES = False
+    EXPORT_POLICY = False
+    RECORD_FRAMES = True
     args = get_args()
+    args.task = "go1_TMR_AMP"
+    args.headless = False
+    args.use_gpu_pipeline = False
+    args.sim_device='cpu'
+    args.rl_device='cpu'
     play(args)

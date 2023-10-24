@@ -71,8 +71,8 @@ class Cfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 80.}  # [N*m/rad]
-        damping = {'joint': 1.0}     # [N*m*s/rad]
+        stiffness = {'joint': 40.}  # [N*m/rad]
+        damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -94,13 +94,14 @@ class Cfg( LeggedRobotCfg ):
         flip_visual_attachments = False
         
     class domain_rand:
+        test_time = False
         randomize_friction = True
-        friction_range = [0.25, 1.75]
+        friction_range = [0.2, 0.4]
         randomize_base_mass = True
-        added_mass_range = [-1., 1.]
+        added_mass_range = [-1.0, 1.0]
         push_robots = True
-        push_interval_s = 15
-        max_push_vel_xy = 1.0
+        push_interval_s = 0.1
+        max_push_vel_xy = 0.001
         randomize_gains = True
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
