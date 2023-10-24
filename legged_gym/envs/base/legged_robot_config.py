@@ -131,6 +131,7 @@ class LeggedRobotCfg(BaseConfig):
         damping_multiplier_range = [0.9, 1.1]
         randomize_restitution = True
         restitution_range = [0., 0.5]
+        test_time = False
         
     class rewards:
         class scales:

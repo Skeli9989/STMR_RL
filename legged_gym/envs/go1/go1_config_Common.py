@@ -39,7 +39,7 @@ ROBOT = ROBOT.lower()
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = None  # Number of steps of history to include.
+        include_history_steps = 15  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
         reference_state_initialization = True
@@ -106,6 +106,8 @@ class Cfg( LeggedRobotCfg ):
         randomize_gains = True
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
+        randomize_restitution = True
+        restitution_range = [0., 0.5]
 
     class noise:
         add_noise = True

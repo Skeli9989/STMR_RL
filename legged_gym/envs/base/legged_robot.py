@@ -421,6 +421,27 @@ class LeggedRobot(BaseTask):
             
             for s in range(len(props)):
                 props[s].friction = self.friction_coeffs[env_id]
+
+        if self.cfg.domain_rand.randomize_restitution:
+            if self.cfg.domain_rand.test_time:
+                if env_id ==0:
+                    restitution_range = self.cfg.domain_rand.restitution_range
+                    restitution_ = (restitution_range[0] + restitution_range[1]) / 2
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    restitution_buckets = torch.ones((num_buckets,1), device='cpu') * restitution_
+                    self.restitution_coeffs = restitution_buckets[bucket_ids]
+            else:
+                if env_id ==0:
+                    # prepare restitution randomization
+                    restitution_range = self.cfg.domain_rand.restitution_range
+                    num_buckets = 64
+                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                    restitution_buckets = torch_rand_float(restitution_range[0], restitution_range[1], (num_buckets,1), device='cpu')
+                    self.restitution_coeffs = restitution_buckets[bucket_ids]
+            
+            for s in range(len(props)):
+                props[s].restitution = self.restitution_coeffs[env_id]
         return props
 
     def _process_dof_props(self, props, env_id):
@@ -463,9 +484,6 @@ class LeggedRobot(BaseTask):
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
             
-        if self.cfg.domain_rand.randomize_restitution:
-            rng = self.cfg.domain_rand.restitution_range
-            props[0].restitution = np.random.uniform(rng[0], rng[1])
             
         return props
 
