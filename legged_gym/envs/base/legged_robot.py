@@ -618,7 +618,7 @@ class LeggedRobot(BaseTask):
         """ Random pushes the robots. Emulates an impulse by setting a randomized base velocity.
         """
         max_vel = self.cfg.domain_rand.max_push_vel_xy
-        self.root_states[:, 7:9] = torch_rand_float(-max_vel, max_vel, (self.num_envs, 2), device=self.device) # lin vel x/y
+        self.root_states[:, 7:9] += torch_rand_float(-max_vel, max_vel, (self.num_envs, 2), device=self.device) # lin vel x/y
         self.gym.set_actor_root_state_tensor(self.sim, gymtorch.unwrap_tensor(self.root_states))
 
     # def _update_terrain_curriculum(self, env_ids):

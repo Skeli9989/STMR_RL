@@ -97,23 +97,22 @@ def play(args):
         look_at = np.array(env.root_states[0, :3].cpu(), dtype=np.float64)
         camera_rot = (camera_rot + camera_rot_per_sec * env.dt) % (2 * np.pi)
         camera_relative_position = 1.2 * np.array([np.cos(camera_rot), np.sin(camera_rot), 0.45])
-        cam_pos = look_at + camera_relative_position
-        
-        cam_pos = gymapi.Vec3(cam_pos[0], cam_pos[1], cam_pos[2])
-        cam_target = gymapi.Vec3(look_at[0], look_at[1], look_at[2])
-        env.gym.set_camera_location(h1, env.envs[0], cam_pos, cam_target)
-
+        env.set_camera(look_at + camera_relative_position, look_at)
 
         if RECORD_FRAMES:
             frames_path = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'frames')
             if not os.path.isdir(frames_path):
-                os.makedirs(frames_path, exist_ok=True)
-            # filename = os.path.join('logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
-            img = env.gym.get_camera_image(env.sim, env.envs[0], h1, gymapi.IMAGE_COLOR)
+                os.mkdir(frames_path)
+            filename = os.path.join('logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
+            env.gym.write_viewer_image_to_file(env.viewer, filename)
+            img = cv2.imread(filename)
             if video is None:
                 video = cv2.VideoWriter('record.mp4', cv2.VideoWriter_fourcc(*'MP4V'), int(1 / env.dt), (img.shape[1],img.shape[0]))
             video.write(img)
             img_idx += 1 
+
+    video.release()
+
 
     video.release()
 
@@ -122,7 +121,7 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     args = get_args()
     args.task = "go1_TMR_AMP"
-    args.headless = True
+    args.headless = False
     args.use_gpu_pipeline = False
     args.sim_device='cpu'
     args.rl_device='cpu'
