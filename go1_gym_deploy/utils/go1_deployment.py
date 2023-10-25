@@ -33,7 +33,7 @@ class Go1Deployment:
         
         for joint_pos_tar in target_squence:
             joint_vel_tar = np.zeros(12)
-            self.agent.publish_joint_target_(joint_pos_tar, joint_vel_tar, p_gain=p_gains, d_gain=d_gains)
+            self.agent.publish_joint_target_(joint_pos_tar, joint_vel_tar, p_gains=p_gains, d_gains=d_gains)
             self.agent.get_obs()
             time.sleep(duration/loop_number)
     
@@ -60,7 +60,7 @@ class Go1Deployment:
                     self.agent.se.right_lower_right_switch_pressed = False
                     break
 
-        self.smooth_move(nominal_dof_pos, duration=3.0, p_gain=80, d_gains=1.0)
+        self.smooth_move(nominal_dof_pos, duration=3.0, p_gains=80, d_gains=1.0)
 
         print("Starting pose calibrated [Press R2 to start controller]")
         while True:

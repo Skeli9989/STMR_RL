@@ -91,7 +91,7 @@ class Go1HardwareAgent():
         
         self.publish_joint_target_(joint_pos_tar, joint_vel_tar)
         
-    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12), p_gain=None, d_gain=None):
+    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12), p_gains=None, d_gains=None):
         joint_pos_tar = joint_pos_tar[self.se.joint_idxs_inv]
         joint_vel_tar = joint_vel_tar[self.se.joint_idxs_inv]
         
@@ -99,15 +99,15 @@ class Go1HardwareAgent():
         command_for_robot.q_des = joint_pos_tar
         command_for_robot.qd_des = joint_vel_tar
         
-        if p_gain is None:
+        if p_gains is None:
             command_for_robot.kp = self.p_gains
         else:
-            command_for_robot.kp = p_gain
+            command_for_robot.kp = p_gains * np.ones(12)
         
-        if d_gain is None:
+        if d_gains is None:
             command_for_robot.kd = self.d_gains
         else:
-            command_for_robot.kd = d_gain
+            command_for_robot.kd = d_gains * np.ones(12)
             
         command_for_robot.tau_ff = np.zeros(12)
         command_for_robot.se_contactState = np.zeros(4)
