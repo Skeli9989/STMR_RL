@@ -102,7 +102,7 @@ class Cfg( LeggedRobotCfg ):
         added_mass_range = [-1.0, 1.0]
         push_robots = True
         push_interval_s = 0.1
-        max_push_vel_xy = 0.01
+        max_push_vel_xy = 0.001
         randomize_gains = True
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
