@@ -133,6 +133,8 @@ class LeggedRobotCfg(BaseConfig):
         randomize_restitution = True
         restitution_range = [0., 0.5]
         test_time = False
+        randomize_com_displacement = True
+        com_displacement_range = [-0.1, 0.1]
         
     class rewards:
         class scales:

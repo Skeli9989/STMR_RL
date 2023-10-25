@@ -483,8 +483,30 @@ class LeggedRobot(BaseTask):
         if self.cfg.domain_rand.randomize_base_mass:
             rng = self.cfg.domain_rand.added_mass_range
             props[0].mass += np.random.uniform(rng[0], rng[1])
+        
+        if env_id==0:
+            num_buckets = 64
+            bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+
+            if self.cfg.domain_rand.randomize_com_displacement and not self.cfg.domain_rand.test_time:
+                min_com_displacement, max_com_displacement = self.cfg.domain_rand.com_displacement_range
+                com_displacement = torch_rand_float(min_com_displacement, max_com_displacement, (num_buckets, 3), device='cpu')
+
+            else:
+                com_displacement = torch.zeros((self.num_buckets, 3), device="cpu")
+            self.com_displacement = com_displacement[bucket_ids]
             
+            if self.cfg.domain_rand.randomize_base_mass and not self.cfg.domain_rand.test_time:
+                min_added_mass, max_added_mass = self.cfg.domain_rand.added_mass_range
+                added_mass = torch_rand_float(min_added_mass, max_added_mass, (num_buckets, 1), device='cpu')
+            else:
+                added_mass = torch.zeros((self.num_buckets, 1), device="cpu")
+            self.added_mass = added_mass[bucket_ids]
             
+        for i in range(len(props)):
+            props[i].mass += self.added_mass[env_id]
+            props[i].com += self.com_displacement[env_id]
+        
         return props
 
     def _post_physics_step_callback(self):
