@@ -91,15 +91,24 @@ class Go1HardwareAgent():
         
         self.publish_joint_target_(joint_pos_tar, joint_vel_tar)
         
-    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12)):
+    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12), p_gain=None, d_gain=None):
         joint_pos_tar = joint_pos_tar[self.se.joint_idxs_inv]
         joint_vel_tar = joint_vel_tar[self.se.joint_idxs_inv]
         
         command_for_robot = pd_tau_targets_lcmt()
         command_for_robot.q_des = joint_pos_tar
         command_for_robot.qd_des = joint_vel_tar
-        command_for_robot.kp = self.p_gains
-        command_for_robot.kd = self.d_gains
+        
+        if p_gain is None:
+            command_for_robot.kp = self.p_gains
+        else:
+            command_for_robot.kp = p_gain
+        
+        if d_gain is None:
+            command_for_robot.kd = self.d_gains
+        else:
+            command_for_robot.kd = d_gain
+            
         command_for_robot.tau_ff = np.zeros(12)
         command_for_robot.se_contactState = np.zeros(4)
         command_for_robot.timestamp_us = int(time.time() * 10 ** 6)
@@ -122,7 +131,11 @@ class Go1HardwareAgent():
         self.actions = self.actions.detach().cpu().numpy()
         self.publish_action_(self.actions, motion_q)
         
-        time.sleep(max(self.dt - (time.time()-self.time), 0))
+        sleep_time = self.dt - (time.time()-self.time)
+        if sleep_time < 0:
+            print(f"Warning: sleep time is negative: {sleep_time}")
+        else:
+            time.sleep(sleep_time)
         self.time = time.time()
         obs = self.get_obs()
         
