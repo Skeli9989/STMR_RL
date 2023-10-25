@@ -21,7 +21,7 @@ class MotionHolder():
         idx = np.searchsorted(self.time_array, time_)
         
         if idx == 0:
-            print(0)
+            # print(0)
             return self.q_src[0]
         elif idx == len(self.time_array):
             raise ValueError("time_ is out of range")
