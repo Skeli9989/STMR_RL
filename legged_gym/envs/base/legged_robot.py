@@ -121,9 +121,9 @@ class LeggedRobot(BaseTask):
         self.actions = torch.clip(actions, -clip_actions, clip_actions).to(self.device)
         # step physics and render each frame
         self.render()
+        self.deploy_actions = self.last_actions
+        self.deploy_actions[self.first_step] = self.actions[self.first_step]
         for _ in range(self.cfg.control.decimation):
-            self.deploy_actions = self.last_actions
-            self.deploy_actions[self.first_step] = self.actions[self.first_step]
             self.torques = self._compute_torques(self.deploy_actions).view(self.torques.shape)
             # self.torques = self._compute_torques(self.actions).view(self.torques.shape)
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
@@ -473,39 +473,30 @@ class LeggedRobot(BaseTask):
         return props
 
     def _process_rigid_body_props(self, props, env_id):
-        # if env_id==0:
-        #     sum = 0
-        #     for i, p in enumerate(props):
-        #         sum += p.mass
-        #         print(f"Mass of body {i}: {p.mass} (before randomization)")
-        #     print(f"Total mass {sum} (before randomization)")
-        # randomize base mass
-        if self.cfg.domain_rand.randomize_base_mass:
-            rng = self.cfg.domain_rand.added_mass_range
-            props[0].mass += np.random.uniform(rng[0], rng[1])
-        
         if env_id==0:
             num_buckets = 64
-            bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+            bucket_ids = torch.randint(0, num_buckets, (self.num_envs,))
 
             if self.cfg.domain_rand.randomize_com_displacement and not self.cfg.domain_rand.test_time:
                 min_com_displacement, max_com_displacement = self.cfg.domain_rand.com_displacement_range
                 com_displacement = torch_rand_float(min_com_displacement, max_com_displacement, (num_buckets, 3), device='cpu')
 
             else:
-                com_displacement = torch.zeros((self.num_buckets, 3), device="cpu")
+                com_displacement = torch.zeros((num_buckets, 3), device="cpu")
             self.com_displacement = com_displacement[bucket_ids]
             
             if self.cfg.domain_rand.randomize_base_mass and not self.cfg.domain_rand.test_time:
                 min_added_mass, max_added_mass = self.cfg.domain_rand.added_mass_range
-                added_mass = torch_rand_float(min_added_mass, max_added_mass, (num_buckets, 1), device='cpu')
+                added_mass = torch_rand_float(min_added_mass, max_added_mass, (num_buckets,1), device='cpu')
             else:
-                added_mass = torch.zeros((self.num_buckets, 1), device="cpu")
-            self.added_mass = added_mass[bucket_ids]
+                added_mass = torch.zeros((num_buckets,1), device="cpu")
+            self.added_mass = added_mass[bucket_ids,0]
             
+        props[0].mass += self.added_mass[env_id].numpy()
         for i in range(len(props)):
-            props[i].mass += self.added_mass[env_id]
-            props[i].com += self.com_displacement[env_id]
+            props[i].com = gymapi.Vec3(self.com_displacement[env_id,0],
+                                        self.com_displacement[env_id,1],
+                                        self.com_displacement[env_id,2])
         
         return props
 
