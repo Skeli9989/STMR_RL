@@ -13,7 +13,7 @@ ROBOT = ROBOT.lower()
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = None  # Number of steps of history to include.
+        include_history_steps = 15  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
         reference_state_initialization = False

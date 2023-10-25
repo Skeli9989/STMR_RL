@@ -51,10 +51,16 @@ class Go1HardwareAgent():
         # self.saved_deploy_time = torch.zeros(1)
         # self.start_time = time.time()
         
+        self.obs = np.zeros(self.cfg.env.num_observations)
+        self.obs_history = np.zeros((self.cfg.env.include_history_steps, self.cfg.env.num_observations))
+
         self.reset()
 
-        
+    
     def get_obs(self):
+        return self.obs_history.flatten()
+
+    def compute_obs(self):
         projected_gravity = self.se.get_gravity_vector()
         
         dof_pos = self.se.get_dof_pos()
@@ -76,8 +82,12 @@ class Go1HardwareAgent():
         self.dof_pos = dof_pos
         self.dof_vel = dof_vel
     
-        return obs
-    
+        self.obs[:] = obs
+
+    def insert_obs(self, obs):
+        self.obs_history[:-1] = self.obs_history[1:]
+        self.obs_history[-1] = obs
+
     def publish_action_(self, action, motion_q):
         joint_pos_tar = action * self.cfg.control.action_scale
         # joint_pos_tar += self.default_dof_pos
@@ -120,7 +130,8 @@ class Go1HardwareAgent():
         self.timestep = 0
         self.time = time.time()
         self.start_time = time.time()
-    
+        self.compute_obs()
+
     def get_time(self):
         # return time.time() - self.start_time
         return self.timestep * self.dt
@@ -137,8 +148,12 @@ class Go1HardwareAgent():
         else:
             time.sleep(sleep_time)
         self.time = time.time()
-        obs = self.get_obs()
+        
+        self.compute_obs()
+        obs = self.obs
+        self.insert_obs(obs)
+        obs_history = self.get_obs()
         
         self.timestep += 1
-        return obs
+        return obs_history
         

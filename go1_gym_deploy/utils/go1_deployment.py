@@ -76,11 +76,11 @@ class Go1Deployment:
         action_list = []
         obs_list    = []
         
-        self.calibrate(wait=True, low=False)
+        self.calibrate(wait=False, low=False)
         self.agent.reset()
-        obs = self.agent.get_obs()
-        obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
-        action = self.policy(obs)
+        obs_history = self.agent.get_obs()
+        obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
+        action = self.policy(obs_history)
         
         try:
             self.agent.reset()
@@ -95,11 +95,11 @@ class Go1Deployment:
         
         while self.agent.get_time() < self.motion_holder.max_time - 0.002:
             try:
-                obs = self.agent.get_obs()
+                obs_history = self.agent.get_obs()
                 # print(obs)
                 # breakpoint()
-                obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
-                action = self.policy(obs)
+                obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
+                action = self.policy(obs_history)
                 action_list.append(action)
                 obs_list.append(obs)
                 motion_q = self.motion_holder.get_q(self.agent.get_time())
