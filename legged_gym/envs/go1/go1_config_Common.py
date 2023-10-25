@@ -109,6 +109,7 @@ class Cfg( LeggedRobotCfg ):
         randomize_restitution = True
         restitution_range = [0., 0.5]
         randomize_com_displacement = True
+        com_displacement_range = [-0.1, 0.1]
 
     class noise:
         add_noise = True
