@@ -82,7 +82,7 @@ class Go1HardwareAgent():
         self.dof_pos = dof_pos
         self.dof_vel = dof_vel
     
-        self.obs[:] = obs
+        self.obs = obs.copy()
 
     def insert_obs(self, obs):
         self.obs_history[:-1] = self.obs_history[1:]

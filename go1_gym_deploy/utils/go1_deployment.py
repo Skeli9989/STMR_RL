@@ -87,13 +87,13 @@ class Go1Deployment:
             motion_q = self.motion_holder.get_q(self.agent.get_time())
             self.agent.step(action, motion_q)
             action_list.append(action)
-            obs_list.append(obs)
+            obs_list.append(self.agent.obs)
         except Exception as e:
             print(e)
             self.emergeny_stop()
             return
         
-        while self.agent.get_time() < self.motion_holder.max_time - 0.002:
+        while self.agent.get_time() < self.motion_holder.max_time:
             try:
                 obs_history = self.agent.get_obs()
                 # print(obs)
@@ -101,7 +101,8 @@ class Go1Deployment:
                 obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
                 action = self.policy(obs_history)
                 action_list.append(action)
-                obs_list.append(obs)
+                print(self.agent.obs)
+                obs_list.append(self.agent.obs)
                 motion_q = self.motion_holder.get_q(self.agent.get_time())
                 self.agent.step(action, motion_q)
                 
@@ -115,8 +116,10 @@ class Go1Deployment:
                 return
 
         action_list = torch.stack(action_list)
+        obs_list = np.stack(obs_list)
         # save to txt from torch tensor
         np.savetxt("action_list.txt", action_list.detach().cpu().numpy())
+        np.savetxt("obs_list.txt", obs_list)
 
         while True:
             try:
