@@ -49,10 +49,15 @@ def play(args):
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
+    
     env_cfg.domain_rand.randomize_gains = False
-    env_cfg.domain_rand.randomize_base_mass = False
-
-    env_cfg.domain_rand.test_time = False   
+    env_cfg.domain_rand.randomize_base_mass = True
+    env_cfg.domain_rand.randomize_friction = True
+    env_cfg.domain_rand.push_robots = False
+    env_cfg.domain_rand.randomize_restitution = True
+    env_cfg.domain_rand.randomize_com_displacement = False
+    
+    env_cfg.domain_rand.test_time = False
     train_cfg.runner.amp_num_preload_transitions = 1
 
     # prepare environment
@@ -81,6 +86,7 @@ def play(args):
     img_idx = 0
 
     env.reset(random_time=False)
+    obs = env.get_observations()
     for repeat_n in range(100):
         for i in range(int(env.max_episode_length)):
             # env.reset()
@@ -88,6 +94,7 @@ def play(args):
             
             if env.times >= env.amp_loader.trajectory_lens[0] - env.dt:
                 env.reset(random_time=False)
+                obs = env.get_observations()
                 # env.reset(random_time=True)
             actions = policy(obs.detach())
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
@@ -172,5 +179,6 @@ if __name__ == '__main__':
     MOVE_CAMERA = False
     args = get_args()
     args.task = "go1_TMR_AMP"
+    args.load_run = "naive_norand"
     # args.task = "a1_amp"
     play(args)

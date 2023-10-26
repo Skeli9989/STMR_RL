@@ -101,13 +101,13 @@ class LeggedRobot(BaseTask):
         self.init_done = True
 
 
-    def reset(self, random_time=True):
+    def reset(self, random_time=False):
         """ Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device), random_time=random_time)
         if self.cfg.env.include_history_steps is not None:
             self.obs_buf_history.reset(
                 torch.arange(self.num_envs, device=self.device),
-                self.obs_buf[torch.arange(self.num_envs, device=self.device)])
+                torch.zeros_like(self.obs_buf[torch.arange(self.num_envs, device=self.device)]))
         obs, privileged_obs, _, _, _, _, _ = self.step(torch.zeros(self.num_envs, self.num_actions, device=self.device, requires_grad=False))
         return obs, privileged_obs
 
@@ -203,7 +203,7 @@ class LeggedRobot(BaseTask):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
-    def reset_idx(self, env_ids, random_time=True):
+    def reset_idx(self, env_ids, random_time=False):
         """ Reset some environments.
             Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids), and self._resample_commands(env_ids)
             [Optional] calls self._update_terrain_curriculum(env_ids), self.update_command_curriculum(env_ids) and
