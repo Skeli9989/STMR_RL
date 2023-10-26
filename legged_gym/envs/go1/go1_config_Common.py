@@ -39,7 +39,7 @@ ROBOT = ROBOT.lower()
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = 15  # Number of steps of history to include.
+        include_history_steps = 1  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
         reference_state_initialization = True
@@ -131,8 +131,8 @@ class Cfg( LeggedRobotCfg ):
         max_contact_force = 100. # forces above this value are penalized
         base_height_target = 0.25
         class scales( LeggedRobotCfg.rewards.scales ):
-            pos_motion     = 150
-            ang_motion     = 150
+            pos_motion     = 100
+            ang_motion     = 100
             dof_pos_motion = 150
 
             dof_vel_motion = 50
