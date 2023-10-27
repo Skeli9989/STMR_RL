@@ -49,7 +49,7 @@ def play(args):
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
-    
+
     env_cfg.domain_rand.randomize_gains = False
     env_cfg.domain_rand.randomize_base_mass = True
     env_cfg.domain_rand.randomize_friction = True
@@ -58,6 +58,7 @@ def play(args):
     env_cfg.domain_rand.randomize_com_displacement = False
     
     env_cfg.domain_rand.test_time = False
+
     train_cfg.runner.amp_num_preload_transitions = 1
 
     # prepare environment
