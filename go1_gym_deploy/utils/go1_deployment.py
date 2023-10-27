@@ -37,22 +37,25 @@ class Go1Deployment:
             self.agent.get_obs()
             time.sleep(duration/loop_number)
     
-    def calibrate(self, wait=True, low=False):
+    def calibrate(self, wait=True, low=False, nominal_dof_pos =None) :
         agent = self.agent
         agent.reset()
         agent.get_obs()
         
-        if low:
-            nominal_dof_pos = np.array([
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,                
-            ])
+        if nominal_dof_pos is None:
+            if low:
+                nominal_dof_pos = np.array([
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,                
+                ])
 
+            else:
+                nominal_dof_pos = agent.default_dof_pos
         else:
-            nominal_dof_pos = agent.default_dof_pos
-        
+            nominal_dof_pos = nominal_dof_pos
+            
         print(f"About to calibrate; the robot will stand [Press R2 to calibrate]")
         if wait:
             while True:
@@ -79,7 +82,8 @@ class Go1Deployment:
         action_list = []
         obs_list    = []
         
-        self.calibrate(wait=False, low=False)
+        motion_q = self.motion_holder.get_q(0)
+        self.calibrate(wait=False, low=False, nominal_dof_pos=motion_q)
         self.agent.reset()
         obs_history = self.agent.get_obs()
         obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
