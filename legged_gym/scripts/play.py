@@ -54,7 +54,7 @@ def play(args):
     env_cfg.domain_rand.randomize_base_mass = True
     env_cfg.domain_rand.randomize_friction = True
     env_cfg.domain_rand.push_robots = False
-    env_cfg.domain_rand.randomize_restitution = True
+    env_cfg.domain_rand.randomize_restitution = False
     env_cfg.domain_rand.randomize_com_displacement = False
     
     env_cfg.domain_rand.test_time = False
@@ -178,7 +178,7 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    args.task = "go1_TMR_AMP"
-    args.load_run = "naive_norand"
+    args.task = "go1_STMR_AMP"
+    # args.load_run = "naive_norand"
     # args.task = "a1_amp"
     play(args)

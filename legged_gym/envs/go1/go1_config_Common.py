@@ -100,7 +100,7 @@ class Cfg( LeggedRobotCfg ):
         randomize_base_mass = True
         randomize_gains = True
         push_robots = False
-        randomize_restitution = False
+        randomize_restitution = True
         randomize_com_displacement = False
         
         friction_range = [0.25, 1.00]
@@ -131,8 +131,8 @@ class Cfg( LeggedRobotCfg ):
         max_contact_force = 100. # forces above this value are penalized
         base_height_target = 0.25
         class scales( LeggedRobotCfg.rewards.scales ):
-            pos_motion     = 100
-            ang_motion     = 100
+            pos_motion     = 150
+            ang_motion     = 150
             dof_pos_motion = 150
 
             dof_vel_motion = 50

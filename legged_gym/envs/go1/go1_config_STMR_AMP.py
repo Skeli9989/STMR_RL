@@ -46,9 +46,9 @@ class Cfg( GO1_Cfg ):
         class scales( GO1_Cfg.rewards.scales ):
             pos_motion     = 150
             ang_motion     = 150
-            dof_pos_motion = 150
+            dof_pos_motion = 30
 
-            dof_vel_motion = 50
+            dof_vel_motion = 10
             lin_vel_motion = 50
             ang_vel_motion = 50
 
