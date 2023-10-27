@@ -62,6 +62,9 @@ class Go1Deployment:
 
         self.smooth_move(nominal_dof_pos, duration=3.0, p_gains=80, d_gains=1.0)
 
+        obs = self.agent.reset()
+        obs_history = self.agent.get_obs()
+        print(obs_history)
         print("Starting pose calibrated [Press R2 to start controller]")
         while True:
             if self.agent.se.right_lower_right_switch_pressed:

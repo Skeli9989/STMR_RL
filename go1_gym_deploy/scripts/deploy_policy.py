@@ -25,7 +25,7 @@ from go1_gym_deploy import BASEDIR
 print(BASEDIR.absolute())
 
 ROBOT = 'go1'.lower()
-MR = "TMR"
+MR = "STMR"
 MOTION = "hopturn"
 
 MOTION_FILE = BASEDIR / f"run/{MOTION}/{MR}/{MOTION}_{ROBOT}_{MR}.txt"
