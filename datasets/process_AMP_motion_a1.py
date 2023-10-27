@@ -209,17 +209,17 @@ for MR in MR_LS:
   def get_pose(robot, qpos):
     root_pos = qpos[0:3]
     root_rot = qpos[3:7]
-    joint_pose = qpos[7:19]
+    joint_pose = qpos[[10,11,12, 7,8,9, 16,17,18, 13,14,15]] # change FR, FL, RR, RL order to FL, FR, RL, RR
     tar_toe_pos_local = np.squeeze(
         np.concatenate([
             chain_foot_fl.forward_kinematics(joint_pose[:3]).get_matrix()[:, :3,
                                                                           3],
-            chain_foot_fr.forward_kinematics(joint_pose[3:6]).get_matrix()[:, :3,
+            chain_foot_fr.forward_kinematics(joint_pose[:6]).get_matrix()[:, :3,
                                                                           3],
             chain_foot_rl.forward_kinematics(joint_pose[6:9]).get_matrix()[:, :3,
                                                                           3],
             chain_foot_rr.forward_kinematics(joint_pose[9:12]).get_matrix()[:, :3,
-                                                                            3]
+                                                                            3],
         ], axis=-1))
 
     pose = np.concatenate([root_pos, root_rot, joint_pose, tar_toe_pos_local])

@@ -82,7 +82,6 @@ def play(args):
         # env.update()
         
         env_ids = torch.arange(env.num_envs, device=env.device)
-        # env_ids_int32 = env_ids.to(dtype=torch.int32)
         while (env.times <= env.amp_loader.trajectory_lens[0] - env.dt):
             frames = env.amp_loader.get_full_frame_at_time_batch(env.traj_idxs, env.times)
             
@@ -95,12 +94,16 @@ def play(args):
             for _ in range(100):
                 env.render()
             
-
-
+    env.reset()
+    frames = env.amp_loader.get_full_frame_at_time_batch(env.traj_idxs, env.times)
+    temp = frames[0, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_END_IDX]
+    frames[0, AMPLoader.JOINT_POSE_START_IDX:AMPLoader.JOINT_POSE_END_IDX][0]= temp[0] + 1
+    env._reset_dofs_amp(env_ids, frames)
+    env.update()
 
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1_TMR_AMP"
+    args.task = "go1_STMR_AMP"
     # args.task = "a1_amp"
     play(args)
