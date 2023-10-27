@@ -40,7 +40,8 @@ class LeggedRobotCfg(BaseConfig):
         send_timeouts = True # send time out information to the algorithm
         episode_length_s = 20 # episode length in seconds
         reference_state_initialization = False # initialize state from reference data
-
+        include_history_steps = 15 # Number of steps of history to include.
+        
     class terrain:
         mesh_type = 'trimesh' # "heightfield" # none, plane, heightfield or trimesh
         horizontal_scale = 0.1 # [m]
@@ -129,7 +130,12 @@ class LeggedRobotCfg(BaseConfig):
         randomize_gains = False
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
-
+        randomize_restitution = True
+        restitution_range = [0., 0.5]
+        test_time = False
+        randomize_com_displacement = True
+        com_displacement_range = [-0.1, 0.1]
+        
     class rewards:
         class scales:
             termination = -0.0

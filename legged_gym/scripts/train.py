@@ -47,8 +47,9 @@ if __name__ == '__main__':
     
     DEBUG = False
     DEBUG = True
+    args.headless = True
     if DEBUG:
-        args.task = "go1_TMR_AMP"
+        args.task = "go1_STMR_AMP"
         for _ in range(100):
             print('WARNING: DEBUG MODE')
         

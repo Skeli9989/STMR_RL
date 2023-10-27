@@ -42,7 +42,8 @@ from legged_gym.envs.a1.a1_config_STMR_AMP import CfgPPO as A1_STMR_AMP
 
 from legged_gym.envs.go1.go1_config_TMR_AMP  import Cfg    as GO1_TMR_Cfg
 from legged_gym.envs.go1.go1_config_TMR_AMP  import CfgPPO as GO1_TMR_AMP
-
+from legged_gym.envs.go1.go1_config_STMR_AMP  import Cfg    as GO1_STMR_Cfg
+from legged_gym.envs.go1.go1_config_STMR_AMP  import CfgPPO as GO1_STMR_AMP
 
 
 import os
@@ -54,3 +55,4 @@ task_registry.register("a1_TMR_AMP", LeggedRobot, A1_TMR_Cfg(), A1_TMR_AMP())
 
 
 task_registry.register("go1_TMR_AMP", LeggedRobot, GO1_TMR_Cfg(), GO1_TMR_AMP())
+task_registry.register("go1_STMR_AMP", LeggedRobot, GO1_STMR_Cfg(), GO1_STMR_AMP())

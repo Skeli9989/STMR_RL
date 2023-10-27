@@ -22,9 +22,9 @@ class Go1Deployment:
                 0.0, 1.3, -3.0,
                 0.0, 1.3, -3.0,                
             ])
-        self.smooth_move(stop_dof_pos, duration=1.0)
+        self.smooth_move(stop_dof_pos, duration=1.0, d_gains=10, p_gains = 40)
     
-    def smooth_move(self, joint_pos_tar, joint_vel_tar=np.zeros(12), duration=3.0):
+    def smooth_move(self, joint_pos_tar, joint_vel_tar=np.zeros(12), duration=3.0, p_gains=None, d_gains=None):
         joint_pos = self.agent.se.get_dof_pos()
 
         dq_size = np.linalg.norm(joint_pos - joint_pos_tar)
@@ -33,26 +33,29 @@ class Go1Deployment:
         
         for joint_pos_tar in target_squence:
             joint_vel_tar = np.zeros(12)
-            self.agent.publish_joint_target_(joint_pos_tar, joint_vel_tar)
+            self.agent.publish_joint_target_(joint_pos_tar, joint_vel_tar, p_gains=p_gains, d_gains=d_gains)
             self.agent.get_obs()
             time.sleep(duration/loop_number)
     
-    def calibrate(self, wait=True, low=False):
+    def calibrate(self, wait=True, low=False, nominal_dof_pos =None) :
         agent = self.agent
         agent.reset()
         agent.get_obs()
         
-        if low:
-            nominal_dof_pos = np.array([
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,
-                0.0, 1.4, -2.5,                
-            ])
+        if nominal_dof_pos is None:
+            if low:
+                nominal_dof_pos = np.array([
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,
+                    0.0, 1.4, -2.5,                
+                ])
 
+            else:
+                nominal_dof_pos = agent.default_dof_pos
         else:
-            nominal_dof_pos = agent.default_dof_pos
-        
+            nominal_dof_pos = nominal_dof_pos
+            
         print(f"About to calibrate; the robot will stand [Press R2 to calibrate]")
         if wait:
             while True:
@@ -60,8 +63,11 @@ class Go1Deployment:
                     self.agent.se.right_lower_right_switch_pressed = False
                     break
 
-        self.smooth_move(nominal_dof_pos, duration=3.0)
+        self.smooth_move(nominal_dof_pos, duration=3.0, p_gains=80, d_gains=1.0)
 
+        obs = self.agent.reset()
+        obs_history = self.agent.get_obs()
+        print(obs_history)
         print("Starting pose calibrated [Press R2 to start controller]")
         while True:
             if self.agent.se.right_lower_right_switch_pressed:
@@ -74,31 +80,36 @@ class Go1Deployment:
     
     def run(self):
         action_list = []
+        obs_list    = []
         
-        self.calibrate(wait=True, low=False)
+        motion_q = self.motion_holder.get_q(0)
+        self.calibrate(wait=False, low=False, nominal_dof_pos=motion_q)
         self.agent.reset()
-        obs = self.agent.get_obs()
-        obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
-        action = self.policy(obs)
+        obs_history = self.agent.get_obs()
+        obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
+        action = self.policy(obs_history)
         
         try:
             self.agent.reset()
             motion_q = self.motion_holder.get_q(self.agent.get_time())
             self.agent.step(action, motion_q)
             action_list.append(action)
+            obs_list.append(self.agent.obs)
         except Exception as e:
             print(e)
             self.emergeny_stop()
             return
         
-        while self.agent.get_time() < self.motion_holder.max_time - 0.002:
+        while self.agent.get_time() < self.motion_holder.max_time:
             try:
-                obs = self.agent.get_obs()
+                obs_history = self.agent.get_obs()
                 # print(obs)
                 # breakpoint()
-                obs = torch.tensor(obs).to(torch.float).to(device=self.agent.device)
-                action = self.policy(obs)
+                obs_history = torch.tensor(obs_history).to(torch.float).to(device=self.agent.device)
+                action = self.policy(obs_history)
                 action_list.append(action)
+                print(self.agent.obs)
+                obs_list.append(self.agent.obs)
                 motion_q = self.motion_holder.get_q(self.agent.get_time())
                 self.agent.step(action, motion_q)
                 
@@ -112,8 +123,10 @@ class Go1Deployment:
                 return
 
         action_list = torch.stack(action_list)
+        obs_list = np.stack(obs_list)
         # save to txt from torch tensor
         np.savetxt("action_list.txt", action_list.detach().cpu().numpy())
+        np.savetxt("obs_list.txt", obs_list)
 
         while True:
             try:

@@ -3,7 +3,7 @@ from go1_gym_deploy.utils.legged_robot_config import LeggedRobotCfg
 import glob
 
 MOTION = "hopturn"
-MR = "TMR"
+MR = "STMR"
 RL = "AMP"
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
@@ -13,7 +13,7 @@ ROBOT = ROBOT.lower()
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = None  # Number of steps of history to include.
+        include_history_steps = 1  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
         reference_state_initialization = False

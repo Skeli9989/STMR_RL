@@ -39,7 +39,7 @@ ROBOT = ROBOT.lower()
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = None  # Number of steps of history to include.
+        include_history_steps = 1  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
         reference_state_initialization = True
@@ -82,7 +82,8 @@ class Cfg( LeggedRobotCfg ):
         mesh_type = 'plane'
         measure_heights = False
         curriculum = False
-
+        restitution = 0.5
+        
     class asset( LeggedRobotCfg.asset ):
         file = f'{LEGGED_GYM_ROOT_DIR}/resources/robots/{ROBOT}/urdf/{ROBOT}.urdf'
         foot_name = "foot"
@@ -96,15 +97,20 @@ class Cfg( LeggedRobotCfg ):
     class domain_rand:
         test_time = False
         randomize_friction = True
-        friction_range = [0.2, 0.4]
         randomize_base_mass = True
-        added_mass_range = [-1.0, 1.0]
-        push_robots = True
-        push_interval_s = 0.1
-        max_push_vel_xy = 0.001
         randomize_gains = True
+        push_robots = False
+        randomize_restitution = True
+        randomize_com_displacement = False
+        
+        friction_range = [0.25, 1.00]
+        added_mass_range = [-1.0, 1.0]
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
+        push_interval_s = 0.1
+        max_push_vel_xy = 0.001
+        restitution_range = [0., 0.5]
+        com_displacement_range = [-0.1, 0.1]
 
     class noise:
         add_noise = True

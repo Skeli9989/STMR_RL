@@ -120,7 +120,7 @@ if __name__ == '__main__':
     EXPORT_POLICY = False
     RECORD_FRAMES = True
     args = get_args()
-    args.task = "go1_TMR_AMP"
+    args.task = "go1_STMR_AMP"
     args.headless = False
     args.use_gpu_pipeline = False
     args.sim_device='cpu'

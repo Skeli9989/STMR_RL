@@ -26,7 +26,7 @@ ROBOT = "go1"
 ROBOT = ROBOT.lower()
 MOTION = "hopturn"
 MR_LS = ['NMR', "TMR", "SMR","STMR"]
-MR_LS = ["TMR"]
+MR_LS = ["STMR"]
 
 for MR in MR_LS:
   class A1config:

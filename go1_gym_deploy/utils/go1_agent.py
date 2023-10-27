@@ -51,10 +51,16 @@ class Go1HardwareAgent():
         # self.saved_deploy_time = torch.zeros(1)
         # self.start_time = time.time()
         
+        self.obs = np.zeros(self.cfg.env.num_observations)
+        self.obs_history = np.zeros((self.cfg.env.include_history_steps, self.cfg.env.num_observations))
+
         self.reset()
 
-        
+    
     def get_obs(self):
+        return self.obs_history.flatten()
+
+    def compute_obs(self):
         projected_gravity = self.se.get_gravity_vector()
         
         dof_pos = self.se.get_dof_pos()
@@ -76,8 +82,12 @@ class Go1HardwareAgent():
         self.dof_pos = dof_pos
         self.dof_vel = dof_vel
     
-        return obs
-    
+        self.obs = obs.copy()
+
+    def insert_obs(self, obs):
+        self.obs_history[:-1] = self.obs_history[1:]
+        self.obs_history[-1] = obs
+
     def publish_action_(self, action, motion_q):
         joint_pos_tar = action * self.cfg.control.action_scale
         # joint_pos_tar += self.default_dof_pos
@@ -91,15 +101,24 @@ class Go1HardwareAgent():
         
         self.publish_joint_target_(joint_pos_tar, joint_vel_tar)
         
-    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12)):
+    def publish_joint_target_(self, joint_pos_tar, joint_vel_tar=np.zeros(12), p_gains=None, d_gains=None):
         joint_pos_tar = joint_pos_tar[self.se.joint_idxs_inv]
         joint_vel_tar = joint_vel_tar[self.se.joint_idxs_inv]
         
         command_for_robot = pd_tau_targets_lcmt()
         command_for_robot.q_des = joint_pos_tar
         command_for_robot.qd_des = joint_vel_tar
-        command_for_robot.kp = self.p_gains
-        command_for_robot.kd = self.d_gains
+        
+        if p_gains is None:
+            command_for_robot.kp = self.p_gains
+        else:
+            command_for_robot.kp = p_gains * np.ones(12)
+        
+        if d_gains is None:
+            command_for_robot.kd = self.d_gains
+        else:
+            command_for_robot.kd = d_gains * np.ones(12)
+            
         command_for_robot.tau_ff = np.zeros(12)
         command_for_robot.se_contactState = np.zeros(4)
         command_for_robot.timestamp_us = int(time.time() * 10 ** 6)
@@ -111,7 +130,8 @@ class Go1HardwareAgent():
         self.timestep = 0
         self.time = time.time()
         self.start_time = time.time()
-    
+        self.compute_obs()
+
     def get_time(self):
         # return time.time() - self.start_time
         return self.timestep * self.dt
@@ -122,10 +142,18 @@ class Go1HardwareAgent():
         self.actions = self.actions.detach().cpu().numpy()
         self.publish_action_(self.actions, motion_q)
         
-        time.sleep(max(self.dt - (time.time()-self.time), 0))
+        sleep_time = self.dt - (time.time()-self.time)
+        if sleep_time < 0:
+            print(f"Warning: sleep time is negative: {sleep_time}")
+        else:
+            time.sleep(sleep_time)
         self.time = time.time()
-        obs = self.get_obs()
+        
+        self.compute_obs()
+        obs = self.obs
+        self.insert_obs(obs)
+        obs_history = self.get_obs()
         
         self.timestep += 1
-        return obs
+        return obs_history
         

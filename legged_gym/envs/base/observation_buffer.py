@@ -13,11 +13,11 @@ class ObservationBuffer:
         self.obs_buf = torch.zeros(self.num_envs, self.num_obs_total, device=self.device, dtype=torch.float)
 
     def reset(self, reset_idxs, new_obs):
-        self.obs_buf[reset_idxs] = new_obs.repeat(1, self.include_history_steps)
+        self.obs_buf[reset_idxs] = torch.tile(new_obs,(1, self.include_history_steps))
 
     def insert(self, new_obs):
         # Shift observations back.
-        self.obs_buf[:, : self.num_obs * (self.include_history_steps - 1)] = self.obs_buf[:,self.num_obs : self.num_obs * self.include_history_steps]
+        self.obs_buf[:, : self.num_obs * (self.include_history_steps - 1)] = self.obs_buf[:,self.num_obs : self.num_obs * self.include_history_steps].clone()
 
         # Add new observation.
         self.obs_buf[:, -self.num_obs:] = new_obs
