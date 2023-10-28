@@ -103,7 +103,7 @@ class Cfg( LeggedRobotCfg ):
         randomize_restitution = True
         randomize_com_displacement = False
         
-        friction_range = [0.25, 1.00]
+        friction_range = [0.25, 0.50]
         added_mass_range = [-1.0, 1.0]
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
@@ -145,8 +145,8 @@ class Cfg( LeggedRobotCfg ):
             lin_vel_z = 0.0      # penalize vertical velocity           
             ang_vel_xy = 0.0     # penalize horizontal angular velocity
             orientation = 0.0    # penalize orientation error            
-            torques = -0.0002     # penalize torques                        
-            dof_vel = -0.0001        # penalize joint velocities               
+            torques = -0.0010     # penalize torques                        
+            dof_vel = -0.0010        # penalize joint velocities               
             dof_acc = 0.0        # penalize joint accelerations               
             base_height = 0.0    # penalize base height                               
             feet_air_time =  0.0 # penalize feet air time                          
