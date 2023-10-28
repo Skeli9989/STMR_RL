@@ -14,13 +14,6 @@ import json
 import sys
 lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=255")
 
-# def temp():
-#     for _ in range(100):
-#         action = agent.se.get_dof_pos()
-#         import time
-#         agent.publish_joint_target_(action, np.zeros_like(action))
-#         time.sleep(0.1)
-
 from go1_gym_deploy import BASEDIR
 print(BASEDIR.absolute())
 
@@ -31,6 +24,10 @@ MOTION = "hopturn"
 MOTION_FILE = BASEDIR / f"run/{MOTION}/{MR}/{MOTION}_{ROBOT}_{MR}.txt"
 POLICY_FILE = BASEDIR / f"run/{MOTION}/{MR}/policy_1.pt"
 
+
+def load_policy(logdir):
+    policy = torch.jit.load(logdir)
+    return policy
 
 def load_and_run_policy():
     agent = Go1HardwareAgent()
@@ -50,19 +47,23 @@ def load_and_run_policy():
     deployment_runner = Go1Deployment(agent, policy, motion_file)
     deployment_runner.run()
 
-def load_policy(logdir):
-    policy = torch.jit.load(logdir)
-    return policy
-
 
 
 
 # %%
+# agent = Go1HardwareAgent()
+# policy = load_policy(POLICY_FILE)
+# motion_file = str(MOTION_FILE)
+# deployment_runner = Go1Deployment(agent, policy, motion_file)
+# q_array = agent.default_dof_pos.copy()
+# # q_array[0] += 0.5
+# # # q_array[3] = 0.3
+# deployment_runner.smooth_move(q_array)
 
 
-
-
-
+# agent.reset()
+# agent.compute_obs()
+# agent.se.joint_pos
 # %%
 
 if __name__ == '__main__':
