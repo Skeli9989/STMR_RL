@@ -129,8 +129,9 @@ class Go1Deployment:
         np.savetxt("obs_list.txt", obs_list)
 
         while True:
+            # action = torch.zeros_like(action)
             try:
-                self.agent.step(action, motion_q)
+                self.calibrate(wait=False, low=False, nominal_dof_pos=motion_q)
             except Exception as e:
                 print(e)
                 self.emergeny_stop()
