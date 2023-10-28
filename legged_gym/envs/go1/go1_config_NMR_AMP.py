@@ -43,8 +43,8 @@ class Cfg( GO1_Cfg ):
 
     class rewards( GO1_Cfg.rewards ):
         class scales( GO1_Cfg.rewards.scales ):
-            pos_motion     = 150 * 3
-            ang_motion     = 150 * 3
+            pos_motion     = 150
+            ang_motion     = 150
 
 class CfgPPO( GO1_CfgPPO ):
     class runner( GO1_CfgPPO.runner ):

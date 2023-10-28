@@ -62,20 +62,6 @@ def play(args):
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
     _, _ = env.reset(random_time=False)
     obs = env.get_observations()
-    # load policy
-    train_cfg.runner.resume = True
-    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
-    policy = ppo_runner.get_inference_policy(device=env.device)
-
-    logger = Logger(env.dt)
-    robot_index = 0 # which robot is used for logging
-    joint_index = 1 # which joint is used for logging
-    stop_state_log = 100 # number of steps before plotting states
-    stop_rew_log = env.max_episode_length + 1 # number of steps before print average episode rewards
-    camera_position = np.array(env_cfg.viewer.pos, dtype=np.float64)
-    camera_vel = np.array([1., 1., 0.])
-    camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
-    img_idx = 0
 
     for repeat_n in range(100):
         env.reset()
@@ -91,7 +77,7 @@ def play(args):
             env.times += env.dt
             
             env.update()
-            for _ in range(100):
+            for _ in range(20):
                 env.render()
             
     env.reset()
@@ -104,6 +90,6 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1_STMR_AMP"
+    args.task = "go1_NMR_AMP"
     # args.task = "a1_amp"
     play(args)
