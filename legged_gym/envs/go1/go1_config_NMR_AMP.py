@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: BSD-3-Clause
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
@@ -27,33 +27,27 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
+import glob
+from legged_gym import LEGGED_GYM_ROOT_DIR
+from legged_gym.envs.go1.go1_config_Common import Cfg as GO1_Cfg
+from legged_gym.envs.go1.go1_config_Common import CfgPPO as GO1_CfgPPO
+from legged_gym.envs.go1.go1_config_Common import MOTION, ROBOT
 
-from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
-from .base.legged_robot import LeggedRobot
+MR = "NMR"
+RL = "AMP"
+MOTION_FILES = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}_processed/*')
 
-from legged_gym.envs.a1.a1_config_NMR_AMP import Cfg as A1_NaiveMR_Cfg
-from legged_gym.envs.a1.a1_config_NMR_AMP import CfgPPO as A1_NaiveMR_AMP
-from legged_gym.envs.a1.a1_config_TMR_AMP  import Cfg    as A1_TMR_Cfg
-from legged_gym.envs.a1.a1_config_TMR_AMP  import CfgPPO as A1_TMR_AMP
-from legged_gym.envs.a1.a1_config_SMR_AMP  import Cfg    as A1_SMR_Cfg
-from legged_gym.envs.a1.a1_config_SMR_AMP  import CfgPPO as A1_SMR_AMP
-from legged_gym.envs.a1.a1_config_STMR_AMP import Cfg    as A1_STMR_Cfg
-from legged_gym.envs.a1.a1_config_STMR_AMP import CfgPPO as A1_STMR_AMP
+class Cfg( GO1_Cfg ):
+    class env( GO1_Cfg.env ):
+        amp_motion_files = MOTION_FILES
 
-from legged_gym.envs.go1.go1_config_TMR_AMP  import Cfg    as GO1_TMR_Cfg
-from legged_gym.envs.go1.go1_config_TMR_AMP  import CfgPPO as GO1_TMR_AMP
-from legged_gym.envs.go1.go1_config_STMR_AMP  import Cfg    as GO1_STMR_Cfg
-from legged_gym.envs.go1.go1_config_STMR_AMP  import CfgPPO as GO1_STMR_AMP
-from legged_gym.envs.go1.go1_config_NMR_AMP  import Cfg    as GO1_NMR_Cfg
-from legged_gym.envs.go1.go1_config_NMR_AMP  import CfgPPO as GO1_NMR_AMP
+    class rewards( GO1_Cfg.rewards ):
+        class scales( GO1_Cfg.rewards.scales ):
+            pos_motion     = 150
+            ang_motion     = 150
 
-import os
+class CfgPPO( GO1_CfgPPO ):
+    class runner( GO1_CfgPPO.runner ):
+        experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+        amp_motion_files = MOTION_FILES
 
-from legged_gym.utils.task_registry import task_registry
-
-task_registry.register("a1_NMR_AMP", LeggedRobot, A1_NaiveMR_Cfg(), A1_NaiveMR_AMP())
-task_registry.register("a1_TMR_AMP", LeggedRobot, A1_TMR_Cfg(), A1_TMR_AMP())
-
-task_registry.register("go1_NMR_AMP", LeggedRobot, GO1_NMR_Cfg(), GO1_NMR_AMP())
-task_registry.register("go1_TMR_AMP", LeggedRobot, GO1_TMR_Cfg(), GO1_TMR_AMP())
-task_registry.register("go1_STMR_AMP", LeggedRobot, GO1_STMR_Cfg(), GO1_STMR_AMP())

@@ -46,7 +46,7 @@ if __name__ == '__main__':
     args = get_args()
     
     DEBUG = False
-    DEBUG = True
+    # DEBUG = True
     args.headless = True
     if DEBUG:
         args.task = "go1_STMR_AMP"

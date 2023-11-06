@@ -2,14 +2,6 @@ from go1_gym_deploy.utils.legged_robot_config import LeggedRobotCfg
 
 import glob
 
-MOTION = "hopturn"
-MR = "STMR"
-RL = "AMP"
-ROBOT = "go1"
-ROBOT = ROBOT.lower()
-# MOTION_FILES = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}_processed/*')
-
-
 class Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
