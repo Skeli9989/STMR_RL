@@ -90,7 +90,7 @@ def play(args):
             # actions = policy(obs.detach())
             # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
             actions = policy(obs.detach())
-            actions = torch.zeros_like(actions)
+            # actions = torch.zeros_like(actions)
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=True)
 
 
