@@ -33,6 +33,7 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 MOTION = "hopturn"
+MOTION = "backpace"
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
 

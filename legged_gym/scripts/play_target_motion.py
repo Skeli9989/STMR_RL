@@ -90,6 +90,6 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1_NMR_AMP"
+    # args.task = "go1_NMR_AMP"
     # args.task = "a1_amp"
     play(args)
