@@ -24,7 +24,7 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
-MOTION = "backpace"
+MOTION = "trot0"
 MR_LS = ['NMR', "TMR", "SMR","STMR"]
 MR_LS = ["STMR"]
 
