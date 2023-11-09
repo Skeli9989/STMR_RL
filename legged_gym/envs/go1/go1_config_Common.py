@@ -32,9 +32,12 @@ import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-MOTION = "hopturn"
-MOTION = "backpace"
+# MOTION = "hopturn"
+# MOTION = "backpace0"
 # MOTION = "trot0"
+MOTION = "sidesteps"
+# MOTION = "ac_trot"
+
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
 
@@ -73,7 +76,7 @@ class Cfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 40.}  # [N*m/rad]
+        stiffness = {'joint': 20.}  # [N*m/rad]
         damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
@@ -105,7 +108,7 @@ class Cfg( LeggedRobotCfg ):
         randomize_restitution = True
         randomize_com_displacement = False
         
-        friction_range = [0.25, 0.50]
+        friction_range = [0.75, 1.00]
         added_mass_range = [-1.0, 1.0]
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]

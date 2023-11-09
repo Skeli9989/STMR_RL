@@ -177,14 +177,14 @@ def get_args():
         args.sim_device += f":{args.sim_device_id}"
     return args
 
-def export_policy_as_jit(actor_critic, path):
+def export_policy_as_jit(actor_critic, path, name='policy_1.pt'):
     if hasattr(actor_critic, 'memory_a'):
         # assumes LSTM: TODO add GRU
         exporter = PolicyExporterLSTM(actor_critic)
         exporter.export(path)
     else: 
         os.makedirs(path, exist_ok=True)
-        path = os.path.join(path, 'policy_1.pt')
+        path = os.path.join(path, name)
         model = copy.deepcopy(actor_critic.actor).to('cpu')
         traced_script_module = torch.jit.script(model)
         traced_script_module.save(path)

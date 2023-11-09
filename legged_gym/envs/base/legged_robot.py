@@ -562,10 +562,10 @@ class LeggedRobot(BaseTask):
         # frames = frames.to(self.device)
         # target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
         target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
-
+        # target_dof_vel = torch.FloatTensor(self.motion_holder.get_batch_qvel(self.times)).to(self.device)
         if control_type=="P":
-            # torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
             torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) - d_gains*self.dof_vel
+            # torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) + 1*d_gains*(target_dof_vel - self.dof_vel)
         elif control_type=="V":
             torques = p_gains*(actions_scaled - self.dof_vel) - d_gains*(self.dof_vel - self.last_dof_vel)/self.sim_params.dt
         elif control_type=="T":
@@ -1185,7 +1185,7 @@ class LeggedRobot(BaseTask):
         frames = frames.to(self.device)
         dof_pos = AMPLoader.get_joint_pose_batch(frames)
         dof_pos_error = torch.sum(torch.square(dof_pos - self.dof_pos), dim=1)
-        return torch.exp(-0.02 * dof_pos_error)
+        return torch.exp(-0.02 * 100 * dof_pos_error)
 
     def _reward_dof_vel_motion(self):
         # reward for qvel motion
@@ -1230,7 +1230,7 @@ class LeggedRobot(BaseTask):
         root_pos = AMPLoader.get_root_pos_batch(frames)
         root_pos[:,:2] += self.env_origins[:, :2]
         root_pos_error = torch.sum(torch.square(root_pos - self.root_states[:, 0:3]), dim=1)
-        return torch.exp(-1 * root_pos_error)
+        return torch.exp(-1 * 5 * root_pos_error)
 
     def _reward_ang_motion(self):
         # reward for root ang

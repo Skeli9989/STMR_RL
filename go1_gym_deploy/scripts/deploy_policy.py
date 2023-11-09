@@ -19,7 +19,7 @@ print(BASEDIR.absolute())
 
 ROBOT = 'go1'.lower()
 MR = "STMR"
-MOTION = "backpace"
+MOTION = "backpace0"
 
 MOTION_FILE = BASEDIR / f"run/{MOTION}/{MR}/{MOTION}_{ROBOT}_{MR}.txt"
 POLICY_FILE = BASEDIR / f"run/{MOTION}/{MR}/policy_1.pt"
