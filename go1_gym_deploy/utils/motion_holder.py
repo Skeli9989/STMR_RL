@@ -33,7 +33,12 @@ class MotionHolder():
             q2 = self.q_src[idx]
             alpha = (time_ - t1) / (t2 - t1)
             return (1 - alpha) * q1 + alpha * q2
-        
+    
+    def get_qvel(self, time_):
+        q = self.get_q(time_)
+        q_af = self.get_q(time_ + self.dt)
+        return (q_af - q) / self.dt
+    
     def get_batch_q(self, times_):
         idx = np.searchsorted(self.time_array, times_)
         
@@ -61,3 +66,8 @@ class MotionHolder():
         res[neither_mask] = (1 - alpha) * q1 + alpha * q2
         
         return res
+
+    def get_batch_qvel(self, times_):
+        q = self.get_batch_q(times_)
+        q_af = self.get_batch_q(times_ + self.dt)
+        return (q_af - q) / self.dt

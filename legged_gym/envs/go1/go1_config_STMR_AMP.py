@@ -44,13 +44,13 @@ class Cfg( GO1_Cfg ):
 
     class rewards( GO1_Cfg.rewards ):
         class scales( GO1_Cfg.rewards.scales ):
-            pos_motion     = 150
-            ang_motion     = 150
-            dof_pos_motion = 100
+            pos_motion     = 150/5
+            ang_motion     = 150/5
+            dof_pos_motion = 150
 
-            dof_vel_motion = 30
-            lin_vel_motion = 50
-            ang_vel_motion = 50
+            dof_vel_motion = 50
+            lin_vel_motion = 50/5
+            ang_vel_motion = 50/5
 
 class CfgPPO( GO1_CfgPPO ):
     class runner( GO1_CfgPPO.runner ):
