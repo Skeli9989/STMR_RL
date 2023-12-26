@@ -24,7 +24,7 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
-MOTION = "sidesteps"
+MOTION = "videowalk0"
 MR_LS = ['NMR', "TMR", "SMR","STMR"]
 MR_LS = ["STMR"]
 
@@ -42,6 +42,10 @@ for MR in MR_LS:
     if ROBOT == "go1":
       INIT_POS = np.array([0, 0, 0.27])
       DEFAULT_JOINT_POSE = np.array([0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8])
+      INIT_ROT = np.array([0, 0, 0, 1.0])
+    if ROBOT == "al":
+      INIT_POS = np.array([0, 0, 0.40])
+      DEFAULT_JOINT_POSE = np.array([0, 0.7, -1.6, 0, 0.7, -1.6, 0, 0.7, -1.6, 0, 0.7, -1.6])
       INIT_ROT = np.array([0, 0, 0, 1.0])
 
     FR_FOOT_NAME = "FR_foot"
@@ -241,6 +245,7 @@ for MR in MR_LS:
     time_between_frames = FRAME_DURATION
 
     for f in range(num_frames - 1):
+      print(f"{f}/{num_frames}", end="\r")
       # Current robot pose.
       ref_joint_pos = qpos_np[f]
       # ref_joint_pos = np.reshape(ref_joint_pos, [-1, POS_SIZE])
