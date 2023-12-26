@@ -250,6 +250,16 @@ class AMPPPO:
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.actor_critic.parameters(), self.max_grad_norm)
                 self.optimizer.step()
+                
+                is_nan = False
+                for layer in self.actor_critic.actor:
+                    if isinstance(layer, nn.Linear):
+                        weight = layer.weight.data
+                        if torch.isnan(weight).any():
+                            is_nan = True
+                            print("NAN")
+                            break
+                    
 
                 if not self.actor_critic.fixed_std and self.min_std is not None:
                     self.actor_critic.std.data = self.actor_critic.std.data.clamp(min=self.min_std)
