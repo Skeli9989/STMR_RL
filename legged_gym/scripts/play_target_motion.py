@@ -90,5 +90,5 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1_STMR_AMP"
+    args.task = "al_STMR_AMP"
     play(args)

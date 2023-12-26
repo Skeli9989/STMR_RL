@@ -27,27 +27,28 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 # Copyright (c) 2021 ETH Zurich, Nikita Rudin
+# %%
 import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
-from legged_gym.envs.go1.go1_config_Common import Cfg as GO1_Cfg
-from legged_gym.envs.go1.go1_config_Common import CfgPPO as GO1_CfgPPO
+from legged_gym.envs.go1.go1_config_Common import Cfg as Cfg
+from legged_gym.envs.go1.go1_config_Common import CfgPPO as CfgPPO
 from legged_gym.envs.go1.go1_config_Common import MOTION, ROBOT
 
 MR = "NMR"
 RL = "AMP"
 MOTION_FILES = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}_processed/*')
 
-class Cfg( GO1_Cfg ):
-    class env( GO1_Cfg.env ):
+class Cfg( Cfg ):
+    class env( Cfg.env ):
         amp_motion_files = MOTION_FILES
 
-    class rewards( GO1_Cfg.rewards ):
-        class scales( GO1_Cfg.rewards.scales ):
+    class rewards( Cfg.rewards ):
+        class scales( Cfg.rewards.scales ):
             pos_motion     = 150
             ang_motion     = 150
 
-class CfgPPO( GO1_CfgPPO ):
-    class runner( GO1_CfgPPO.runner ):
+class CfgPPO( CfgPPO ):
+    class runner( CfgPPO.runner ):
         experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
         amp_motion_files = MOTION_FILES
 

@@ -30,20 +30,20 @@
 import glob
 
 from legged_gym import LEGGED_GYM_ROOT_DIR
-from legged_gym.envs.a1.a1_config_Common import Cfg as A1_Cfg
-from legged_gym.envs.a1.a1_config_Common import CfgPPO as A1_CfgPPO
+from legged_gym.envs.a1.a1_config_Common import Cfg as Cfg
+from legged_gym.envs.a1.a1_config_Common import CfgPPO as CfgPPO
 from legged_gym.envs.a1.a1_config_Common import MOTION, ROBOT
 
 MR = "TMR"
 RL = "AMP"
 MOTION_FILES = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}_processed/*')
 
-class Cfg( A1_Cfg ):
-    class env( A1_Cfg.env ):
+class Cfg( Cfg ):
+    class env( Cfg.env ):
         amp_motion_files = MOTION_FILES
 
-    class rewards( A1_Cfg.rewards ):
-        class scales( A1_Cfg.rewards.scales ):
+    class rewards( Cfg.rewards ):
+        class scales( Cfg.rewards.scales ):
             pos_motion     = 150
             ang_motion     = 150
             dof_pos_motion = 150
@@ -53,8 +53,8 @@ class Cfg( A1_Cfg ):
             ang_vel_motion = 50
 
 
-class CfgPPO( A1_CfgPPO ):
-    class runner( A1_CfgPPO.runner ):
+class CfgPPO( CfgPPO ):
+    class runner( CfgPPO.runner ):
         experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
         amp_motion_files = MOTION_FILES
 

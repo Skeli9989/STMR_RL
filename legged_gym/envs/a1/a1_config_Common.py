@@ -71,7 +71,7 @@ class Cfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 80.}  # [N*m/rad]
+        stiffness = {'joint': 30.}  # [N*m/rad]
         damping = {'joint': 1.0}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25

@@ -43,7 +43,7 @@ from isaacgym import gymtorch, gymapi, gymutil
 def play(args):
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 100)
+    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     env_cfg.env.get_commands_from_joystick = False
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
@@ -78,6 +78,10 @@ def play(args):
 
     env.reset(random_time=False)
     obs = env.get_observations()
+    
+    # env.default_dof_pos[:] = torch.tensor([
+    #     0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8
+    # ])
     for repeat_n in range(100):
         for i in range(int(env.max_episode_length)):
             # env.reset()
@@ -87,11 +91,30 @@ def play(args):
             #     env.reset(random_time=False)
             #     obs = env.get_observations()
             #     # env.reset(random_time=True)
-            # actions = policy(obs.detach())
-            # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
             actions = policy(obs.detach())
+            # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
+            # actions = policy(obs.detach())
+            # env.default_dof_pos[:] = torch.tensor([
+            #     0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8
+            # ])
+
+            # actions = torch.ones(env_cfg.env.num_envs, 12) * torch.sin(torch.tensor(0.05 * i))
             # actions = torch.zeros_like(actions)
+            
+            # contact_info = env.gym.get_rigid_contacts(env.sim)     
+            # contact_info = env.gym.get_env_rigid_contacts(env.envs[0])       
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=True)
+            
+            # env.root_states[0][0] += 0.01
+            # env_ids_int32 = torch.tensor([0]).to(dtype=torch.int32)
+            # env.gym.set_actor_root_state_tensor_indexed(env.sim,
+            #                                             gymtorch.unwrap_tensor(env.root_states[0]),
+            #                                             gymtorch.unwrap_tensor(env_ids_int32), len(env_ids_int32))
+            
+            # env.update()
+            # if env.reset_buf.any():
+            #     for _ in range(1000):
+            #         env.render()
 
 
 if __name__ == '__main__':
@@ -99,5 +122,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    args.task = "go1_STMR_AMP"
+    # args.task = "al_STMR_AMP"
     play(args)
