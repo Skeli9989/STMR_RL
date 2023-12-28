@@ -24,9 +24,9 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
-MOTION = "videowalk1"
+MOTION = "videowalk0"
 MR_LS = ['NMR', "TMR", "SMR","STMR"]
-MR_LS = ["STMR"]
+MR_LS = ["SMR"]
 
 for MR in MR_LS:
   class A1config:
@@ -218,7 +218,7 @@ for MR in MR_LS:
         np.concatenate([
             chain_foot_fl.forward_kinematics(joint_pose[:3]).get_matrix()[:, :3,
                                                                           3],
-            chain_foot_fr.forward_kinematics(joint_pose[:6]).get_matrix()[:, :3,
+            chain_foot_fr.forward_kinematics(joint_pose[3:6]).get_matrix()[:, :3,
                                                                           3],
             chain_foot_rl.forward_kinematics(joint_pose[6:9]).get_matrix()[:, :3,
                                                                           3],
