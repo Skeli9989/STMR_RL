@@ -74,7 +74,7 @@ def play(args):
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
         path = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'policies')
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path, name = args.task)
         print('Exported policy as jit script to: ', path)
 
     env.reset(random_time=False)
@@ -123,5 +123,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "al_STMR_hopturn"
+    # args.task = "go1_STMR_hopturn"
     play(args)
