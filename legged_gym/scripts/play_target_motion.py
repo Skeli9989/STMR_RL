@@ -43,6 +43,7 @@ from isaacgym.torch_utils import quat_rotate
 from rsl_rl.datasets.motion_loader import AMPLoader
 
 def play(args):
+    register_tasks(args.task)
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
@@ -90,5 +91,5 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "al_STMR_AMP"
+    # args.task = "al_STMR_AMP"
     play(args)

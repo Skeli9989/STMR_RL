@@ -31,6 +31,8 @@
 from .base_config import BaseConfig
 
 class LeggedRobotCfg(BaseConfig):
+    def __init__(self, MOTION):
+        self.MOTION = MOTION
     class env:
         num_envs = 4096
         num_observations = 235

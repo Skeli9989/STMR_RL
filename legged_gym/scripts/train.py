@@ -38,6 +38,7 @@ from legged_gym.utils import get_args, task_registry
 import torch
 
 def train(args):
+    register_tasks(args.task)
     env, env_cfg = task_registry.make_env(name=args.task, args=args)
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args)
     ppo_runner.learn(num_learning_iterations=train_cfg.runner.max_iterations, init_at_random_ep_len=True)
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     # DEBUG = True
     args.headless = True
     if DEBUG:
-        # args.task = "al_STMR_AMP"
+        # args.task = "go1_SMR_videowalk0"
         for _ in range(100):
             print('WARNING: DEBUG MODE')
         

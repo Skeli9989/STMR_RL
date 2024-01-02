@@ -41,6 +41,7 @@ import torch
 from isaacgym import gymtorch, gymapi, gymutil
 
 def play(args):
+    register_tasks(args.task)
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
@@ -122,5 +123,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "al_STMR_AMP"
+    # args.task = "al_STMR_hopturn"
     play(args)

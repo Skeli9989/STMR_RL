@@ -32,11 +32,12 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 
-MOTION = "hopturn"
 ROBOT = "A1"
 ROBOT = ROBOT.lower()
 
-class Cfg( LeggedRobotCfg ):
+class A1_Cfg( LeggedRobotCfg ):
+    def __init__(self, MOTION):
+        super().__init__(MOTION)
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
         include_history_steps = None  # Number of steps of history to include.
@@ -165,25 +166,25 @@ class Cfg( LeggedRobotCfg ):
         clip_observations = 100.
         clip_actions = 1.
 
-class CfgPPO( LeggedRobotCfgPPO ):
-    runner_class_name = 'AMPOnPolicyRunner'
+class A1_CfgPPO( LeggedRobotCfgPPO ):
+    runner_class_name = 'OnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
-        amp_replay_buffer_size = 1000000
+        # amp_replay_buffer_size = 1000000
         num_learning_epochs = 5
         num_mini_batches = 4
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        algorithm_class_name = 'AMPPPO'
+        algorithm_class_name = 'PPO'
         policy_class_name = 'ActorCritic'
         max_iterations = 50_000 # number of policy updates
 
-        amp_reward_coef = 2.0
-        amp_num_preload_transitions = 2000000
-        amp_task_reward_lerp = 0.3
-        amp_discr_hidden_dims = [1024, 512]
+        # amp_reward_coef = 2.0
+        # amp_num_preload_transitions = 2000000
+        # amp_task_reward_lerp = 0.3
+        # amp_discr_hidden_dims = [1024, 512]
 
-        min_normalized_std = [0.01, 0.01, 0.01] * 4
+        # min_normalized_std = [0.01, 0.01, 0.01] * 4
 
 
