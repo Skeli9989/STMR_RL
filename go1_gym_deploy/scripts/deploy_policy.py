@@ -19,10 +19,12 @@ print(BASEDIR.absolute())
 
 ROBOT = 'go1'.lower()
 MR = "STMR"
-MOTION = "backpace0"
+MOTION = "hopturn"
+# MOTION = "sidesteps"
+# MOTION = "trot0"
 
 MOTION_FILE = BASEDIR / f"run/{MOTION}/{MR}/{MOTION}_{ROBOT}_{MR}.txt"
-POLICY_FILE = BASEDIR / f"run/{MOTION}/{MR}/policy_1.pt"
+POLICY_FILE = BASEDIR / f"run/{MOTION}/{MR}/go1_{MR}_{MOTION}.pt"
 
 
 def load_policy(logdir):

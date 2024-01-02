@@ -37,7 +37,7 @@ class Go1Deployment:
             self.agent.get_obs()
             time.sleep(duration/loop_number)
     
-    def calibrate(self, wait=True, low=False, nominal_dof_pos =None) :
+    def calibrate(self, wait=True, low=False, nominal_dof_pos =None, duration=3.0) :
         agent = self.agent
         agent.reset()
         agent.get_obs()
@@ -63,7 +63,7 @@ class Go1Deployment:
                     self.agent.se.right_lower_right_switch_pressed = False
                     break
 
-        self.smooth_move(nominal_dof_pos, duration=3.0, p_gains=80, d_gains=1.0)
+        self.smooth_move(nominal_dof_pos, duration=duration, p_gains=120, d_gains=1.0)
 
         obs = self.agent.reset()
         obs_history = self.agent.get_obs()
@@ -131,7 +131,7 @@ class Go1Deployment:
         while True:
             # action = torch.zeros_like(action)
             try:
-                self.calibrate(wait=False, low=False, nominal_dof_pos=motion_q)
+                self.calibrate(wait=False, low=False, nominal_dof_pos=motion_q, duration=0.5)
             except Exception as e:
                 print(e)
                 self.emergeny_stop()
