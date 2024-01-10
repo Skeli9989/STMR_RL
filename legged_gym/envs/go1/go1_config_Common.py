@@ -70,8 +70,7 @@ class Go1_Cfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        # stiffness = {'joint': 30.}  # [N*m/rad]
-        stiffness = {'joint': 60.}  # [N*m/rad]
+        stiffness = {'joint': 30.}  # [N*m/rad]
         damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
@@ -181,7 +180,7 @@ class Go1_CfgPPO( LeggedRobotCfgPPO ):
         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
         algorithm_class_name = 'AMPPPO'
         policy_class_name = 'ActorCritic'
-        max_iterations = 50_000 # number of policy updates
+        max_iterations = 10_000 # number of policy updates
 
         amp_reward_coef = 2
         # amp_motion_files = MOTION_FILES

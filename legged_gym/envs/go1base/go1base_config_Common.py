@@ -32,45 +32,45 @@ import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-ROBOT = "al"
+ROBOT = "go1"
 ROBOT = ROBOT.lower()
 
-class Al_Cfg( LeggedRobotCfg ):
+class Go1_Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
         include_history_steps = 1  # Number of steps of history to include.
-        num_observations = 40
-        num_privileged_obs = 46
+        num_observations = 41
+        num_privileged_obs = 47
         reference_state_initialization = True
         reference_state_initialization_prob = 0.85
         # amp_motion_files = MOTION_FILES
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
         get_commands_from_joystick = False
 
-
     class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.35] # x,y,z [m]
+        pos = [0.0, 0.0, 0.27] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
             'FL_hip_joint': 0.0,   # [rad]
-            'FL_thigh_joint': 0.7,     # [rad]
-            'FL_calf_joint': -1.6,   # [rad]
+            'FL_thigh_joint': 0.9,     # [rad]
+            'FL_calf_joint': -1.8,   # [rad]
 
             'FR_hip_joint': 0.0,  # [rad]
-            'FR_thigh_joint': 0.7,     # [rad]
-            'FR_calf_joint': -1.6,  # [rad]
+            'FR_thigh_joint': 0.9,     # [rad]
+            'FR_calf_joint': -1.8,  # [rad]
 
             'RL_hip_joint': 0.0,   # [rad]
-            'RL_thigh_joint': 0.7,   # [rad]
-            'RL_calf_joint': -1.6,    # [rad]
+            'RL_thigh_joint': 0.9,   # [rad]
+            'RL_calf_joint': -1.8,    # [rad]
             
             'RR_hip_joint': -0.0,   # [rad]
-            'RR_thigh_joint': 0.7,   # [rad]
-            'RR_calf_joint': -1.6,    # [rad]
+            'RR_thigh_joint': 0.9,   # [rad]
+            'RR_calf_joint': -1.8,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
+        # stiffness = {'joint': 30.}  # [N*m/rad]
         stiffness = {'joint': 30.}  # [N*m/rad]
         damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
@@ -89,18 +89,10 @@ class Al_Cfg( LeggedRobotCfg ):
         foot_name = "foot"
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = [
-            # "base","floating_base","trunk","imu_link",
-            # "FL_hip", "FL_hip_rotor", "FL_thigh", "FL_thigh_rotor", "FL_calf", "FL_calf_rotor", "FL_foot", "FL_foot",
-            # "FR_hip", "FR_hip_rotor", "FR_thigh", "FR_thigh_rotor", "FR_calf", "FR_calf_rotor", "FR_foot", "FR_foot",
-            # "RL_hip", "RL_hip_rotor", "RL_thigh", "RL_thigh_rotor", "RL_calf", "RL_calf_rotor", "RL_foot", "RL_foot",
-            # "RR_hip", "RR_hip_rotor", "RR_thigh", "RR_thigh_rotor", "RR_calf", "RR_calf_rotor", "RR_foot", "RR_foot",
-            
-            "base", 
-            "FL_calf", "FR_calf", "RL_calf", "RR_calf",
-            "FL_thigh", "FR_thigh", "RL_thigh", "RR_thigh"
-            ]
+            "base", "FL_calf", "FR_calf", "RL_calf", "RR_calf",
+            "FL_thigh", "FR_thigh", "RL_thigh", "RR_thigh"]
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
-        flip_visual_attachments = True
+        flip_visual_attachments = False
         
     class domain_rand:
         test_time = False
@@ -176,25 +168,50 @@ class Al_Cfg( LeggedRobotCfg ):
             ang_vel_yaw = [0, 0]    # min max [rad/s]
             heading = [0, 0]
 
-class Al_CfgPPO( LeggedRobotCfgPPO ):
-    runner_class_name = 'OnPolicyRunner'
+class Go1_CfgPPO( LeggedRobotCfgPPO ):
+    runner_class_name = 'AMPOnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
-        # amp_replay_buffer_size = 1000000
+        amp_replay_buffer_size = 1000000
         num_learning_epochs = 5
         num_mini_batches = 4
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
-        algorithm_class_name = 'PPO'
+        algorithm_class_name = 'AMPPPO'
         policy_class_name = 'ActorCritic'
-        max_iterations = 10_000 # number of policy updates
+        max_iterations = 50_000 # number of policy updates
 
-        # amp_reward_coef = 2
-        # amp_num_preload_transitions = 2000000
-        # amp_task_reward_lerp = 0.3
-        # amp_discr_hidden_dims = [1024, 512]
+        amp_reward_coef = 2
+        # amp_motion_files = MOTION_FILES
+        amp_num_preload_transitions = 2000000
+        amp_task_reward_lerp = 0.3
+        amp_discr_hidden_dims = [1024, 512]
 
-        # min_normalized_std = [0.01, 0.01, 0.01] * 4
+        min_normalized_std = [0.01, 0.01, 0.01] * 4
+        # resume = True
 
+
+# class Go1_CfgPPO( LeggedRobotCfgPPO ):
+#     # runner_class_name = 'AMPOnPolicyRunner'
+#     runner_class_name = 'OnPolicyRunner'
+#     class algorithm( LeggedRobotCfgPPO.algorithm ):
+#         entropy_coef = 0.01
+#         # amp_replay_buffer_size = 1000000
+#         num_learning_epochs = 5
+#         num_mini_batches = 4
+
+#     class runner( LeggedRobotCfgPPO.runner ):
+#         run_name = ''
+#         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+#         algorithm_class_name = 'PPO'
+#         policy_class_name = 'ActorCritic'
+#         max_iterations = 50_000 # number of policy updates
+
+#         # amp_reward_coef = 2
+#         # amp_num_preload_transitions = 2000000
+#         # amp_task_reward_lerp = 0.3
+#         # amp_discr_hidden_dims = [1024, 512]
+
+#         # min_normalized_std = [0.01, 0.01, 0.01] * 4
