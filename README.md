@@ -38,6 +38,9 @@ Spatial-Temporal Motion Retargeting
 5. run deploy script
 `python go1_gym_deploy/scripts/deploy_policy.py`
 
+### Pretrained model ###
+https://www.notion.so/Real-World-be9b4a2e91b34d689f4a4de1932b5e53
+
 ### License ###
 This repository and its code are referred from
 1. https://github.com/Alescontrela/AMP_for_hardware
