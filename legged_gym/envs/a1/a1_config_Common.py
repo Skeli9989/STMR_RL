@@ -178,7 +178,7 @@ class A1_CfgPPO( LeggedRobotCfgPPO ):
         run_name = ''
         algorithm_class_name = 'PPO'
         policy_class_name = 'ActorCritic'
-        max_iterations = 50_000 # number of policy updates
+        max_iterations = 10_000 # number of policy updates
 
         # amp_reward_coef = 2.0
         # amp_num_preload_transitions = 2000000

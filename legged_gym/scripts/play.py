@@ -74,7 +74,7 @@ def play(args):
     # export policy as a jit module (used to run it from C++)
     if EXPORT_POLICY:
         path = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'policies')
-        export_policy_as_jit(ppo_runner.alg.actor_critic, path)
+        export_policy_as_jit(ppo_runner.alg.actor_critic, path, name = args.task+'.pt')
         print('Exported policy as jit script to: ', path)
 
     env.reset(random_time=False)
@@ -83,6 +83,7 @@ def play(args):
     # env.default_dof_pos[:] = torch.tensor([
     #     0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8
     # ])
+    actions_ls = []
     for repeat_n in range(100):
         for i in range(int(env.max_episode_length)):
             # env.reset()
@@ -93,6 +94,7 @@ def play(args):
             #     obs = env.get_observations()
             #     # env.reset(random_time=True)
             actions = policy(obs.detach())
+            actions_ls.append(actions.detach().cpu().numpy().flatten())
             # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
             # actions = policy(obs.detach())
             # env.default_dof_pos[:] = torch.tensor([
@@ -103,9 +105,14 @@ def play(args):
             # actions = torch.zeros_like(actions)
             
             # contact_info = env.gym.get_rigid_contacts(env.sim)     
-            # contact_info = env.gym.get_env_rigid_contacts(env.envs[0])       
+            # contact_info = env.gym.get_env_rigid_contacts(env.envs[0])
+            # actions = torch.zeros_like(actions)       
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=True)
-            
+            if dones.any():
+                # from matplotlib import pyplot as plt
+                # plt.plot(actions_ls)
+                # plt.show()
+                actions_ls =[]
             # env.root_states[0][0] += 0.01
             # env_ids_int32 = torch.tensor([0]).to(dtype=torch.int32)
             # env.gym.set_actor_root_state_tensor_indexed(env.sim,
@@ -123,5 +130,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "al_STMR_hopturn"
+    # args.task = "go1_SMR_go1trot"
     play(args)

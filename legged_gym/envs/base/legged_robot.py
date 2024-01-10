@@ -322,17 +322,34 @@ class LeggedRobot(BaseTask):
         #     self.commands[:, 1] = lin_vel_y
         #     self.commands[:, 2] = ang_vel
 
-        self.privileged_obs_buf = torch.cat((   
-            self.base_lin_vel * self.obs_scales.lin_vel,
-            self.base_ang_vel  * self.obs_scales.ang_vel,
-            self.projected_gravity,
-            # self.commands[:, :3] * self.commands_scale,
-            (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
-            self.dof_vel * self.obs_scales.dof_vel,
-            self.deploy_actions,
-            # self.actions, 
-            torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
-            ),dim=-1)
+        if self.cfg.env.num_observations == 40:
+            self.privileged_obs_buf = torch.cat((   
+                self.base_lin_vel * self.obs_scales.lin_vel,
+                self.base_ang_vel  * self.obs_scales.ang_vel,
+                self.projected_gravity,
+                # self.commands[:, :3] * self.commands_scale,
+                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
+                self.dof_vel * self.obs_scales.dof_vel,
+                self.deploy_actions,
+                # self.actions, 
+                torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+                ),dim=-1)
+        elif self.cfg.env.num_observations == 41:
+            self.privileged_obs_buf = torch.cat((   
+                self.base_lin_vel * self.obs_scales.lin_vel,
+                self.base_ang_vel  * self.obs_scales.ang_vel,
+                self.projected_gravity,
+                # self.commands[:, :3] * self.commands_scale,
+                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
+                self.dof_vel * self.obs_scales.dof_vel,
+                self.deploy_actions,
+                # self.actions, 
+                torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+                self.root_states[:,2].reshape(-1,1),
+                ),dim=-1)
+        else:
+            raise ValueError("Number of observations not supported")
+        
         # add perceptive inputs if not blind
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
@@ -643,8 +660,8 @@ class LeggedRobot(BaseTask):
         self.root_states[env_ids, :3] = root_pos
         root_orn = AMPLoader.get_root_rot_batch(frames)
         self.root_states[env_ids, 3:7] = root_orn
-        self.root_states[env_ids, 7:10] = quat_rotate(root_orn, AMPLoader.get_linear_vel_batch(frames))
-        self.root_states[env_ids, 10:13] = quat_rotate(root_orn, AMPLoader.get_angular_vel_batch(frames))
+        self.root_states[env_ids, 7:10] = quat_rotate(root_orn, torch.zeros_like(AMPLoader.get_linear_vel_batch(frames)))
+        self.root_states[env_ids, 10:13] = quat_rotate(root_orn, torch.zeros_like(AMPLoader.get_angular_vel_batch(frames)))
 
         env_ids_int32 = env_ids.to(dtype=torch.int32)
         self.gym.set_actor_root_state_tensor_indexed(self.sim,
@@ -715,8 +732,10 @@ class LeggedRobot(BaseTask):
         noise_vec[24-3:36-3] = noise_scales.dof_vel * noise_level * self.obs_scales.dof_vel
         noise_vec[36-3:48-3] = 0. # previous actions
         noise_vec[48-3]    = self.dt
-        if self.cfg.terrain.measure_heights:
-            noise_vec[48-3:235-3] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
+        if self.cfg.env.num_observations != 40:
+            noise_vec[49-3] = noise_scales.height_measurements * noise_level
+        # if self.cfg.terrain.measure_heights:
+            # noise_vec[48-3:235-3] = noise_scales.height_measurements* noise_level * self.obs_scales.height_measurements
         return noise_vec
 
     #----------------------------------------
