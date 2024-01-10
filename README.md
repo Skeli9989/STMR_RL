@@ -16,9 +16,9 @@ Spatial-Temporal Motion Retargeting
 ### Usage in simulation ###
 1. Train:
     `python legged_gym/scripts/train.py --task={ROBOT}_{MR}_{MOTION}`
-    -  ROBOT: go1, a1, al (i.e. aliengo)
+    -  ROBOT: go1, go1base, a1, al (i.e. aliengo)
     -  MR: NMR, SMR, TMR, STMR, TO
-    -  MOTION: trot0, trot1, pace0, pace1, hopturn, sidesteps, videowalk0, videowalk1
+    -  MOTION: trot0, trot1, go1trot, pace0, pace1, hopturn, sidesteps, videowalk0, videowalk1
 2. Play target motion:
 `python legged_gym/scripts/play_target_motion.py --task={ROBOT}_{MR}_{MOTION}`
 3. Play policy
