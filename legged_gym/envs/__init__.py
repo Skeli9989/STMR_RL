@@ -175,6 +175,43 @@ def get_STMR_cfg(ROBOT,MOTION):
 
     return Cfg, CfgPPO
 
+def get_TO_cfg(ROBOT,MOTION):
+    MR = "TO"
+    common_cfg, common_cfgppo = common_config_dict[ROBOT.lower()]
+    if "base" in ROBOT:
+        raw_robot_name = ROBOT.split("base")[0]
+    else:
+        raw_robot_name = ROBOT
+    class Cfg(common_cfg):
+        class env(common_cfg.env):
+            amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+        
+        class rewards(common_cfg.rewards):
+            class scales(common_cfg.rewards.scales):
+                pos_motion     = 150/5
+                ang_motion     = 150/5
+                dof_pos_motion = 150
+
+                dof_vel_motion = 50
+                lin_vel_motion = 50/5
+                ang_vel_motion = 50/5
+                
+                # pos_motion     = 30
+                # ang_motion     = 30
+                # dof_pos_motion = 30
+
+                # dof_vel_motion = 2
+                # lin_vel_motion = 2
+                # ang_vel_motion = 2
+
+
+    class CfgPPO( common_cfgppo ):
+        class runner( common_cfgppo.runner ):
+            experiment_name = f"STMR/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+            amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+
+    return Cfg, CfgPPO
+
 
 import os
 from legged_gym.utils.task_registry import task_registry
@@ -195,6 +232,8 @@ def register_tasks(task):
         Cfg, CfgPPO = get_TMR_cfg(ROBOT, MOTION)
     elif MR == "STMR":
         Cfg, CfgPPO = get_STMR_cfg(ROBOT, MOTION)
+    elif MR == "TO":
+        Cfg, CfgPPO = get_TO_cfg(ROBOT, MOTION)
     else:
         print(f"Unknow task: {task}")
         raise NotImplementedError    
