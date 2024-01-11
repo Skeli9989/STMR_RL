@@ -64,3 +64,4 @@ image_*.png
 unused/*
 logs*/*
 *.zip
+checklist/*

@@ -40,7 +40,7 @@ for MR in MRs:
     # Save the image
     plt.title(f'{MR}_Motion_checklist', fontsize=16, pad=20)
     plt.savefig(f'checklist/{MR}_Motion_checklist.png', bbox_inches='tight', pad_inches=0.05)
-    plt.show()
+    # plt.show()
 
 # %%
 # RL checklist
