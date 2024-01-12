@@ -43,7 +43,7 @@ class A1_Cfg( LeggedRobotCfg ):
         include_history_steps = None  # Number of steps of history to include.
         num_observations = 40
         num_privileged_obs = 46
-        reference_state_initialization = False
+        reference_state_initialization = True
         reference_state_initialization_prob = 0.85
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
         get_commands_from_joystick = False
@@ -51,21 +51,21 @@ class A1_Cfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.26] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'leg0_FL_a_hip_joint': 0.0,   # [rad]
-            'leg0_FL_c_thigh_joint': 0.9,     # [rad]
-            'leg0_FL_d_calf_joint': -1.8,   # [rad]
+            'FL_hip_joint': 0.0,   # [rad]
+            'FL_thigh_joint': 0.9,     # [rad]
+            'FL_calf_joint': -1.8,   # [rad]
 
-            'leg1_FR_a_hip_joint': 0.0,  # [rad]
-            'leg1_FR_c_thigh_joint': 0.9,     # [rad]
-            'leg1_FR_d_calf_joint': -1.8,  # [rad]
+            'FR_hip_joint': 0.0,  # [rad]
+            'FR_thigh_joint': 0.9,     # [rad]
+            'FR_calf_joint': -1.8,  # [rad]
 
-            'leg2_RL_a_hip_joint': 0.0,   # [rad]
-            'leg2_RL_c_thigh_joint': 0.9,   # [rad]
-            'leg2_RL_d_calf_joint': -1.8,    # [rad]
+            'RL_hip_joint': 0.0,   # [rad]
+            'RL_thigh_joint': 0.9,   # [rad]
+            'RL_calf_joint': -1.8,    # [rad]
             
-            'leg3_RR_a_hip_joint': -0.0,   # [rad]
-            'leg3_RR_c_thigh_joint': 0.9,   # [rad]
-            'leg3_RR_d_calf_joint': -1.8,    # [rad]
+            'RR_hip_joint': -0.0,   # [rad]
+            'RR_thigh_joint': 0.9,   # [rad]
+            'RR_calf_joint': -1.8,    # [rad]
         }
 
 
@@ -73,7 +73,7 @@ class A1_Cfg( LeggedRobotCfg ):
         # PD Drive parameters:
         control_type = 'P'
         stiffness = {'joint': 30.}  # [N*m/rad]
-        damping = {'joint': 1.0}     # [N*m*s/rad]
+        damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -82,6 +82,8 @@ class A1_Cfg( LeggedRobotCfg ):
     class terrain( LeggedRobotCfg.terrain ):
         mesh_type = 'plane'
         measure_heights = False
+        curriculum = False
+        restitution = 0.5
 
     class asset( LeggedRobotCfg.asset ):
         file = f'{LEGGED_GYM_ROOT_DIR}/resources/robots/{ROBOT}/urdf/{ROBOT}.urdf'
@@ -93,16 +95,22 @@ class A1_Cfg( LeggedRobotCfg ):
         self_collisions = 0 # 1 to disable, 0 to enable...bitwise filter
 
     class domain_rand:
+        test_time = False
         randomize_friction = True
-        friction_range = [0.25, 1.75]
         randomize_base_mass = True
-        added_mass_range = [-1., 1.]
-        push_robots = True
-        push_interval_s = 15
-        max_push_vel_xy = 1.0
         randomize_gains = True
+        push_robots = False
+        randomize_restitution = True
+        randomize_com_displacement = False
+        
+        friction_range = [0.75, 1.00]
+        added_mass_range = [-1.0, 1.0]
         stiffness_multiplier_range = [0.9, 1.1]
         damping_multiplier_range = [0.9, 1.1]
+        push_interval_s = 0.1
+        max_push_vel_xy = 0.001
+        restitution_range = [0., 0.5]
+        com_displacement_range = [-0.1, 0.1]
 
     class noise:
         add_noise = True
@@ -117,15 +125,19 @@ class A1_Cfg( LeggedRobotCfg ):
 
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
+        soft_dof_vel_limit = 1.
+        soft_torque_limit = 1.
+        base_height_target = 1.
+        max_contact_force = 100. # forces above this value are penalized
         base_height_target = 0.25
         class scales( LeggedRobotCfg.rewards.scales ):
-            pos_motion     = 150 * 3
-            ang_motion     = 150 * 3
-            # dof_pos_motion = 2
+            pos_motion     = 150
+            ang_motion     = 150
+            dof_pos_motion = 150
 
-            # dof_vel_motion = 1e-2
-            # lin_vel_motion = 4
-            # ang_vel_motion = 1
+            dof_vel_motion = 50
+            lin_vel_motion = 50
+            ang_vel_motion = 50
 
             termination = 0.0
             tracking_lin_vel = 0  
@@ -133,16 +145,16 @@ class A1_Cfg( LeggedRobotCfg ):
             lin_vel_z = 0.0      # penalize vertical velocity           
             ang_vel_xy = 0.0     # penalize horizontal angular velocity
             orientation = 0.0    # penalize orientation error            
-            torques = -0.02     # penalize torques                        
-            # dof_vel = -0.005         # penalize joint velocities               
-            # dof_acc = -0.001        # penalize joint accelerations               
+            torques = -0.0010     # penalize torques                        
+            dof_vel = -0.0010        # penalize joint velocities               
+            dof_acc = 0.0        # penalize joint accelerations               
             base_height = 0.0    # penalize base height                               
             feet_air_time =  0.0 # penalize feet air time                          
             collision = 0.0      # penalize collisions                   
             feet_stumble = 0.0   # penalize feet stumble                    
             action_rate = 0.0    # penalize change in action                 
             stand_still = 0.0    # penalize standing still                     
-            dof_pos_limits = 0.0 # penalize joint position limits             
+            dof_pos_limits = 0.0 # penalize joint position limits               
             
     class commands:
         curriculum = False
@@ -156,35 +168,27 @@ class A1_Cfg( LeggedRobotCfg ):
             ang_vel_yaw = [0, 0]    # min max [rad/s]
             heading = [0, 0]
             
-    class normalization:
-        class obs_scales:
-            lin_vel = 2.0
-            ang_vel = 0.25
-            dof_pos = 1.0
-            dof_vel = 0.05
-            height_measurements = 5.0
-        clip_observations = 100.
-        clip_actions = 1.
 
 class A1_CfgPPO( LeggedRobotCfgPPO ):
-    runner_class_name = 'OnPolicyRunner'
+    runner_class_name = 'AMPOnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
-        # amp_replay_buffer_size = 1000000
+        amp_replay_buffer_size = 1000000
         num_learning_epochs = 5
         num_mini_batches = 4
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        algorithm_class_name = 'PPO'
+        # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+        algorithm_class_name = 'AMPPPO'
         policy_class_name = 'ActorCritic'
         max_iterations = 10_000 # number of policy updates
 
-        # amp_reward_coef = 2.0
-        # amp_num_preload_transitions = 2000000
-        # amp_task_reward_lerp = 0.3
-        # amp_discr_hidden_dims = [1024, 512]
+        amp_reward_coef = 2
+        # amp_motion_files = MOTION_FILES
+        amp_num_preload_transitions = 2000000
+        amp_task_reward_lerp = 0.3
+        amp_discr_hidden_dims = [1024, 512]
 
-        # min_normalized_std = [0.01, 0.01, 0.01] * 4
-
-
+        min_normalized_std = [0.01, 0.01, 0.01] * 4
+        # resume = True
