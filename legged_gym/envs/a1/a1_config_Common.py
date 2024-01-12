@@ -41,9 +41,9 @@ class A1_Cfg( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
         include_history_steps = None  # Number of steps of history to include.
-        num_observations = 41
-        num_privileged_obs = 47
-        reference_state_initialization = False
+        num_observations = 40
+        num_privileged_obs = 46
+        reference_state_initialization = True
         reference_state_initialization_prob = 0.85
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
         get_commands_from_joystick = False
@@ -51,21 +51,21 @@ class A1_Cfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.26] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
-            'leg0_FL_a_hip_joint': 0.0,   # [rad]
-            'leg0_FL_c_thigh_joint': 0.9,     # [rad]
-            'leg0_FL_d_calf_joint': -1.8,   # [rad]
+            'FL_hip_joint': 0.0,   # [rad]
+            'FL_thigh_joint': 0.9,     # [rad]
+            'FL_calf_joint': -1.8,   # [rad]
 
-            'leg1_FR_a_hip_joint': 0.0,  # [rad]
-            'leg1_FR_c_thigh_joint': 0.9,     # [rad]
-            'leg1_FR_d_calf_joint': -1.8,  # [rad]
+            'FR_hip_joint': 0.0,  # [rad]
+            'FR_thigh_joint': 0.9,     # [rad]
+            'FR_calf_joint': -1.8,  # [rad]
 
-            'leg2_RL_a_hip_joint': 0.0,   # [rad]
-            'leg2_RL_c_thigh_joint': 0.9,   # [rad]
-            'leg2_RL_d_calf_joint': -1.8,    # [rad]
+            'RL_hip_joint': 0.0,   # [rad]
+            'RL_thigh_joint': 0.9,   # [rad]
+            'RL_calf_joint': -1.8,    # [rad]
             
-            'leg3_RR_a_hip_joint': -0.0,   # [rad]
-            'leg3_RR_c_thigh_joint': 0.9,   # [rad]
-            'leg3_RR_d_calf_joint': -1.8,    # [rad]
+            'RR_hip_joint': -0.0,   # [rad]
+            'RR_thigh_joint': 0.9,   # [rad]
+            'RR_calf_joint': -1.8,    # [rad]
         }
 
 
@@ -73,7 +73,7 @@ class A1_Cfg( LeggedRobotCfg ):
         # PD Drive parameters:
         control_type = 'P'
         stiffness = {'joint': 30.}  # [N*m/rad]
-        damping = {'joint': 1.0}     # [N*m*s/rad]
+        damping = {'joint': 0.5}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -170,7 +170,7 @@ class A1_Cfg( LeggedRobotCfg ):
             
 
 class A1_CfgPPO( LeggedRobotCfgPPO ):
-    runner_class_name = 'OnPolicyRunner'
+    runner_class_name = 'AMPOnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
         amp_replay_buffer_size = 1000000
@@ -191,4 +191,4 @@ class A1_CfgPPO( LeggedRobotCfgPPO ):
         amp_discr_hidden_dims = [1024, 512]
 
         min_normalized_std = [0.01, 0.01, 0.01] * 4
-
+        # resume = True
