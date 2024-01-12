@@ -76,7 +76,7 @@ def play(args):
         load_run = f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}/{args.load_run}"
     
     from pathlib import Path
-    GET_ALL = False
+    GET_ALL = True
     if GET_ALL:
         models = [file for file in os.listdir(load_run) if 'model' in file]
         models.sort(key=lambda m: '{0:0>15}'.format(m))
@@ -134,6 +134,6 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1base_STMR_hopturn"
+    # args.task = "go1base_STMR_hopturn"
     # args.task = "a1_amp"
     play(args)

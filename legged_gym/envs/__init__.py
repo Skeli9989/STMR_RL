@@ -48,11 +48,15 @@ from legged_gym.envs.al.al_config_Common import Al_CfgPPO
 from legged_gym.envs.go1base.go1base_config_Common import Go1_Cfg as Gobase_Cfg
 from legged_gym.envs.go1base.go1base_config_Common import Go1_CfgPPO as Gobase_CfgPPO
 
+from legged_gym.envs.a1base.a1base_config_Common import A1_Cfg as A1base_Cfg
+from legged_gym.envs.a1base.a1base_config_Common import A1_CfgPPO as A1base_CfgPPO
+
 common_config_dict = {
     "go1": (Go1_Cfg, Go1_CfgPPO),
     "a1": (A1_Cfg, A1_CfgPPO),
     "al": (Al_Cfg, Al_CfgPPO),
     "go1base": (Gobase_Cfg, Gobase_CfgPPO),
+    "a1base": (A1base_Cfg, A1base_CfgPPO),
 }
 
 def get_NMR_cfg(ROBOT, MOTION):

@@ -36,4 +36,9 @@ for motion_path in (unzip_path/"logs"/"STMR").iterdir():
 # %%
 # remove unzip_path
 shutil.rmtree(unzip_path)
+# remove zip_path
+zip_path.unlink()
 
+# %%
+from checklist import main
+main()
