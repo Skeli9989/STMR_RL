@@ -42,6 +42,8 @@ from isaacgym import gymtorch, gymapi, gymutil
 from rsl_rl.datasets.motion_loader import AMPLoader
 
 def play(args):
+    register_tasks(args.task)
+
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
@@ -64,9 +66,6 @@ def play(args):
 
     env.reset(random_time=False)
     
-    from pathlib import Path
-    save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/performance.json"
-
     if args.load_run is None:
         root= f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}"
         runs = os.listdir(root)
@@ -76,9 +75,16 @@ def play(args):
     else:
         load_run = f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}/{args.load_run}"
     
-    models = [file for file in os.listdir(load_run) if 'model' in file]
-    models.sort(key=lambda m: '{0:0>15}'.format(m))
-    
+    from pathlib import Path
+    GET_ALL = False
+    if GET_ALL:
+        models = [file for file in os.listdir(load_run) if 'model' in file]
+        models.sort(key=lambda m: '{0:0>15}'.format(m))
+        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/performance_all.json"
+    else:
+        models = ["model_10000.pt"]
+        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/performance_1k.json"
+
     res_dict = {}
     for model in models:
         iternum = str.split(str.split(model,"_")[1], ".pt")[0]
@@ -128,6 +134,6 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
-    args.task = "go1_TMR_AMP"
+    args.task = "go1base_STMR_hopturn"
     # args.task = "a1_amp"
     play(args)
