@@ -72,8 +72,13 @@ def get_NMR_cfg(ROBOT, MOTION):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                pos_motion     = 150
-                ang_motion     = 150
+                pos_motion     = 150/5
+                ang_motion     = 150/5
+                dof_pos_motion = 150
+                
+                dof_vel_motion = 50
+                lin_vel_motion = 50/5
+                ang_vel_motion = 50/5
 
     class CfgPPO( common_cfgppo ):
         class runner( common_cfgppo.runner ):
@@ -96,13 +101,13 @@ def get_SMR_cfg(ROBOT, MOTION):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                pos_motion     = 150/5
-                ang_motion     = 150/5
-                dof_pos_motion = 150
+                dof_pos_motion = 50
+                pos_motion     = 50/5
+                ang_motion     = 50
 
                 dof_vel_motion = 50
                 lin_vel_motion = 50/5
-                ang_vel_motion = 50/5
+                ang_vel_motion = 50
 
 
     class CfgPPO( common_cfgppo ):
@@ -125,13 +130,13 @@ def get_TMR_cfg(ROBOT,MOTION):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                pos_motion     = 150/5
-                ang_motion     = 150/5
-                dof_pos_motion = 150
+                dof_pos_motion = 50
+                pos_motion     = 50/5
+                ang_motion     = 50
 
                 dof_vel_motion = 50
                 lin_vel_motion = 50/5
-                ang_vel_motion = 50/5
+                ang_vel_motion = 50
 
 
     class CfgPPO( common_cfgppo ):
@@ -155,14 +160,14 @@ def get_STMR_cfg(ROBOT,MOTION):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                pos_motion     = 150/5
-                ang_motion     = 150/5
-                dof_pos_motion = 150
+                dof_pos_motion = 50
+                pos_motion     = 50/5
+                ang_motion     = 50
 
                 dof_vel_motion = 50
                 lin_vel_motion = 50/5
-                ang_vel_motion = 50/5
-                
+                ang_vel_motion = 50
+
                 # pos_motion     = 30
                 # ang_motion     = 30
                 # dof_pos_motion = 30
@@ -192,13 +197,13 @@ def get_TO_cfg(ROBOT,MOTION):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                pos_motion     = 150/5
-                ang_motion     = 150/5
-                dof_pos_motion = 150
+                dof_pos_motion = 50
+                pos_motion     = 50/5
+                ang_motion     = 50
 
                 dof_vel_motion = 50
                 lin_vel_motion = 50/5
-                ang_vel_motion = 50/5
+                ang_vel_motion = 50
                 
                 # pos_motion     = 30
                 # ang_motion     = 30

@@ -1,7 +1,0 @@
-{
-    "10000": {
-        "joint_tracking_error": 0.09777544128251667,
-        "position_tracking_error": 0.0013141386147219477,
-        "orientation_tracking_error": 0.025326548319942545
-    }
-}

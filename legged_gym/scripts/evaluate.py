@@ -80,12 +80,12 @@ def play(args):
     if GET_ALL:
         models = [file for file in os.listdir(load_run) if 'model' in file]
         models.sort(key=lambda m: '{0:0>15}'.format(m))
-        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/performance_all.json"
+        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_all.json"
     else:
         models = ["model_10000.pt"]
-        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/performance_1k.json"
+        save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_1k.json"
 
-    res_dict = {}
+    res_dict = {"target":[], "deploy":[]}
     for model in models:
         iternum = str.split(str.split(model,"_")[1], ".pt")[0]
         train_cfg.runner.checkpoint = int(iternum)
@@ -94,14 +94,16 @@ def play(args):
         ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
         policy = ppo_runner.get_inference_policy(device=env.device)
 
-        res_dict_ = dict(
-            joint_tracking_error = [],
-            position_tracking_error = [],
-            orientation_tracking_error = []
-        )
+        # res_dict_ = dict(
+        #     joint_tracking_error = [],
+        #     position_tracking_error = [],
+        #     orientation_tracking_error = []
+        # )
         
+        target_ls = []
+        deploy_ls = []
         env.reset(random_time=False)
-        while env.times <= env.amp_loader.trajectory_lens[0] - env.dt:
+        while env.times < env.amp_loader.trajectory_lens[0] - env.amp_loader.trajectory_frame_durations[0]:
             actions = policy(obs.detach())
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
         
@@ -111,29 +113,46 @@ def play(args):
             frames = frames.to(env.device)
             
             dof_pos = AMPLoader.get_joint_pose_batch(frames)
-            dof_pos_error = torch.sum(torch.square(dof_pos - env.dof_pos))
-            res_dict_["joint_tracking_error"].append(dof_pos_error.detach().cpu().tolist())
+            
+            # dof_pos_error = torch.sum(torch.square(dof_pos - env.dof_pos))
+            # res_dict_["joint_tracking_error"].append(dof_pos_error.detach().cpu().tolist())
             
             root_pos = AMPLoader.get_root_pos_batch(frames)
             root_pos[:,:2] += env.env_origins[:, :2]
-            root_pos_error = torch.sum(torch.square(root_pos - env.root_states[:, 0:3]))
-            res_dict_["position_tracking_error"].append(root_pos_error.detach().cpu().tolist())
+
+            # root_pos_error = torch.sum(torch.square(root_pos - env.root_states[:, 0:3]))
+            # res_dict_["position_tracking_error"].append(root_pos_error.detach().cpu().tolist())
 
             root_rot = AMPLoader.get_root_rot_batch(frames)
             root_rot_cur= env.root_states[:,3:7]
 
-            inner_product = torch.sum(root_rot_cur * root_rot)
-            ang_error =  1 - inner_product ** 2
-            res_dict_["orientation_tracking_error"].append(ang_error.detach().cpu().tolist())
+            # inner_product = torch.sum(root_rot_cur * root_rot)
+            # ang_error =  1 - inner_product ** 2
+            # res_dict_["orientation_tracking_error"].append(ang_error.detach().cpu().tolist())
 
-        for key,value in res_dict_.items():
-            res_dict_[key] = np.mean(value)
-        res_dict[iternum] = res_dict_
+
+            def cast_numpy(tensor):
+                return tensor.detach().cpu().numpy().copy().flatten()
+            
+            target = np.concatenate([cast_numpy(root_pos), cast_numpy(root_rot), cast_numpy(dof_pos)])
+            deploy = np.concatenate([cast_numpy(env.root_states[:, 0:3]), cast_numpy(env.root_states[:, 3:7]), cast_numpy(env.dof_pos)])
+
+            # res_dict["target"].append(target.tolist())
+            # res_dict["deploy"].append(deploy.tolist())
+            target_ls.append(target.tolist())
+            deploy_ls.append(deploy.tolist())
+
+
+        # for key,value in res_dict_.items():
+            # res_dict_[key] = np.mean(value)
+        # res_dict[iternum] = res_dict_
+        res_dict["target"].append(target_ls)
+        res_dict["deploy"].append(deploy_ls)
         from toolbox.write import write_json
         write_json(save_path, res_dict)
 
 if __name__ == '__main__':
     args = get_args()
-    # args.task = "go1base_STMR_hopturn"
+    # args.task = "go1base_TO_hopturn"
     # args.task = "a1_amp"
     play(args)
