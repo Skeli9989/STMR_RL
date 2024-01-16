@@ -61,7 +61,7 @@ amp_cfg_dict = {
 def get_cfg(ROBOT, MOTION, MR):
     if MR in ["NMR", "SMR", "TMR", "STMR"]:
         common_cfg, common_cfgppo = ppo_cfg_dict[ROBOT.lower()]
-    elif MR in ["AMP", "AMPNO"]: 
+    elif MR in ["AMP", "AMPNO", "AMPNONO"]: 
         common_cfg, common_cfgppo = amp_cfg_dict[ROBOT.lower()]
     else:
         raise ValueError(f"MR {MR} not supported")    
@@ -76,13 +76,13 @@ def get_cfg(ROBOT, MOTION, MR):
         
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                dof_pos_motion = 150
+                dof_pos_motion = 150/5
                 pos_motion     = 150/5
                 ang_motion     = 150/5
     
-                dof_vel_motion = dof_pos_motion/10
-                lin_vel_motion = pos_motion/10
-                ang_vel_motion = ang_motion/10
+                dof_vel_motion = dof_pos_motion* 0
+                lin_vel_motion = pos_motion    * 0
+                ang_vel_motion = ang_motion    * 0
 
     class CfgPPO( common_cfgppo ):
         class runner( common_cfgppo.runner ):
@@ -93,10 +93,9 @@ def get_cfg(ROBOT, MOTION, MR):
         MR = "NMR"
         Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
         CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
-    elif MR == "AMPNO":
-        MR = "NMR"
-        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
-        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+    elif MR in ["AMPNO", "AMPNONO"]:
+        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
+        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
         
         Cfg.rewards.scales.dof_pos_motion = 0
         Cfg.rewards.scales.pos_motion     = 0
@@ -105,7 +104,8 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.rewards.scales.dof_vel_motion = 0
         Cfg.rewards.scales.lin_vel_motion = 0
         Cfg.rewards.scales.ang_vel_motion = 0
-        
+    
+    Cfg.MR = MR
     return Cfg, CfgPPO
 
 import os
@@ -118,7 +118,7 @@ def register_tasks(task):
     
     register_name = f"{ROBOT.lower()}_{MR}_{MOTION}"
 
-    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO"]:
+    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO"]:
         Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR)
     else:
         raise ValueError(f"MR {MR} not supported")

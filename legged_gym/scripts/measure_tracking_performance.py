@@ -1,6 +1,6 @@
 # %%
 ROBOT = "go1".lower()
-MOTION = 'hopturn'
+MOTION = 'hopturnslow'
 
 error_dict = {}
 
@@ -49,8 +49,8 @@ from mjpc.task.Quadruped.info import QuadrupedMPCInfo as MPCInfo
 mpc_info = MPCInfo(model, data)
 
 # %%
-# MR = "NMR"
-MR = "STMR"
+MR = "NMR"
+# MR = "STMR"
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
 # load motion
@@ -116,23 +116,26 @@ for model_i in range(model_number):
     target_site_ls = []
     deploy_site_ls = []
     for frame_i in range(frame_number):
-        target_qpos = target_qpos_array[frame_i]
-        deploy_qpos = deploy_qpos_array[frame_i]
 
-        data.qpos[:] = target_qpos
-        mujoco.mj_forward(model, data)
-        for site_i in site_ids:
-            target_site_ls.append(data.site_xpos[site_i].copy())
-        # viewer.render()
+        for _ in range(2):
+            target_qpos = target_qpos_array[frame_i]
+            deploy_qpos = deploy_qpos_array[frame_i]
 
-        plot_skeleton(model, data, mpc_info, viewer, rgba = [1,0,0,0.5])
+            data.qpos[:] = target_qpos
+            mujoco.mj_forward(model, data)
+            for site_i in site_ids:
+                target_site_ls.append(data.site_xpos[site_i].copy())
+            # viewer.render()
 
-        data.qpos[:] = deploy_qpos
-        mujoco.mj_forward(model, data)
-        for site_i in site_ids:
-            deploy_site_ls.append(data.site_xpos[site_i].copy())
-        if frame_i%1 == 0:
-            viewer.render()    
+            if frame_i%1 == 0:
+                plot_skeleton(model, data, mpc_info, viewer, rgba = [1,0,0,0.5])
+
+            data.qpos[:] = deploy_qpos
+            mujoco.mj_forward(model, data)
+            for site_i in site_ids:
+                deploy_site_ls.append(data.site_xpos[site_i].copy())
+            if frame_i%1 == 0:
+                viewer.render()    
 
     key_point_error = np.mean(np.abs(np.array(target_site_ls) - np.array(deploy_site_ls)))
     key_point_error_ls.append(key_point_error)

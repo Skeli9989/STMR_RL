@@ -47,10 +47,10 @@ if __name__ == '__main__':
     args = get_args()
     
     DEBUG = False
-    # DEBUG = True
+    DEBUG = True
     args.headless = True
     if DEBUG:
-        args.task = "a1base_STMR_hopturn"
+        args.task = "go1base_AMPNONO_hopturnslow"
         for _ in range(100):
             print('WARNING: DEBUG MODE')
         
