@@ -58,11 +58,14 @@ amp_cfg_dict = {
     "a1base": (A1base_Cfg, A1base_CfgAMPPPO),
 }
 
-def get_cfg(ROBOT, MOTION, MR, PPO):
-    if PPO:
+def get_cfg(ROBOT, MOTION, MR):
+    if MR in ["NMR", "SMR", "TMR", "STMR"]:
         common_cfg, common_cfgppo = ppo_cfg_dict[ROBOT.lower()]
-    else:
+    elif MR in ["AMP", "AMPNO"]: 
         common_cfg, common_cfgppo = amp_cfg_dict[ROBOT.lower()]
+    else:
+        raise ValueError(f"MR {MR} not supported")    
+
     if "base" in ROBOT:
         raw_robot_name = ROBOT.split("base")[0]
     else:
@@ -86,13 +89,23 @@ def get_cfg(ROBOT, MOTION, MR, PPO):
             experiment_name = f"STMR/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
             amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
 
-    if not PPO:
-        # Cfg.rewards.scales.dof_vel_motion = 0
-        # Cfg.rewards.scales.lin_vel_motion = 0
-        # Cfg.rewards.scales.ang_vel_motion = 0
+    if MR == 'AMP':
         MR = "NMR"
         Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
         CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+    elif MR == "AMPNO":
+        MR = "NMR"
+        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+        
+        Cfg.rewards.scales.dof_pos_motion = 0
+        Cfg.rewards.scales.pos_motion     = 0
+        Cfg.rewards.scales.ang_motion     = 0
+
+        Cfg.rewards.scales.dof_vel_motion = 0
+        Cfg.rewards.scales.lin_vel_motion = 0
+        Cfg.rewards.scales.ang_vel_motion = 0
+        
     return Cfg, CfgPPO
 
 import os
@@ -105,11 +118,9 @@ def register_tasks(task):
     
     register_name = f"{ROBOT.lower()}_{MR}_{MOTION}"
 
-    if MR in ["NMR", "SMR", "TMR", "STMR"]:
-        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR, PPO= True)
-    elif MR in ["AMP"]:
-        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR, PPO= False)
+    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO"]:
+        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR)
     else:
-        raise NotImplementedError("AMP not supported yet")
+        raise ValueError(f"MR {MR} not supported")
     
     task_registry.register(register_name, LeggedRobot, Cfg, CfgPPO)
