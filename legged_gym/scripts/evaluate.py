@@ -76,13 +76,14 @@ def play(args):
         load_run = f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}/{args.load_run}"
     
     from pathlib import Path
-    GET_ALL = True
+    GET_ALL = False
+    
+    models = [file for file in os.listdir(load_run) if 'model' in file]
+    models.sort(key=lambda m: '{0:0>15}'.format(m))
     if GET_ALL:
-        models = [file for file in os.listdir(load_run) if 'model' in file]
-        models.sort(key=lambda m: '{0:0>15}'.format(m))
         save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_all.json"
     else:
-        models = ["model_10000.pt"]
+        models = [models[-1]]
         save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_1k.json"
 
     res_dict = {"target":[], "deploy":[]}

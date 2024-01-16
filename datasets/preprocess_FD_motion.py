@@ -22,15 +22,15 @@ from datasets.retarget_utils import *
 import numpy as np
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
-ROBOT = "a1"
+ROBOT = "go1"
 ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
-MOTIONS = ['go1trot']
+MOTIONS = ['hopturnslow']
 # MOTIONS = ['hopturn']
 
 for MOTION in MOTIONS:
   MR_LS = ['NMR', "TMR", "SMR","STMR"]
-  MR_LS = ["NMR"]
+  MR_LS = ["STMR"]
   # MR_LS = ["NMR"]
 
   for MR in MR_LS:
@@ -305,6 +305,12 @@ for MOTION in MOTIONS:
         toe_velocity = np.array(
             get_tar_toe_pos_local(next_pose) -
             get_tar_toe_pos_local(curr_pose)) / time_between_frames
+
+        if f==0:
+          del_linear_vel = np.zeros_like(del_linear_vel)
+          del_angular_vel = np.zeros_like(del_angular_vel)
+          joint_velocity = np.zeros_like(joint_velocity)
+          toe_velocity = np.zeros_like(toe_velocity)
 
         curr_pose = np.concatenate([
             curr_pose, del_linear_vel, del_angular_vel, joint_velocity, toe_velocity

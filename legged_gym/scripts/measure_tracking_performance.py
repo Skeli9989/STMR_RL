@@ -49,14 +49,23 @@ from mjpc.task.Quadruped.info import QuadrupedMPCInfo as MPCInfo
 mpc_info = MPCInfo(model, data)
 
 # %%
-MR = "NMR"
-# MR = "STMR"
+# MR = "NMR"
+MR = "STMR"
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
 # load motion
-ROBOT_base = ROBOT+"base"
-path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/pose_all.json"
+if MR == "NMR":
+    ROBOT_base = ROBOT + 'base'
+elif MR == "STMR":
+    ROBOT_base = ROBOT+"base"
+else:
+    raise NotImplementedError
 
+GET_ALL = False
+if GET_ALL:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/pose_all.json"
+else:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/pose_1k.json"
 import json
 # load json
 with open(path) as json_file:
@@ -100,7 +109,7 @@ frame_number = len(target_qpos_total[0])
 print(model_number)
 key_point_error_ls = []
 for model_i in range(model_number):
-    model_i = -1
+    # model_i = -1
     target_qpos_array = target_qpos_total[model_i]
     deploy_qpos_array = deploy_qpos_total[model_i]
 
@@ -128,7 +137,7 @@ for model_i in range(model_number):
     key_point_error = np.mean(np.abs(np.array(target_site_ls) - np.array(deploy_site_ls)))
     key_point_error_ls.append(key_point_error)
     print(key_point_error)
-    break
+    # break
     
 # %%
 # L1 loss between target and deploy site

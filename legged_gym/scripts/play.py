@@ -130,5 +130,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "go1_SMR_go1trot"
+    # args.task = "go1base_STMR_hopturn"
     play(args)

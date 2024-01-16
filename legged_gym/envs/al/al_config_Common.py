@@ -176,7 +176,7 @@ class Al_Cfg( LeggedRobotCfg ):
             ang_vel_yaw = [0, 0]    # min max [rad/s]
             heading = [0, 0]
 
-class Al_CfgPPO( LeggedRobotCfgPPO ):
+class Al_CfgAMPPPO( LeggedRobotCfgPPO ):
     runner_class_name = 'OnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
@@ -198,3 +198,16 @@ class Al_CfgPPO( LeggedRobotCfgPPO ):
 
         # min_normalized_std = [0.01, 0.01, 0.01] * 4
 
+
+class Al_CfgPPO( LeggedRobotCfgPPO ):
+    runner_class_name = 'OnPolicyRunner'
+    class algorithm( LeggedRobotCfgPPO.algorithm ):
+        entropy_coef = 0.01
+        num_learning_epochs = 5
+        num_mini_batches = 4
+
+    class runner( LeggedRobotCfgPPO.runner ):
+        run_name = ''
+        algorithm_class_name = 'PPO'
+        policy_class_name = 'ActorCritic'
+        max_iterations = 10_000 # number of policy updates

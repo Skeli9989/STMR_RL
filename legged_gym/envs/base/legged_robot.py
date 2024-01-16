@@ -238,7 +238,6 @@ class LeggedRobot(BaseTask):
         
         if self.cfg.env.reference_state_initialization:
             frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
-            self.amp_loader
             self._reset_dofs_amp(env_ids, frames)
             self._reset_root_states_amp(env_ids, frames)
         else:
@@ -322,34 +321,32 @@ class LeggedRobot(BaseTask):
         #     self.commands[:, 1] = lin_vel_y
         #     self.commands[:, 2] = ang_vel
 
-        if self.cfg.env.num_observations == 40:
-            self.privileged_obs_buf = torch.cat((   
-                self.base_lin_vel * self.obs_scales.lin_vel,
-                self.base_ang_vel  * self.obs_scales.ang_vel,
-                self.projected_gravity,
-                # self.commands[:, :3] * self.commands_scale,
-                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
-                self.dof_vel * self.obs_scales.dof_vel,
-                self.deploy_actions,
-                # self.actions, 
+
+
+        self.privileged_obs_buf = torch.cat((   
+            self.base_lin_vel * self.obs_scales.lin_vel,
+            self.base_ang_vel  * self.obs_scales.ang_vel,
+            self.projected_gravity,
+            # self.commands[:, :3] * self.commands_scale,
+            (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
+            self.dof_vel * self.obs_scales.dof_vel,
+            self.deploy_actions,
+            # self.actions, 
+            # torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+            # self.root_states[:,2].reshape(-1,1),
+            ),dim=-1)
+        
+        if self.cfg.env.time_observation:
+            self.privileged_obs_buf = torch.cat((
+                self.privileged_obs_buf,
                 torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
                 ),dim=-1)
-        elif self.cfg.env.num_observations == 41:
-            self.privileged_obs_buf = torch.cat((   
-                self.base_lin_vel * self.obs_scales.lin_vel,
-                self.base_ang_vel  * self.obs_scales.ang_vel,
-                self.projected_gravity,
-                # self.commands[:, :3] * self.commands_scale,
-                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
-                self.dof_vel * self.obs_scales.dof_vel,
-                self.deploy_actions,
-                # self.actions, 
-                torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+        if self.cfg.env.height_observation:
+            self.privileged_obs_buf = torch.cat((
+                self.privileged_obs_buf,
                 self.root_states[:,2].reshape(-1,1),
                 ),dim=-1)
-        else:
-            raise ValueError("Number of observations not supported")
-        
+
         # add perceptive inputs if not blind
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
@@ -581,7 +578,7 @@ class LeggedRobot(BaseTask):
         if control_type=="P":
             target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
             torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) - d_gains*self.dof_vel
-            # torques = p_gains*(actions_scaled - self.dof_pos) - d_gains*self.dof_vel
+            # torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
         elif control_type=="V":
             torques = p_gains*(actions_scaled - self.dof_vel) - d_gains*(self.dof_vel - self.last_dof_vel)/self.sim_params.dt
         elif control_type=="T":
@@ -618,6 +615,7 @@ class LeggedRobot(BaseTask):
         """
         self.dof_pos[env_ids] = AMPLoader.get_joint_pose_batch(frames)
         self.dof_vel[env_ids] = AMPLoader.get_joint_vel_batch(frames)
+        self.dof_vel[env_ids] = torch.zeros_like(self.dof_vel[env_ids])
         env_ids_int32 = env_ids.to(dtype=torch.int32)
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),

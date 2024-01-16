@@ -35,7 +35,7 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
 
-class Go1_Cfg( LeggedRobotCfg ):
+class Go1base_Cfg_PPO( LeggedRobotCfg ):
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
         include_history_steps = 1  # Number of steps of history to include.
@@ -46,6 +46,8 @@ class Go1_Cfg( LeggedRobotCfg ):
         # amp_motion_files = MOTION_FILES
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
         get_commands_from_joystick = False
+        height_observation = True
+        time_observation = True
 
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.27] # x,y,z [m]
@@ -168,7 +170,26 @@ class Go1_Cfg( LeggedRobotCfg ):
             ang_vel_yaw = [0, 0]    # min max [rad/s]
             heading = [0, 0]
 
-class Go1_CfgPPO( LeggedRobotCfgPPO ):
+class Go1base_runner_CfgPPO( LeggedRobotCfgPPO ):
+    runner_class_name = 'OnPolicyRunner'
+    class algorithm( LeggedRobotCfgPPO.algorithm ):
+        entropy_coef = 0.01
+        num_learning_epochs = 5
+        num_mini_batches = 4
+
+    class runner( LeggedRobotCfgPPO.runner ):
+        run_name = ''
+        algorithm_class_name = 'PPO'
+        policy_class_name = 'ActorCritic'
+        max_iterations = 10_000 # number of policy updates
+
+class Go1base_Cfg_AMP( Go1base_Cfg_PPO ):
+    class env( Go1base_Cfg_PPO.env ):
+        num_observations   = Go1base_Cfg_PPO.env.num_observations   - 1
+        num_privileged_obs = Go1base_Cfg_PPO.env.num_privileged_obs - 1
+        time_observation = False
+
+class Go1base_runner_CfgAMP( LeggedRobotCfgPPO ):
     runner_class_name = 'AMPOnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
@@ -191,27 +212,3 @@ class Go1_CfgPPO( LeggedRobotCfgPPO ):
 
         min_normalized_std = [0.01, 0.01, 0.01] * 4
         # resume = True
-
-
-# class Go1_CfgPPO( LeggedRobotCfgPPO ):
-#     # runner_class_name = 'AMPOnPolicyRunner'
-#     runner_class_name = 'OnPolicyRunner'
-#     class algorithm( LeggedRobotCfgPPO.algorithm ):
-#         entropy_coef = 0.01
-#         # amp_replay_buffer_size = 1000000
-#         num_learning_epochs = 5
-#         num_mini_batches = 4
-
-#     class runner( LeggedRobotCfgPPO.runner ):
-#         run_name = ''
-#         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
-#         algorithm_class_name = 'PPO'
-#         policy_class_name = 'ActorCritic'
-#         max_iterations = 50_000 # number of policy updates
-
-#         # amp_reward_coef = 2
-#         # amp_num_preload_transitions = 2000000
-#         # amp_task_reward_lerp = 0.3
-#         # amp_discr_hidden_dims = [1024, 512]
-
-#         # min_normalized_std = [0.01, 0.01, 0.01] * 4
