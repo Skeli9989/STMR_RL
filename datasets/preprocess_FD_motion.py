@@ -30,7 +30,7 @@ MOTIONS = ['hopturnslow']
 
 for MOTION in MOTIONS:
   MR_LS = ['NMR', "TMR", "SMR","STMR"]
-  MR_LS = ["STMR"]
+  MR_LS = ["NMR"]
   # MR_LS = ["NMR"]
 
   for MR in MR_LS:

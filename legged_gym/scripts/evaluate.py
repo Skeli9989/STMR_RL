@@ -76,8 +76,8 @@ def play(args):
         load_run = f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}/{args.load_run}"
     
     from pathlib import Path
-    GET_ALL = False
-    
+    GET_ALL = True
+
     models = [file for file in os.listdir(load_run) if 'model' in file]
     models.sort(key=lambda m: '{0:0>15}'.format(m))
     if GET_ALL:

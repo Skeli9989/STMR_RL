@@ -73,12 +73,18 @@ def get_cfg(ROBOT, MOTION, MR):
     class Cfg(common_cfg):
         class env(common_cfg.env):
             amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
-        
+            total_ee_names = [
+                "FL_hip", "FL_thigh", "FL_foot",
+                "FR_hip", "FR_thigh", "FR_foot",
+                "RL_hip", "RL_thigh", "RL_foot",
+                "RR_hip", "RR_thigh", "RR_foot",
+                ]
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
                 dof_pos_motion = 150/5
                 pos_motion     = 150/5
                 ang_motion     = 150/5
+                EE_motion = 50
     
                 dof_vel_motion = dof_pos_motion* 0
                 lin_vel_motion = pos_motion    * 0

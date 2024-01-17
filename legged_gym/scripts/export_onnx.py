@@ -55,7 +55,11 @@ with open(LEGGED_GYM_ROOT_DIR/Path('datasets/default.pkl'), 'rb') as f:
 
 from argparse import Namespace
 args = Namespace(**args)
-args.task = "go1base_STMR_hopturn"
+args.task = "go1base_STMR_go1trot"
+
+ROBOT = args.task.split('_')[0]
+MR = args.task.split('_')[1]
+MOTION = args.task.split('_')[2]
 
 # %%
 register_tasks(args.task)
@@ -116,7 +120,7 @@ import onnxruntime as ort
 import numpy as np
 
 
-ort_sess = ort.InferenceSession('model.onnx')
+ort_sess = ort.InferenceSession('datasets/model.onnx')
 outputs = ort_sess.run(None, {'input': torch_input.numpy()})
 
 outputs

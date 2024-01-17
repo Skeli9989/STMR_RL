@@ -51,6 +51,7 @@ import legged_gym.utils.kinematics.urdf as pk
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg
 from rsl_rl.datasets.motion_loader import AMPLoader
 from go1_gym_deploy.utils.motion_holder import MotionHolder
+from pytorch3d import transforms
 
 
 class LeggedRobot(BaseTask):
@@ -83,6 +84,14 @@ class LeggedRobot(BaseTask):
                             LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
                                 ee_name).to(device=sim_device))
 
+        self.total_chain_ee = []
+        for ee_name in self.cfg.env.total_ee_names:
+            self.total_chain_ee.append(
+                pk.build_serial_chain_from_urdf(
+                    open(self.cfg.asset.file.format(
+                            LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
+                                ee_name).to(device=sim_device))
+        
         self._get_commands_from_joystick = self.cfg.env.get_commands_from_joystick
         if self._get_commands_from_joystick:
           pygame.init()
@@ -1264,6 +1273,40 @@ class LeggedRobot(BaseTask):
         inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
         ang_error =  1 - inner_product ** 2
         return torch.exp(-1 * ang_error)
+
+    def _reward_EE_motion(self):
+        self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
+        
+        def get_global_keypoints(chains, dof_pos, rot, pos):
+            R = transforms.quaternion_to_matrix(rot[:,[3,0,1,2]])
+
+            key_pos = []
+            with torch.no_grad():
+                for i, chain_ee in enumerate(chains):
+                    idx = i//4
+                    key_pos.append(
+                        chain_ee.forward_kinematics(dof_pos[:, idx * 3:idx * 3 +
+                                                    3]).get_matrix()[:, :3, 3])
+
+            key_pos = torch.stack(key_pos, dim=1)
+            key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
+            return key_pos
+        
+
+        frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
+        frames = frames.to(self.device)
+        target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
+        target_rot = AMPLoader.get_root_rot_batch(frames)
+        target_pos = AMPLoader.get_root_pos_batch(frames)
+        target_key_pos = get_global_keypoints(self.total_chain_ee, target_dof_pos, target_rot, target_pos)
+
+        cur_dof_pos = self.dof_pos.clone()
+        cur_rot = self.root_states[:,3:7].clone()
+        cur_pos = self.root_states[:,0:3].clone() - self.env_origins
+        cur_key_pos = get_global_keypoints(self.total_chain_ee, cur_dof_pos, cur_rot, cur_pos)
+
+        key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
+        return torch.exp(-5 * key_pos_error)
 
     def update(self):
         self.gym.simulate(self.sim)

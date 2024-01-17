@@ -107,6 +107,11 @@ model_number = len(target_qpos_total)
 frame_number = len(target_qpos_total[0])
 
 print(model_number)
+
+if GET_ALL:
+    render_every = 10
+else:
+    render_every = 1
 key_point_error_ls = []
 for model_i in range(model_number):
     # model_i = -1
@@ -117,7 +122,7 @@ for model_i in range(model_number):
     deploy_site_ls = []
     for frame_i in range(frame_number):
 
-        for _ in range(2):
+        for _ in range(1):
             target_qpos = target_qpos_array[frame_i]
             deploy_qpos = deploy_qpos_array[frame_i]
 
@@ -127,14 +132,14 @@ for model_i in range(model_number):
                 target_site_ls.append(data.site_xpos[site_i].copy())
             # viewer.render()
 
-            if frame_i%1 == 0:
+            if frame_i%render_every == 0:
                 plot_skeleton(model, data, mpc_info, viewer, rgba = [1,0,0,0.5])
 
             data.qpos[:] = deploy_qpos
             mujoco.mj_forward(model, data)
             for site_i in site_ids:
                 deploy_site_ls.append(data.site_xpos[site_i].copy())
-            if frame_i%1 == 0:
+            if frame_i%render_every == 0:
                 viewer.render()    
 
     key_point_error = np.mean(np.abs(np.array(target_site_ls) - np.array(deploy_site_ls)))
@@ -142,7 +147,6 @@ for model_i in range(model_number):
     print(key_point_error)
     # break
     
-# %%
 # L1 loss between target and deploy site
 from matplotlib import pyplot as plt
 plt.plot(key_point_error_ls)
