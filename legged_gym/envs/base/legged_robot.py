@@ -51,6 +51,7 @@ import legged_gym.utils.kinematics.urdf as pk
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg
 from rsl_rl.datasets.motion_loader import AMPLoader
 from go1_gym_deploy.utils.motion_holder import MotionHolder
+from pytorch3d import transforms
 
 
 class LeggedRobot(BaseTask):
@@ -83,6 +84,14 @@ class LeggedRobot(BaseTask):
                             LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
                                 ee_name).to(device=sim_device))
 
+        self.total_chain_ee = []
+        for ee_name in self.cfg.env.total_ee_names:
+            self.total_chain_ee.append(
+                pk.build_serial_chain_from_urdf(
+                    open(self.cfg.asset.file.format(
+                            LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
+                                ee_name).to(device=sim_device))
+        
         self._get_commands_from_joystick = self.cfg.env.get_commands_from_joystick
         if self._get_commands_from_joystick:
           pygame.init()
@@ -101,7 +110,7 @@ class LeggedRobot(BaseTask):
         self.init_done = True
 
 
-    def reset(self, random_time=False):
+    def reset(self, random_time=True):
         """ Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device), random_time=random_time)
         if self.cfg.env.include_history_steps is not None:
@@ -203,7 +212,7 @@ class LeggedRobot(BaseTask):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
-    def reset_idx(self, env_ids, random_time=False):
+    def reset_idx(self, env_ids, random_time=True):
         """ Reset some environments.
             Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids), and self._resample_commands(env_ids)
             [Optional] calls self._update_terrain_curriculum(env_ids), self.update_command_curriculum(env_ids) and
@@ -238,7 +247,6 @@ class LeggedRobot(BaseTask):
         
         if self.cfg.env.reference_state_initialization:
             frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
-            self.amp_loader
             self._reset_dofs_amp(env_ids, frames)
             self._reset_root_states_amp(env_ids, frames)
         else:
@@ -322,34 +330,32 @@ class LeggedRobot(BaseTask):
         #     self.commands[:, 1] = lin_vel_y
         #     self.commands[:, 2] = ang_vel
 
-        if self.cfg.env.num_observations == 40:
-            self.privileged_obs_buf = torch.cat((   
-                self.base_lin_vel * self.obs_scales.lin_vel,
-                self.base_ang_vel  * self.obs_scales.ang_vel,
-                self.projected_gravity,
-                # self.commands[:, :3] * self.commands_scale,
-                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
-                self.dof_vel * self.obs_scales.dof_vel,
-                self.deploy_actions,
-                # self.actions, 
+
+
+        self.privileged_obs_buf = torch.cat((   
+            self.base_lin_vel * self.obs_scales.lin_vel,
+            self.base_ang_vel  * self.obs_scales.ang_vel,
+            self.projected_gravity,
+            # self.commands[:, :3] * self.commands_scale,
+            (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
+            self.dof_vel * self.obs_scales.dof_vel,
+            self.deploy_actions,
+            # self.actions, 
+            # torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+            # self.root_states[:,2].reshape(-1,1),
+            ),dim=-1)
+        
+        if self.cfg.env.time_observation:
+            self.privileged_obs_buf = torch.cat((
+                self.privileged_obs_buf,
                 torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
                 ),dim=-1)
-        elif self.cfg.env.num_observations == 41:
-            self.privileged_obs_buf = torch.cat((   
-                self.base_lin_vel * self.obs_scales.lin_vel,
-                self.base_ang_vel  * self.obs_scales.ang_vel,
-                self.projected_gravity,
-                # self.commands[:, :3] * self.commands_scale,
-                (self.dof_pos - self.default_dof_pos) * self.obs_scales.dof_pos,
-                self.dof_vel * self.obs_scales.dof_vel,
-                self.deploy_actions,
-                # self.actions, 
-                torch.tensor(self.times, device=self.device, dtype=torch.float32).reshape(-1,1),
+        if self.cfg.env.height_observation:
+            self.privileged_obs_buf = torch.cat((
+                self.privileged_obs_buf,
                 self.root_states[:,2].reshape(-1,1),
                 ),dim=-1)
-        else:
-            raise ValueError("Number of observations not supported")
-        
+
         # add perceptive inputs if not blind
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
@@ -578,11 +584,12 @@ class LeggedRobot(BaseTask):
         # frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
         # frames = frames.to(self.device)
         # target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
-        target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
-        # target_dof_vel = torch.FloatTensor(self.motion_holder.get_batch_qvel(self.times)).to(self.device)
         if control_type=="P":
-            torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) - d_gains*self.dof_vel
-            # torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) + 1*d_gains*(target_dof_vel - self.dof_vel)
+            if self.cfg.MR in ["AMPNONO"]:
+                torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
+            else:
+                target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
+                torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) - d_gains*self.dof_vel
         elif control_type=="V":
             torques = p_gains*(actions_scaled - self.dof_vel) - d_gains*(self.dof_vel - self.last_dof_vel)/self.sim_params.dt
         elif control_type=="T":
@@ -619,6 +626,7 @@ class LeggedRobot(BaseTask):
         """
         self.dof_pos[env_ids] = AMPLoader.get_joint_pose_batch(frames)
         self.dof_vel[env_ids] = AMPLoader.get_joint_vel_batch(frames)
+        self.dof_vel[env_ids] = torch.zeros_like(self.dof_vel[env_ids])
         env_ids_int32 = env_ids.to(dtype=torch.int32)
         self.gym.set_dof_state_tensor_indexed(self.sim,
                                               gymtorch.unwrap_tensor(self.dof_state),
@@ -1265,6 +1273,40 @@ class LeggedRobot(BaseTask):
         inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
         ang_error =  1 - inner_product ** 2
         return torch.exp(-1 * ang_error)
+
+    def _reward_EE_motion(self):
+        self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
+        
+        def get_global_keypoints(chains, dof_pos, rot, pos):
+            R = transforms.quaternion_to_matrix(rot[:,[3,0,1,2]])
+
+            key_pos = []
+            with torch.no_grad():
+                for i, chain_ee in enumerate(chains):
+                    idx = i//4
+                    key_pos.append(
+                        chain_ee.forward_kinematics(dof_pos[:, idx * 3:idx * 3 +
+                                                    3]).get_matrix()[:, :3, 3])
+
+            key_pos = torch.stack(key_pos, dim=1)
+            key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
+            return key_pos
+        
+
+        frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
+        frames = frames.to(self.device)
+        target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
+        target_rot = AMPLoader.get_root_rot_batch(frames)
+        target_pos = AMPLoader.get_root_pos_batch(frames)
+        target_key_pos = get_global_keypoints(self.total_chain_ee, target_dof_pos, target_rot, target_pos)
+
+        cur_dof_pos = self.dof_pos.clone()
+        cur_rot = self.root_states[:,3:7].clone()
+        cur_pos = self.root_states[:,0:3].clone() - self.env_origins
+        cur_key_pos = get_global_keypoints(self.total_chain_ee, cur_dof_pos, cur_rot, cur_pos)
+
+        key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
+        return torch.exp(-10 * key_pos_error)
 
     def update(self):
         self.gym.simulate(self.sim)
