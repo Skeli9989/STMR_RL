@@ -41,7 +41,7 @@ class Go1base_Cfg_PPO( LeggedRobotCfg ):
         include_history_steps = 1  # Number of steps of history to include.
         num_observations = 41
         num_privileged_obs = 47
-        reference_state_initialization = True
+        reference_state_initialization = False
         reference_state_initialization_prob = 0.85
         # amp_motion_files = MOTION_FILES
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]

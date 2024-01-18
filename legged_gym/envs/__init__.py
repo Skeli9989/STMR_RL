@@ -32,6 +32,8 @@ from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from .base.legged_robot import LeggedRobot
 
 # %%
+SIM = True
+
 import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
@@ -81,10 +83,10 @@ def get_cfg(ROBOT, MOTION, MR):
                 ]
         class rewards(common_cfg.rewards):
             class scales(common_cfg.rewards.scales):
-                dof_pos_motion = 150/5
-                pos_motion     = 150/5
-                ang_motion     = 150/5
-                EE_motion = 50
+                dof_pos_motion = 3
+                pos_motion     = 3
+                ang_motion     = 3
+                EE_motion      = 30
     
                 dof_vel_motion = dof_pos_motion* 0
                 lin_vel_motion = pos_motion    * 0
@@ -110,8 +112,21 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.rewards.scales.dof_vel_motion = 0
         Cfg.rewards.scales.lin_vel_motion = 0
         Cfg.rewards.scales.ang_vel_motion = 0
-    
+    elif MR in ["NMR"]:
+        Cfg.env.reference_state_initialization = True
     Cfg.MR = MR
+
+    if SIM:
+        Cfg.terrain.curriculum = False
+        Cfg.noise.add_noise = False
+
+        Cfg.domain_rand.randomize_gains = False
+        Cfg.domain_rand.randomize_base_mass = False
+        Cfg.domain_rand.randomize_friction = False
+        Cfg.domain_rand.randomize_restitution = False
+        Cfg.domain_rand.push_robots = False
+        Cfg.domain_rand.randomize_com_displacement = False
+        print("SIMULATION MODE: No domain randomization \n" * 50)
     return Cfg, CfgPPO
 
 import os

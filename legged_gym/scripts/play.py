@@ -44,17 +44,18 @@ def play(args):
     register_tasks(args.task)
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
+    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 16)
     env_cfg.env.get_commands_from_joystick = False
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
     env_cfg.terrain.curriculum = False
     env_cfg.noise.add_noise = False
+    env_cfg.env.reference_state_initialization = False
 
     env_cfg.domain_rand.randomize_gains = False
-    env_cfg.domain_rand.randomize_base_mass = True
-    env_cfg.domain_rand.randomize_friction = True
-    env_cfg.domain_rand.randomize_restitution = True
+    env_cfg.domain_rand.randomize_base_mass = False
+    env_cfg.domain_rand.randomize_friction = False
+    env_cfg.domain_rand.randomize_restitution = False
     env_cfg.domain_rand.push_robots = False
     env_cfg.domain_rand.randomize_com_displacement = False
     
@@ -130,5 +131,5 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "go1base_STMR_hopturn"
+    # args.task = "go1base_NMR_hopturnslow"
     play(args)

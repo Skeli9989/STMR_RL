@@ -76,11 +76,10 @@ def play(args):
         load_run = f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}/{args.load_run}"
     
     from pathlib import Path
-    GET_ALL = True
 
     models = [file for file in os.listdir(load_run) if 'model' in file]
     models.sort(key=lambda m: '{0:0>15}'.format(m))
-    if GET_ALL:
+    if args.GET_ALL:
         save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_all.json"
     else:
         models = [models[-1]]
@@ -154,6 +153,7 @@ def play(args):
 
 if __name__ == '__main__':
     args = get_args()
+    args.GET_ALL = False
     # args.task = "go1base_TO_hopturn"
     # args.task = "a1_amp"
     play(args)

@@ -106,10 +106,16 @@ torch_input = torch.ones(1,env_cfg.env.num_observations).to(device=device)
 torch_model(torch_input)
 
 # %%
+if 'base' in ROBOT:
+    raw_robot_name = ROBOT.split("base")[0]
+else:
+    raw_robot_name = ROBOT
+
+savename = f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{ROBOT}_{MR}.onnx'
 onnx_program = torch.onnx.export(
     torch_model, 
     torch_input,
-    'model.onnx',
+    savename,
     opset_version=9,
     input_names=["input"],
     output_names=["action"])
@@ -120,7 +126,8 @@ import onnxruntime as ort
 import numpy as np
 
 
-ort_sess = ort.InferenceSession('datasets/model.onnx')
+ort_sess = ort.InferenceSession(savename)
 outputs = ort_sess.run(None, {'input': torch_input.numpy()})
 
 outputs
+# %%

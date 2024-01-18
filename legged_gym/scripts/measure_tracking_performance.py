@@ -51,12 +51,17 @@ mpc_info = MPCInfo(model, data)
 # %%
 MR = "NMR"
 # MR = "STMR"
+# MR = "AMP"
 from legged_gym import LEGGED_GYM_ROOT_DIR
-
-# load motion
+from fastdtw import fastdtw
+import numpy as np
+from scipy.spatial.distance import cityblock
+# load motion4580
 if MR == "NMR":
     ROBOT_base = ROBOT + 'base'
 elif MR == "STMR":
+    ROBOT_base = ROBOT+"base"
+elif MR == "AMP":
     ROBOT_base = ROBOT+"base"
 else:
     raise NotImplementedError
@@ -142,7 +147,15 @@ for model_i in range(model_number):
             if frame_i%render_every == 0:
                 viewer.render()    
 
-    key_point_error = np.mean(np.abs(np.array(target_site_ls) - np.array(deploy_site_ls)))
+    target_site_array = np.array(target_site_ls).reshape(frame_number, -1)
+    deploy_site_array = np.array(deploy_site_ls).reshape(frame_number, -1)
+
+    distance, path = fastdtw(target_site_array, deploy_site_array, dist=cityblock)
+    key_point_error = distance/frame_number/len(site_ids)
+
+    # key_point_error = np.mean(np.abs(np.array(target_site_ls) - np.array(deploy_site_ls)), axis=1)
+    # key_point_error = np.max(key_point_error, axis=0)
+    
     key_point_error_ls.append(key_point_error)
     print(key_point_error)
     # break
@@ -160,5 +173,40 @@ plt.legend()
 
 
 # %%
+import numpy as np
 
+## A noisy sine wave as query
+query = deploy_site_array
 
+## A cosine is for template; sin and cos are offset by 25 samples
+template = target_site_array
+
+## Find the best match with the canonical recursion formula
+from dtw import *
+alignment = dtw(query, template, keep_internals=True)
+
+## Display the warping curve, i.e. the alignment curve
+alignment.plot(type="threeway")
+
+alignment.distance
+
+## Align and plot with the Rabiner-Juang type VI-c unsmoothed recursion
+# dtw(query, template, keep_internals=True, 
+#     step_pattern=rabinerJuangStepPattern(6, "c"))\
+#     .plot(type="twoway",offset=-2)
+
+# ## See the recursion relation, as formula and diagram
+# print(rabinerJuangStepPattern(6,"c"))
+# rabinerJuangStepPattern(6,"c").plot()
+
+# %%
+from fastdtw import fastdtw
+import numpy as np
+from scipy.spatial.distance import cityblock
+
+# Perform DTW
+distance, path = fastdtw(target_site_array, deploy_site_array, dist=cityblock)
+
+print(f'DTW Distance: {distance}')
+print('DTW Path:')
+print(path)

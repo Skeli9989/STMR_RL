@@ -110,7 +110,7 @@ class LeggedRobot(BaseTask):
         self.init_done = True
 
 
-    def reset(self, random_time=False):
+    def reset(self, random_time=True):
         """ Reset all robots"""
         self.reset_idx(torch.arange(self.num_envs, device=self.device), random_time=random_time)
         if self.cfg.env.include_history_steps is not None:
@@ -212,7 +212,7 @@ class LeggedRobot(BaseTask):
         self.time_out_buf = self.episode_length_buf > self.max_episode_length # no terminal reward for time-outs
         self.reset_buf |= self.time_out_buf
 
-    def reset_idx(self, env_ids, random_time=False):
+    def reset_idx(self, env_ids, random_time=True):
         """ Reset some environments.
             Calls self._reset_dofs(env_ids), self._reset_root_states(env_ids), and self._resample_commands(env_ids)
             [Optional] calls self._update_terrain_curriculum(env_ids), self.update_command_curriculum(env_ids) and
@@ -1306,7 +1306,7 @@ class LeggedRobot(BaseTask):
         cur_key_pos = get_global_keypoints(self.total_chain_ee, cur_dof_pos, cur_rot, cur_pos)
 
         key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
-        return torch.exp(-5 * key_pos_error)
+        return torch.exp(-10 * key_pos_error)
 
     def update(self):
         self.gym.simulate(self.sim)
