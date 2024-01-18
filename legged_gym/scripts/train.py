@@ -51,7 +51,7 @@ if __name__ == '__main__':
     args.headless = True
     if DEBUG:
         args.headless = False
-        args.task = "go1base_NMR_hopturnslow"
+        args.task = "go1base_STMR_hopturn"
         for _ in range(100):
             print('WARNING: DEBUG MODE')
         

@@ -245,13 +245,13 @@ class LeggedRobot(BaseTask):
         self.times[env_ids.cpu().numpy()]     =  times
         self.last_times[env_ids.cpu().numpy()] =  times
         
-        if self.cfg.env.reference_state_initialization:
-            frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
-            self._reset_dofs_amp(env_ids, frames)
-            self._reset_root_states_amp(env_ids, frames)
-        else:
-            self._reset_dofs(env_ids)
-            self._reset_root_states(env_ids)
+        # if self.cfg.env.reference_state_initialization:
+        frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
+        self._reset_dofs_amp(env_ids, frames)
+        self._reset_root_states_amp(env_ids, frames)
+        # else:
+            # self._reset_dofs(env_ids)
+            # self._reset_root_states(env_ids)
 
         # self._resample_commands(env_ids)
 
@@ -424,47 +424,45 @@ class LeggedRobot(BaseTask):
         Returns:
             [List[gymapi.RigidShapeProperties]]: Modified rigid shape properties
         """
-        if self.cfg.domain_rand.randomize_friction:
-            if self.cfg.domain_rand.test_time:
-                if env_id==0:
-                    friction_range = self.cfg.domain_rand.friction_range
-                    friction_ = (friction_range[0] + friction_range[1]) / 2
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
-                    self.friction_coeffs = friction_buckets[bucket_ids]
-            else:
-                if env_id==0:
-                    # prepare friction randomization
-                    friction_range = self.cfg.domain_rand.friction_range
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
-                    self.friction_coeffs = friction_buckets[bucket_ids]
+        if self.cfg.domain_rand.randomize_friction and not self.cfg.domain_rand.test_time:
+            if env_id==0:
+                friction_range = self.cfg.domain_rand.friction_range
+                friction_ = (friction_range[0] + friction_range[1]) / 2
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
+                self.friction_coeffs = friction_buckets[bucket_ids]
+        else:
+            if env_id==0:
+                # prepare friction randomization
+                friction_range = self.cfg.domain_rand.friction_range
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
+                self.friction_coeffs = friction_buckets[bucket_ids]
             
-            for s in range(len(props)):
-                props[s].friction = self.friction_coeffs[env_id]
+        for s in range(len(props)):
+            props[s].friction = self.friction_coeffs[env_id]
 
-        if self.cfg.domain_rand.randomize_restitution:
-            if self.cfg.domain_rand.test_time:
-                if env_id ==0:
-                    restitution_range = self.cfg.domain_rand.restitution_range
-                    restitution_ = (restitution_range[0] + restitution_range[1]) / 2
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    restitution_buckets = torch.ones((num_buckets,1), device='cpu') * restitution_
-                    self.restitution_coeffs = restitution_buckets[bucket_ids]
-            else:
-                if env_id ==0:
-                    # prepare restitution randomization
-                    restitution_range = self.cfg.domain_rand.restitution_range
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    restitution_buckets = torch_rand_float(restitution_range[0], restitution_range[1], (num_buckets,1), device='cpu')
-                    self.restitution_coeffs = restitution_buckets[bucket_ids]
-            
-            for s in range(len(props)):
-                props[s].restitution = self.restitution_coeffs[env_id]
+        if self.cfg.domain_rand.randomize_restitution and not self.cfg.domain_rand.test_time:
+            if env_id ==0:
+                # prepare restitution randomization
+                restitution_range = self.cfg.domain_rand.restitution_range
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                restitution_buckets = torch_rand_float(restitution_range[0], restitution_range[1], (num_buckets,1), device='cpu')
+                self.restitution_coeffs = restitution_buckets[bucket_ids]
+        else:
+            if env_id ==0:
+                restitution_range = self.cfg.domain_rand.restitution_range
+                restitution_ = (restitution_range[0] + restitution_range[1]) / 2
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                restitution_buckets = torch.ones((num_buckets,1), device='cpu') * restitution_
+                self.restitution_coeffs = restitution_buckets[bucket_ids]
+
+        for s in range(len(props)):
+            props[s].restitution = self.restitution_coeffs[env_id]
         return props
 
     def _process_dof_props(self, props, env_id):
@@ -1270,8 +1268,21 @@ class LeggedRobot(BaseTask):
         root_rot = AMPLoader.get_root_rot_batch(frames)
         root_rot_cur= self.root_states[:,3:7]
 
-        inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
-        ang_error =  1 - inner_product ** 2
+        from pytorch3d.transforms import quaternion_multiply, quaternion_invert
+        from pytorch3d.transforms.rotation_conversions import quaternion_to_axis_angle
+        import torch
+
+        q1 = root_rot.clone()[:,[3,0,1,2]]
+        q2 = root_rot_cur.clone()[:,[3,0,1,2]]
+        q_diff = quaternion_multiply(q1,quaternion_invert(q2))
+        angle = quaternion_to_axis_angle(q_diff)
+
+        # l2 norm of angle using torch
+        ang_error = torch.linalg.norm(angle, dim=1)
+
+        # inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
+        # ang_error =  1 - inner_product ** 2
+
         return torch.exp(-1 * ang_error)
 
     def _reward_EE_motion(self):

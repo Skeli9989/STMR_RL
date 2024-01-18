@@ -65,6 +65,7 @@ def play(args):
     obs = env.get_observations()
 
     env.reset(random_time=False)
+    env.reset_idx(torch.arange(env.num_envs, device=env.device), random_time=False)
     
     if args.load_run is None:
         root= f"{LEGGED_GYM_ROOT_DIR}/logs/{train_cfg.runner.experiment_name}"
