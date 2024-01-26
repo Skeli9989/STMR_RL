@@ -132,7 +132,7 @@ def get_cfg(ROBOT, MOTION, MR):
 import os
 from legged_gym.utils.task_registry import task_registry
 
-def register_tasks(task):
+def register_tasks(task, seed):
     ROBOT  = task.split('_')[0].lower()
     MR     = task.split('_')[1].upper()
     MOTION = task.split('_')[2].lower()
@@ -144,4 +144,5 @@ def register_tasks(task):
     else:
         raise ValueError(f"MR {MR} not supported")
     
+    CfgPPO.runner.experiment_name += f"/seed{seed}"
     task_registry.register(register_name, LeggedRobot, Cfg, CfgPPO)
