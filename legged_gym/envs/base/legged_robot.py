@@ -1313,12 +1313,6 @@ class LeggedRobot(BaseTask):
         target_pos = AMPLoader.get_root_pos_batch(frames)
         target_key_pos = get_global_keypoints(self.chain_ee, target_dof_pos, target_rot, target_pos, self.cfg.env.total_ee_names)
 
-        import time
-        time_start = time.time()
-        for i in range(1000):
-            target_key_pos = get_global_keypoints(self.chain_ee, target_dof_pos, target_rot, target_pos, self.cfg.env.total_ee_names)
-        print(time.time() - time_start)
-
         cur_dof_pos = self.dof_pos.clone()
         cur_rot = self.root_states[:,3:7].clone()
         cur_pos = self.root_states[:,0:3].clone() - self.env_origins
