@@ -202,7 +202,7 @@ class Go1base_runner_CfgAMP( LeggedRobotCfgPPO ):
         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
         algorithm_class_name = 'AMPPPO'
         policy_class_name = 'ActorCritic'
-        max_iterations = 50_000 # number of policy updates
+        max_iterations = 25_000 # number of policy updates
 
         amp_reward_coef = 2
         # amp_motion_files = MOTION_FILES
