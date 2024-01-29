@@ -32,8 +32,6 @@ from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from .base.legged_robot import LeggedRobot
 
 # %%
-SIM = True
-
 import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
@@ -60,7 +58,7 @@ amp_cfg_dict = {
     "a1base": (A1base_Cfg, A1base_CfgAMPPPO),
 }
 
-def get_cfg(ROBOT, MOTION, MR):
+def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
     if MR in ["NMR", "SMR", "TMR", "STMR"]:
         common_cfg, common_cfgppo = ppo_cfg_dict[ROBOT.lower()]
     elif MR in ["AMP", "AMPNO", "AMPNONO"]: 
@@ -116,7 +114,7 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.env.reference_state_initialization = True
     Cfg.MR = MR
 
-    if SIM:
+    if NO_RAND:
         Cfg.terrain.curriculum = False
         Cfg.noise.add_noise = False
 
@@ -126,13 +124,13 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.domain_rand.randomize_restitution = False
         Cfg.domain_rand.push_robots = False
         Cfg.domain_rand.randomize_com_displacement = False
-        print("SIMULATION MODE: No domain randomization \n" * 50)
+        print("No domain randomization!!! \n" * 50)
     return Cfg, CfgPPO
 
 import os
 from legged_gym.utils.task_registry import task_registry
 
-def register_tasks(task, seed):
+def register_tasks(task, seed, NO_RAND):
     ROBOT  = task.split('_')[0].lower()
     MR     = task.split('_')[1].upper()
     MOTION = task.split('_')[2].lower()
@@ -140,7 +138,7 @@ def register_tasks(task, seed):
     register_name = f"{ROBOT.lower()}_{MR}_{MOTION}"
 
     if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO"]:
-        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR)
+        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR, NO_RAND)
     else:
         raise ValueError(f"MR {MR} not supported")
     

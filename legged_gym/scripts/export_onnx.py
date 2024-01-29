@@ -45,6 +45,7 @@ from isaacgym import gymtorch, gymapi, gymutil
 EXPORT_POLICY = True
 RECORD_FRAMES = True
 MOVE_CAMERA = False
+NO_RAND = False
 # args = get_args()
 
 # %%
@@ -62,7 +63,7 @@ MR = args.task.split('_')[1]
 MOTION = args.task.split('_')[2]
 
 # %%
-register_tasks(args.task)
+register_tasks(args.task, args.seed, NO_RAND=NO_RAND)
 env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
 # override some parameters for testing
 env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)

@@ -39,9 +39,10 @@ import numpy as np
 import torch
 
 from isaacgym import gymtorch, gymapi, gymutil
+NO_RAND = True
 
 def play(args):
-    register_tasks(args.task)
+    register_tasks(args.task, args.seed, NO_RAND=NO_RAND)
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 16)
