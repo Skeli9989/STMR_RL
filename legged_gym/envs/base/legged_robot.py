@@ -84,13 +84,13 @@ class LeggedRobot(BaseTask):
                             LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
                                 ee_name).to(device=sim_device))
 
-        self.total_chain_ee = []
-        for ee_name in self.cfg.env.total_ee_names:
-            self.total_chain_ee.append(
-                pk.build_serial_chain_from_urdf(
-                    open(self.cfg.asset.file.format(
-                            LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
-                                ee_name).to(device=sim_device))
+        # self.total_chain_ee = []
+        # for ee_name in self.cfg.env.total_ee_names:
+        #     self.total_chain_ee.append(
+        #         pk.build_serial_chain_from_urdf(
+        #             open(self.cfg.asset.file.format(
+        #                     LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
+        #                         ee_name).to(device=sim_device))
         
         self._get_commands_from_joystick = self.cfg.env.get_commands_from_joystick
         if self._get_commands_from_joystick:
@@ -1288,19 +1288,21 @@ class LeggedRobot(BaseTask):
     def _reward_EE_motion(self):
         self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
         
-        def get_global_keypoints(chains, dof_pos, rot, pos):
+        def get_global_keypoints(chains, dof_pos, rot, pos, total_ee_names):
             R = transforms.quaternion_to_matrix(rot[:,[3,0,1,2]])
 
             key_pos = []
+            res_dict = {}
             with torch.no_grad():
                 for i, chain_ee in enumerate(chains):
-                    idx = i//4
-                    key_pos.append(
-                        chain_ee.forward_kinematics(dof_pos[:, idx * 3:idx * 3 +
-                                                    3]).get_matrix()[:, :3, 3])
+                    fk_res_dict = chain_ee.forward_kinematics(dof_pos[:, i * 3:i * 3 +3], end_only=False)
+                    res_dict.update(fk_res_dict)
 
-            key_pos = torch.stack(key_pos, dim=1)
-            key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
+                for ee_name in total_ee_names:
+                    key_pos.append(res_dict[ee_name].get_matrix()[:, :3, 3])
+
+                key_pos = torch.stack(key_pos, dim=1)
+                key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
             return key_pos
         
 
@@ -1309,12 +1311,18 @@ class LeggedRobot(BaseTask):
         target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
         target_rot = AMPLoader.get_root_rot_batch(frames)
         target_pos = AMPLoader.get_root_pos_batch(frames)
-        target_key_pos = get_global_keypoints(self.total_chain_ee, target_dof_pos, target_rot, target_pos)
+        target_key_pos = get_global_keypoints(self.chain_ee, target_dof_pos, target_rot, target_pos, self.cfg.env.total_ee_names)
+
+        import time
+        time_start = time.time()
+        for i in range(1000):
+            target_key_pos = get_global_keypoints(self.chain_ee, target_dof_pos, target_rot, target_pos, self.cfg.env.total_ee_names)
+        print(time.time() - time_start)
 
         cur_dof_pos = self.dof_pos.clone()
         cur_rot = self.root_states[:,3:7].clone()
         cur_pos = self.root_states[:,0:3].clone() - self.env_origins
-        cur_key_pos = get_global_keypoints(self.total_chain_ee, cur_dof_pos, cur_rot, cur_pos)
+        cur_key_pos = get_global_keypoints(self.chain_ee, cur_dof_pos, cur_rot, cur_pos, self.cfg.env.total_ee_names)
 
         key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
         return torch.exp(-10 * key_pos_error)
