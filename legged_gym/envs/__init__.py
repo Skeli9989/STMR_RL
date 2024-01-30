@@ -59,7 +59,7 @@ amp_cfg_dict = {
 }
 
 def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
-    if MR in ["NMR", "SMR", "TMR", "STMR"]:
+    if MR in ["NMR", "SMR", "TMR", "STMR", "TO"]:
         common_cfg, common_cfgppo = ppo_cfg_dict[ROBOT.lower()]
     elif MR in ["AMP", "AMPNO", "AMPNONO"]: 
         common_cfg, common_cfgppo = amp_cfg_dict[ROBOT.lower()]
@@ -95,10 +95,10 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
             experiment_name = f"STMR/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
             amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
 
-    if MR == 'AMP':
-        MR = "NMR"
-        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
-        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+    if MR =='AMP':
+        MR_TEMP = "NMR"
+        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR_TEMP}/{MOTION}_{raw_robot_name}_{MR_TEMP}_processed/*')
+        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR_TEMP}/{MOTION}_{raw_robot_name}_{MR_TEMP}_processed/*')
     elif MR in ["AMPNO", "AMPNONO"]:
         Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
         CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
@@ -137,7 +137,7 @@ def register_tasks(task, seed, NO_RAND):
     
     register_name = f"{ROBOT.lower()}_{MR}_{MOTION}"
 
-    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO"]:
+    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO", "TO"]:
         Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR, NO_RAND)
     else:
         raise ValueError(f"MR {MR} not supported")
