@@ -91,7 +91,13 @@ def export_json_files(ROBOT, MOTION, MR, PLOT=False):
 	contact_json = {'data':[]}
 	for time_, contact in zip(time_array, mj_contact_boolean.T):
 		contact = contact.tolist()
-		contact_json['data'].append([time_, *contact])
+		contact_per_foot = {
+			"FR": contact[0],
+			"FL": contact[1],
+			"RR": contact[2],
+			"RL": contact[3],
+		}
+		contact_json['data'].append([time_, contact_per_foot])
 
 	save_name = f"{ROOT_DIR}/../{AMP_DATASET_DIR}/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}_contact.json"
 	with open(save_name, 'w') as f:
