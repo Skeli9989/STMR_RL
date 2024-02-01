@@ -40,14 +40,15 @@ from legged_gym.envs.go1.go1_config_Common import Go1_Cfg, Go1_CfgPPO, Go1_CfgAM
 from legged_gym.envs.a1.a1_config_Common import A1_Cfg, A1_CfgPPO, A1_CfgAMPPPO
 from legged_gym.envs.al.al_config_Common import Al_Cfg, Al_CfgPPO, Al_CfgAMPPPO
 from legged_gym.envs.go1base.go1base_config_Common import Go1base_Cfg_PPO, Go1base_Cfg_AMP, Go1base_runner_CfgPPO, Go1base_runner_CfgAMP
-from legged_gym.envs.a1base.a1base_config_Common import A1base_Cfg, A1base_CfgPPO, A1base_CfgAMPPPO
+# from legged_gym.envs.a1base.a1base_config_Common import A1base_Cfg, A1base_CfgPPO, A1base_CfgAMPPPO
+from legged_gym.envs.a1base.a1base_config_Common import A1base_CfgPPO, A1base_Cfg_AMP, A1base_runner_CfgPPO, A1base_runner_CfgAMP
 
 ppo_cfg_dict = {
     "go1": (Go1_Cfg, Go1_CfgPPO),
     "a1": (A1_Cfg, A1_CfgPPO),
     "al": (Al_Cfg, Al_CfgPPO),
     "go1base": (Go1base_Cfg_PPO, Go1base_runner_CfgPPO),
-    "a1base": (A1base_Cfg, A1base_CfgPPO),
+    "a1base": (A1base_CfgPPO, A1base_runner_CfgPPO),
 }
 
 amp_cfg_dict = {
@@ -55,7 +56,7 @@ amp_cfg_dict = {
     "a1": (A1_Cfg, A1_CfgAMPPPO),
     "al": (Al_Cfg, Al_CfgAMPPPO),
     "go1base": (Go1base_Cfg_AMP, Go1base_runner_CfgAMP),
-    "a1base": (A1base_Cfg, A1base_CfgAMPPPO),
+    "a1base": (A1base_Cfg_AMP, A1base_runner_CfgAMP),
 }
 
 def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
