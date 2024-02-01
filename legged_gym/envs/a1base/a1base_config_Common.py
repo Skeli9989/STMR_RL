@@ -35,18 +35,20 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 ROBOT = "A1"
 ROBOT = ROBOT.lower()
 
-class A1base_Cfg( LeggedRobotCfg ):
+class A1base_CfgPPO( LeggedRobotCfg ):
     def __init__(self, MOTION):
         super().__init__(MOTION)
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
-        include_history_steps = None  # Number of steps of history to include.
+        include_history_steps = 1  # Number of steps of history to include.
         num_observations = 41
         num_privileged_obs = 47
         reference_state_initialization = False
         reference_state_initialization_prob = 0.85
         ee_names = ["FL_foot", "FR_foot", "RL_foot", "RR_foot"]
         get_commands_from_joystick = False
+        height_observation = True
+        time_observation = True
 
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.26] # x,y,z [m]
@@ -169,7 +171,28 @@ class A1base_Cfg( LeggedRobotCfg ):
             heading = [0, 0]
             
 
-class A1base_CfgAMPPPO( LeggedRobotCfgPPO ):
+class A1base_runner_CfgPPO( LeggedRobotCfgPPO ):
+    runner_class_name = 'OnPolicyRunner'
+    class algorithm( LeggedRobotCfgPPO.algorithm ):
+        entropy_coef = 0.01
+        num_learning_epochs = 5
+        num_mini_batches = 4
+
+    class runner( LeggedRobotCfgPPO.runner ):
+        run_name = ''
+        # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+        algorithm_class_name = 'PPO'
+        policy_class_name = 'ActorCritic'
+        max_iterations = 10_000 # number of policy updates
+
+
+class A1base_Cfg_AMP(A1base_CfgPPO):
+    class env( A1base_CfgPPO.env ):
+        num_observations = A1base_CfgPPO.env.num_observations - 1
+        num_privileged_obs = A1base_CfgPPO.env.num_privileged_obs - 1
+        time_observation = False
+
+class A1base_runner_CfgAMP( LeggedRobotCfgPPO ):
     runner_class_name = 'AMPOnPolicyRunner'
     class algorithm( LeggedRobotCfgPPO.algorithm ):
         entropy_coef = 0.01
@@ -182,7 +205,7 @@ class A1base_CfgAMPPPO( LeggedRobotCfgPPO ):
         # experiment_name = f"AMP/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
         algorithm_class_name = 'AMPPPO'
         policy_class_name = 'ActorCritic'
-        max_iterations = 10_000 # number of policy updates
+        max_iterations = 25_000 # number of policy updates
 
         amp_reward_coef = 2
         # amp_motion_files = MOTION_FILES
@@ -192,18 +215,3 @@ class A1base_CfgAMPPPO( LeggedRobotCfgPPO ):
 
         min_normalized_std = [0.01, 0.01, 0.01] * 4
         # resume = True
-
-
-class A1base_CfgPPO( LeggedRobotCfgPPO ):
-    runner_class_name = 'OnPolicyRunner'
-    class algorithm( LeggedRobotCfgPPO.algorithm ):
-        entropy_coef = 0.01
-        num_learning_epochs = 5
-        num_mini_batches = 4
-
-    class runner( LeggedRobotCfgPPO.runner ):
-        run_name = ''
-        algorithm_class_name = 'PPO'
-        policy_class_name = 'ActorCritic'
-        max_iterations = 10_000 # number of policy updates
-        

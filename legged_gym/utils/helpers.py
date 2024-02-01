@@ -130,6 +130,8 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
         # num envs
         if args.num_envs is not None:
             env_cfg.env.num_envs = args.num_envs
+        if args.seed is not None:
+            env_cfg.seed = args.seed
     if cfg_train is not None:
         if args.seed is not None:
             cfg_train.seed = args.seed

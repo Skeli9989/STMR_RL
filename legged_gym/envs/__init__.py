@@ -32,8 +32,6 @@ from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from .base.legged_robot import LeggedRobot
 
 # %%
-SIM = True
-
 import glob
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
@@ -42,14 +40,15 @@ from legged_gym.envs.go1.go1_config_Common import Go1_Cfg, Go1_CfgPPO, Go1_CfgAM
 from legged_gym.envs.a1.a1_config_Common import A1_Cfg, A1_CfgPPO, A1_CfgAMPPPO
 from legged_gym.envs.al.al_config_Common import Al_Cfg, Al_CfgPPO, Al_CfgAMPPPO
 from legged_gym.envs.go1base.go1base_config_Common import Go1base_Cfg_PPO, Go1base_Cfg_AMP, Go1base_runner_CfgPPO, Go1base_runner_CfgAMP
-from legged_gym.envs.a1base.a1base_config_Common import A1base_Cfg, A1base_CfgPPO, A1base_CfgAMPPPO
+# from legged_gym.envs.a1base.a1base_config_Common import A1base_Cfg, A1base_CfgPPO, A1base_CfgAMPPPO
+from legged_gym.envs.a1base.a1base_config_Common import A1base_CfgPPO, A1base_Cfg_AMP, A1base_runner_CfgPPO, A1base_runner_CfgAMP
 
 ppo_cfg_dict = {
     "go1": (Go1_Cfg, Go1_CfgPPO),
     "a1": (A1_Cfg, A1_CfgPPO),
     "al": (Al_Cfg, Al_CfgPPO),
     "go1base": (Go1base_Cfg_PPO, Go1base_runner_CfgPPO),
-    "a1base": (A1base_Cfg, A1base_CfgPPO),
+    "a1base": (A1base_CfgPPO, A1base_runner_CfgPPO),
 }
 
 amp_cfg_dict = {
@@ -57,11 +56,11 @@ amp_cfg_dict = {
     "a1": (A1_Cfg, A1_CfgAMPPPO),
     "al": (Al_Cfg, Al_CfgAMPPPO),
     "go1base": (Go1base_Cfg_AMP, Go1base_runner_CfgAMP),
-    "a1base": (A1base_Cfg, A1base_CfgAMPPPO),
+    "a1base": (A1base_Cfg_AMP, A1base_runner_CfgAMP),
 }
 
-def get_cfg(ROBOT, MOTION, MR):
-    if MR in ["NMR", "SMR", "TMR", "STMR"]:
+def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
+    if MR in ["NMR", "SMR", "TMR", "STMR", "TO"]:
         common_cfg, common_cfgppo = ppo_cfg_dict[ROBOT.lower()]
     elif MR in ["AMP", "AMPNO", "AMPNONO"]: 
         common_cfg, common_cfgppo = amp_cfg_dict[ROBOT.lower()]
@@ -94,13 +93,13 @@ def get_cfg(ROBOT, MOTION, MR):
 
     class CfgPPO( common_cfgppo ):
         class runner( common_cfgppo.runner ):
-            experiment_name = f"STMR/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+            experiment_name = f"{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
             amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
 
-    if MR == 'AMP':
-        MR = "NMR"
-        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
-        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
+    if MR =='AMP':
+        MR_TEMP = "NMR"
+        Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR_TEMP}/{MOTION}_{raw_robot_name}_{MR_TEMP}_processed/*')
+        CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR_TEMP}/{MOTION}_{raw_robot_name}_{MR_TEMP}_processed/*')
     elif MR in ["AMPNO", "AMPNONO"]:
         Cfg.env.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
         CfgPPO.runner.amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/NMR/{MOTION}_{raw_robot_name}_NMR_processed/*')
@@ -116,7 +115,8 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.env.reference_state_initialization = True
     Cfg.MR = MR
 
-    if SIM:
+    if NO_RAND:
+        CfgPPO.runner.experiment_name = 'STMR/'+CfgPPO.runner.experiment_name
         Cfg.terrain.curriculum = False
         Cfg.noise.add_noise = False
 
@@ -126,22 +126,25 @@ def get_cfg(ROBOT, MOTION, MR):
         Cfg.domain_rand.randomize_restitution = False
         Cfg.domain_rand.push_robots = False
         Cfg.domain_rand.randomize_com_displacement = False
-        print("SIMULATION MODE: No domain randomization \n" * 50)
+        print("No domain randomization!!! \n" * 50)
+    else:
+        CfgPPO.runner.experiment_name = 'RAND/'+CfgPPO.runner.experiment_name
     return Cfg, CfgPPO
 
 import os
 from legged_gym.utils.task_registry import task_registry
 
-def register_tasks(task):
+def register_tasks(task, seed, NO_RAND):
     ROBOT  = task.split('_')[0].lower()
     MR     = task.split('_')[1].upper()
     MOTION = task.split('_')[2].lower()
     
     register_name = f"{ROBOT.lower()}_{MR}_{MOTION}"
 
-    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO"]:
-        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR)
+    if MR in ["NMR", "SMR", "TMR", "STMR", "AMP", "AMPNO", "AMPNONO", "TO"]:
+        Cfg, CfgPPO = get_cfg(ROBOT, MOTION, MR, NO_RAND)
     else:
         raise ValueError(f"MR {MR} not supported")
     
+    CfgPPO.runner.experiment_name += f"/seed{seed}"
     task_registry.register(register_name, LeggedRobot, Cfg, CfgPPO)

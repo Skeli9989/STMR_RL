@@ -84,13 +84,13 @@ class LeggedRobot(BaseTask):
                             LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
                                 ee_name).to(device=sim_device))
 
-        self.total_chain_ee = []
-        for ee_name in self.cfg.env.total_ee_names:
-            self.total_chain_ee.append(
-                pk.build_serial_chain_from_urdf(
-                    open(self.cfg.asset.file.format(
-                            LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
-                                ee_name).to(device=sim_device))
+        # self.total_chain_ee = []
+        # for ee_name in self.cfg.env.total_ee_names:
+        #     self.total_chain_ee.append(
+        #         pk.build_serial_chain_from_urdf(
+        #             open(self.cfg.asset.file.format(
+        #                     LEGGED_GYM_ROOT_DIR=LEGGED_GYM_ROOT_DIR)).read(),
+        #                         ee_name).to(device=sim_device))
         
         self._get_commands_from_joystick = self.cfg.env.get_commands_from_joystick
         if self._get_commands_from_joystick:
@@ -245,13 +245,13 @@ class LeggedRobot(BaseTask):
         self.times[env_ids.cpu().numpy()]     =  times
         self.last_times[env_ids.cpu().numpy()] =  times
         
-        if self.cfg.env.reference_state_initialization:
-            frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
-            self._reset_dofs_amp(env_ids, frames)
-            self._reset_root_states_amp(env_ids, frames)
-        else:
-            self._reset_dofs(env_ids)
-            self._reset_root_states(env_ids)
+        # if self.cfg.env.reference_state_initialization:
+        frames = self.amp_loader.get_full_frame_at_time_batch(traj_idxs, times)
+        self._reset_dofs_amp(env_ids, frames)
+        self._reset_root_states_amp(env_ids, frames)
+        # else:
+            # self._reset_dofs(env_ids)
+            # self._reset_root_states(env_ids)
 
         # self._resample_commands(env_ids)
 
@@ -424,47 +424,45 @@ class LeggedRobot(BaseTask):
         Returns:
             [List[gymapi.RigidShapeProperties]]: Modified rigid shape properties
         """
-        if self.cfg.domain_rand.randomize_friction:
-            if self.cfg.domain_rand.test_time:
-                if env_id==0:
-                    friction_range = self.cfg.domain_rand.friction_range
-                    friction_ = (friction_range[0] + friction_range[1]) / 2
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
-                    self.friction_coeffs = friction_buckets[bucket_ids]
-            else:
-                if env_id==0:
-                    # prepare friction randomization
-                    friction_range = self.cfg.domain_rand.friction_range
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
-                    self.friction_coeffs = friction_buckets[bucket_ids]
+        if self.cfg.domain_rand.randomize_friction and not self.cfg.domain_rand.test_time:
+            if env_id==0:
+                friction_range = self.cfg.domain_rand.friction_range
+                friction_ = (friction_range[0] + friction_range[1]) / 2
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                friction_buckets = torch.ones((num_buckets,1), device='cpu') * friction_
+                self.friction_coeffs = friction_buckets[bucket_ids]
+        else:
+            if env_id==0:
+                # prepare friction randomization
+                friction_range = self.cfg.domain_rand.friction_range
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                friction_buckets = torch_rand_float(friction_range[0], friction_range[1], (num_buckets,1), device='cpu')
+                self.friction_coeffs = friction_buckets[bucket_ids]
             
-            for s in range(len(props)):
-                props[s].friction = self.friction_coeffs[env_id]
+        for s in range(len(props)):
+            props[s].friction = self.friction_coeffs[env_id]
 
-        if self.cfg.domain_rand.randomize_restitution:
-            if self.cfg.domain_rand.test_time:
-                if env_id ==0:
-                    restitution_range = self.cfg.domain_rand.restitution_range
-                    restitution_ = (restitution_range[0] + restitution_range[1]) / 2
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    restitution_buckets = torch.ones((num_buckets,1), device='cpu') * restitution_
-                    self.restitution_coeffs = restitution_buckets[bucket_ids]
-            else:
-                if env_id ==0:
-                    # prepare restitution randomization
-                    restitution_range = self.cfg.domain_rand.restitution_range
-                    num_buckets = 64
-                    bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
-                    restitution_buckets = torch_rand_float(restitution_range[0], restitution_range[1], (num_buckets,1), device='cpu')
-                    self.restitution_coeffs = restitution_buckets[bucket_ids]
-            
-            for s in range(len(props)):
-                props[s].restitution = self.restitution_coeffs[env_id]
+        if self.cfg.domain_rand.randomize_restitution and not self.cfg.domain_rand.test_time:
+            if env_id ==0:
+                # prepare restitution randomization
+                restitution_range = self.cfg.domain_rand.restitution_range
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                restitution_buckets = torch_rand_float(restitution_range[0], restitution_range[1], (num_buckets,1), device='cpu')
+                self.restitution_coeffs = restitution_buckets[bucket_ids]
+        else:
+            if env_id ==0:
+                restitution_range = self.cfg.domain_rand.restitution_range
+                restitution_ = (restitution_range[0] + restitution_range[1]) / 2
+                num_buckets = 64
+                bucket_ids = torch.randint(0, num_buckets, (self.num_envs, 1))
+                restitution_buckets = torch.ones((num_buckets,1), device='cpu') * restitution_
+                self.restitution_coeffs = restitution_buckets[bucket_ids]
+
+        for s in range(len(props)):
+            props[s].restitution = self.restitution_coeffs[env_id]
         return props
 
     def _process_dof_props(self, props, env_id):
@@ -588,7 +586,11 @@ class LeggedRobot(BaseTask):
             if self.cfg.MR in ["AMPNONO"]:
                 torques = p_gains*(actions_scaled + self.default_dof_pos - self.dof_pos) - d_gains*self.dof_vel
             else:
-                target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
+                frames = self.amp_loader.get_full_frame_at_time_batch(self.traj_idxs, self.times)
+                frames = frames.to(self.device)
+                target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
+                
+                # target_dof_pos = torch.FloatTensor(self.motion_holder.get_batch_q(self.times)).to(self.device)
                 torques = p_gains*(actions_scaled + target_dof_pos  - self.dof_pos) - d_gains*self.dof_vel
         elif control_type=="V":
             torques = p_gains*(actions_scaled - self.dof_vel) - d_gains*(self.dof_vel - self.last_dof_vel)/self.sim_params.dt
@@ -1270,26 +1272,41 @@ class LeggedRobot(BaseTask):
         root_rot = AMPLoader.get_root_rot_batch(frames)
         root_rot_cur= self.root_states[:,3:7]
 
-        inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
-        ang_error =  1 - inner_product ** 2
+        from pytorch3d.transforms import quaternion_multiply, quaternion_invert
+        from pytorch3d.transforms.rotation_conversions import quaternion_to_axis_angle
+        import torch
+
+        q1 = root_rot.clone()[:,[3,0,1,2]]
+        q2 = root_rot_cur.clone()[:,[3,0,1,2]]
+        q_diff = quaternion_multiply(q1,quaternion_invert(q2))
+        angle = quaternion_to_axis_angle(q_diff)
+
+        # l2 norm of angle using torch
+        ang_error = torch.linalg.norm(angle, dim=1)
+
+        # inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
+        # ang_error =  1 - inner_product ** 2
+
         return torch.exp(-1 * ang_error)
 
     def _reward_EE_motion(self):
         self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
         
-        def get_global_keypoints(chains, dof_pos, rot, pos):
+        def get_global_keypoints(chains, dof_pos, rot, pos, total_ee_names):
             R = transforms.quaternion_to_matrix(rot[:,[3,0,1,2]])
 
             key_pos = []
+            res_dict = {}
             with torch.no_grad():
                 for i, chain_ee in enumerate(chains):
-                    idx = i//4
-                    key_pos.append(
-                        chain_ee.forward_kinematics(dof_pos[:, idx * 3:idx * 3 +
-                                                    3]).get_matrix()[:, :3, 3])
+                    fk_res_dict = chain_ee.forward_kinematics(dof_pos[:, i * 3:i * 3 +3], end_only=False)
+                    res_dict.update(fk_res_dict)
 
-            key_pos = torch.stack(key_pos, dim=1)
-            key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
+                for ee_name in total_ee_names:
+                    key_pos.append(res_dict[ee_name].get_matrix()[:, :3, 3])
+
+                key_pos = torch.stack(key_pos, dim=1)
+                key_pos = torch.matmul(key_pos, R) + pos.unsqueeze(1)
             return key_pos
         
 
@@ -1298,12 +1315,12 @@ class LeggedRobot(BaseTask):
         target_dof_pos = AMPLoader.get_joint_pose_batch(frames)
         target_rot = AMPLoader.get_root_rot_batch(frames)
         target_pos = AMPLoader.get_root_pos_batch(frames)
-        target_key_pos = get_global_keypoints(self.total_chain_ee, target_dof_pos, target_rot, target_pos)
+        target_key_pos = get_global_keypoints(self.chain_ee, target_dof_pos, target_rot, target_pos, self.cfg.env.total_ee_names)
 
         cur_dof_pos = self.dof_pos.clone()
         cur_rot = self.root_states[:,3:7].clone()
         cur_pos = self.root_states[:,0:3].clone() - self.env_origins
-        cur_key_pos = get_global_keypoints(self.total_chain_ee, cur_dof_pos, cur_rot, cur_pos)
+        cur_key_pos = get_global_keypoints(self.chain_ee, cur_dof_pos, cur_rot, cur_pos, self.cfg.env.total_ee_names)
 
         key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
         return torch.exp(-10 * key_pos_error)
