@@ -93,7 +93,7 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
 
     class CfgPPO( common_cfgppo ):
         class runner( common_cfgppo.runner ):
-            experiment_name = f"STMR/{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
+            experiment_name = f"{MOTION}/{ROBOT}/{MR}/{MOTION}_{ROBOT}_{MR}"
             amp_motion_files = glob.glob(f'{LEGGED_GYM_ROOT_DIR}/datasets/{MOTION}/{raw_robot_name}/{MR}/{MOTION}_{raw_robot_name}_{MR}_processed/*')
 
     if MR =='AMP':
@@ -116,6 +116,7 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
     Cfg.MR = MR
 
     if NO_RAND:
+        CfgPPO.runner.experiment_name = 'STMR/'+CfgPPO.runner.experiment_name
         Cfg.terrain.curriculum = False
         Cfg.noise.add_noise = False
 
@@ -126,6 +127,8 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
         Cfg.domain_rand.push_robots = False
         Cfg.domain_rand.randomize_com_displacement = False
         print("No domain randomization!!! \n" * 50)
+    else:
+        CfgPPO.runner.experiment_name = 'RAND/'+CfgPPO.runner.experiment_name
     return Cfg, CfgPPO
 
 import os
