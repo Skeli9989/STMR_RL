@@ -25,12 +25,13 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 ROBOT = "go1"
 ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
-MOTIONS = ['hopturnslow']
-# MOTIONS = ['hopturn']
+MOTIONS = ['hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
+# MOTIONS = ['sidesteps']
 
 for MOTION in MOTIONS:
-  MR_LS = ['NMR', "TMR", "SMR","STMR"]
-  MR_LS = ["NMR"]
+  MR_LS = ['NMR', "SMR","STMR", 'TO']
+  # MR_LS = ['TO']
+  # MR_LS = ["NMR"]
   # MR_LS = ["NMR"]
 
   for MR in MR_LS:

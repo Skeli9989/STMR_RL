@@ -132,5 +132,6 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    # args.task = "go1base_NMR_hopturnslow"
+    args.task = "go1base_NMR_hopturn"
+    args.seed = 1
     play(args)

@@ -1,6 +1,10 @@
 # %%
 ROBOT = "go1".lower()
-MOTION = 'hopturnslow'
+MOTION = 'trot0'
+seed = 1
+# MR = "NMR"
+MR = "STMR"
+# MR = "AMP"
 
 error_dict = {}
 
@@ -49,9 +53,6 @@ from mjpc.task.Quadruped.info import QuadrupedMPCInfo as MPCInfo
 mpc_info = MPCInfo(model, data)
 
 # %%
-MR = "NMR"
-# MR = "STMR"
-# MR = "AMP"
 from legged_gym import LEGGED_GYM_ROOT_DIR
 from fastdtw import fastdtw
 import numpy as np
@@ -68,9 +69,9 @@ else:
 
 GET_ALL = False
 if GET_ALL:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/pose_all.json"
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_all.json"
 else:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/pose_1k.json"
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_1k.json"
 import json
 # load json
 with open(path) as json_file:
@@ -165,48 +166,3 @@ from matplotlib import pyplot as plt
 plt.plot(key_point_error_ls)
 
 error_dict[MR] = key_point_error_ls
-# %%
-for key, value in error_dict.items():
-    plt.plot(value, label=key)
-
-plt.legend()
-
-
-# %%
-import numpy as np
-
-## A noisy sine wave as query
-query = deploy_site_array
-
-## A cosine is for template; sin and cos are offset by 25 samples
-template = target_site_array
-
-## Find the best match with the canonical recursion formula
-from dtw import *
-alignment = dtw(query, template, keep_internals=True)
-
-## Display the warping curve, i.e. the alignment curve
-alignment.plot(type="threeway")
-
-alignment.distance
-
-## Align and plot with the Rabiner-Juang type VI-c unsmoothed recursion
-# dtw(query, template, keep_internals=True, 
-#     step_pattern=rabinerJuangStepPattern(6, "c"))\
-#     .plot(type="twoway",offset=-2)
-
-# ## See the recursion relation, as formula and diagram
-# print(rabinerJuangStepPattern(6,"c"))
-# rabinerJuangStepPattern(6,"c").plot()
-
-# %%
-from fastdtw import fastdtw
-import numpy as np
-from scipy.spatial.distance import cityblock
-
-# Perform DTW
-distance, path = fastdtw(target_site_array, deploy_site_array, dist=cityblock)
-
-print(f'DTW Distance: {distance}')
-print('DTW Path:')
-print(path)

@@ -40,25 +40,98 @@ import torch
 
 from isaacgym import gymtorch, gymapi, gymutil
 from rsl_rl.datasets.motion_loader import AMPLoader
+from toolbox.write import write_json
+
+import mujoco
+from mujoco_viewer.mujoco_viewer import MujocoViewer
+import numpy as np
+from numpy.linalg import norm
+from toolbox.resources import get_asset_dict, ASSET_SRC
+from mjmr.util import reset, get_mr_info, get_xml_path, plot_contact_schedule, get_vel_contact_boolean, get_mujoco_contact_boolean,get_vel_contact_boolean_from_pos, get_key_id, output_amp_motion
+from mjmr.task.Quadruped.info import QuadrupedRetargetInfo as RetargetInfo
+from mjpc.task.Quadruped.play import plot_skeleton
+from mjpc.task.Quadruped.info import QuadrupedMPCInfo as MPCInfo
+
+from fastdtw import fastdtw
+from scipy.spatial.distance import cityblock
+
 NO_RAND = True
+GET_ALL = False
+
+def get_target_deploy_array(env, model, train_cfg, obs):
+    iternum = str.split(str.split(model,"_")[1], ".pt")[0]
+    train_cfg.runner.checkpoint = int(iternum)
+    # load policy
+    train_cfg.runner.resume = True
+    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
+    policy = ppo_runner.get_inference_policy(device=env.device)
+
+    target_ls = []
+    deploy_ls = []
+    env.reset(random_time=False)
+    while env.times < env.amp_loader.trajectory_lens[0] - env.amp_loader.trajectory_frame_durations[0]:
+        actions = policy(obs.detach())
+        obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
+    
+        env.times = np.clip(env.times, 0, env.amp_loader.trajectory_lens[0] - env.amp_loader.trajectory_frame_durations[0])
+        
+        frames = env.amp_loader.get_full_frame_at_time_batch(env.traj_idxs, env.times)
+        frames = frames.to(env.device)
+        
+        dof_pos = AMPLoader.get_joint_pose_batch(frames)
+        
+        root_pos = AMPLoader.get_root_pos_batch(frames)
+        root_pos[:,:2] += env.env_origins[:, :2]
+
+        root_rot = AMPLoader.get_root_rot_batch(frames)
+        root_rot_cur= env.root_states[:,3:7]
+
+
+        def cast_numpy(tensor):
+            return tensor.detach().cpu().numpy().copy().flatten()
+        
+        target = np.concatenate([cast_numpy(root_pos), cast_numpy(root_rot), cast_numpy(dof_pos)])
+        deploy = np.concatenate([cast_numpy(env.root_states[:, 0:3]), cast_numpy(env.root_states[:, 3:7]), cast_numpy(env.dof_pos)])
+
+        # res_dict["target"].append(target.tolist())
+        # res_dict["deploy"].append(deploy.tolist())
+        target_ls.append(target.tolist())
+        deploy_ls.append(deploy.tolist())
+
+    return target_ls, deploy_ls
 
 def play(args):
+    ROBOT  = args.task.split("_")[0]
+    MR     = args.task.split("_")[1]
+    MOTION = args.task.split("_")[2]
+
+    if 'base' in ROBOT:
+        ROBOT = ROBOT.split("base")[0]
+    ROBOT_base = ROBOT+"base"
+
+    # Load Mujoco Model
+    xml_path = get_xml_path(ROBOT)
+    mjmodel = mujoco.MjModel.from_xml_path(xml_path.as_posix())
+    mjdata  = mujoco.MjData(mjmodel)
+    reset(mjmodel, mjdata)
+    try:
+        viewer.close()
+    except Exception:
+        pass
+
+    viewer = MujocoViewer(
+        mjmodel,mjdata,mode='window',title="MPC",
+        width=1200,height=800,hide_menus=True
+    )
+    mr_info   = RetargetInfo(mjmodel, mjdata)
+    mpc_info = MPCInfo(mjmodel, mjdata)
+
+
+
+    # Load Isaac Model
     register_tasks(args.task, args.seed, NO_RAND=NO_RAND)
-
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
-    # override some parameters for testing
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
-    env_cfg.env.get_commands_from_joystick = False
-    env_cfg.terrain.num_rows = 5
-    env_cfg.terrain.num_cols = 5
-    env_cfg.terrain.curriculum = False
-    env_cfg.noise.add_noise = False
-    env_cfg.domain_rand.randomize_friction = False
-    env_cfg.domain_rand.push_robots = False
-    env_cfg.domain_rand.randomize_gains = False
-    env_cfg.domain_rand.randomize_base_mass = False
-
-    train_cfg.runner.amp_num_preload_transitions = 1
+    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1) # override some parameters for testing
 
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
@@ -79,83 +152,76 @@ def play(args):
     
     from pathlib import Path
 
-    models = [file for file in os.listdir(load_run) if 'model' in file]
-    models.sort(key=lambda m: '{0:0>15}'.format(m))
-    if args.GET_ALL:
+    models_names = [file for file in os.listdir(load_run) if 'model' in file]
+    models_names.sort(key=lambda m: '{0:0>15}'.format(m))
+    if GET_ALL:
         save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_all.json"
     else:
-        models = [models[-1]]
+        models_names = [models_names[-1]]
         save_path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{train_cfg.runner.experiment_name}/pose_1k.json"
 
-    res_dict = {"target":[], "deploy":[]}
-    for model in models:
-        iternum = str.split(str.split(model,"_")[1], ".pt")[0]
-        train_cfg.runner.checkpoint = int(iternum)
-        # load policy
-        train_cfg.runner.resume = True
-        ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
-        policy = ppo_runner.get_inference_policy(device=env.device)
+    res_dict = {"target":[], "deploy":[], "dtw_distance":[]}
+    for model_name in models_names:
+        print(f"{model_name}_{models_names[-1]}")
+        target_ls, deploy_ls = get_target_deploy_array(env, model_name, train_cfg, obs)
 
-        # res_dict_ = dict(
-        #     joint_tracking_error = [],
-        #     position_tracking_error = [],
-        #     orientation_tracking_error = []
-        # )
-        
-        target_ls = []
-        deploy_ls = []
-        env.reset(random_time=False)
-        while env.times < env.amp_loader.trajectory_lens[0] - env.amp_loader.trajectory_frame_durations[0]:
-            actions = policy(obs.detach())
-            obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
-        
-            env.times = np.clip(env.times, 0, env.amp_loader.trajectory_lens[0] - env.amp_loader.trajectory_frame_durations[0])
-            
-            frames = env.amp_loader.get_full_frame_at_time_batch(env.traj_idxs, env.times)
-            frames = frames.to(env.device)
-            
-            dof_pos = AMPLoader.get_joint_pose_batch(frames)
-            
-            # dof_pos_error = torch.sum(torch.square(dof_pos - env.dof_pos))
-            # res_dict_["joint_tracking_error"].append(dof_pos_error.detach().cpu().tolist())
-            
-            root_pos = AMPLoader.get_root_pos_batch(frames)
-            root_pos[:,:2] += env.env_origins[:, :2]
-
-            # root_pos_error = torch.sum(torch.square(root_pos - env.root_states[:, 0:3]))
-            # res_dict_["position_tracking_error"].append(root_pos_error.detach().cpu().tolist())
-
-            root_rot = AMPLoader.get_root_rot_batch(frames)
-            root_rot_cur= env.root_states[:,3:7]
-
-            # inner_product = torch.sum(root_rot_cur * root_rot)
-            # ang_error =  1 - inner_product ** 2
-            # res_dict_["orientation_tracking_error"].append(ang_error.detach().cpu().tolist())
-
-
-            def cast_numpy(tensor):
-                return tensor.detach().cpu().numpy().copy().flatten()
-            
-            target = np.concatenate([cast_numpy(root_pos), cast_numpy(root_rot), cast_numpy(dof_pos)])
-            deploy = np.concatenate([cast_numpy(env.root_states[:, 0:3]), cast_numpy(env.root_states[:, 3:7]), cast_numpy(env.dof_pos)])
-
-            # res_dict["target"].append(target.tolist())
-            # res_dict["deploy"].append(deploy.tolist())
-            target_ls.append(target.tolist())
-            deploy_ls.append(deploy.tolist())
-
-
-        # for key,value in res_dict_.items():
-            # res_dict_[key] = np.mean(value)
-        # res_dict[iternum] = res_dict_
         res_dict["target"].append(target_ls)
         res_dict["deploy"].append(deploy_ls)
-        from toolbox.write import write_json
+
+        dtw_distance = calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy_ls, viewer)
+        res_dict["dtw_distance"].append(dtw_distance)
         write_json(save_path, res_dict)
+
+def calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy_ls,viewer, render_every=10):
+    site_ids = [
+        mr_info.id.trunk_site,
+        mr_info.id.FR_hip_site, mr_info.id.FR_calf_site, mr_info.id.FR_foot_site,
+        mr_info.id.FL_hip_site, mr_info.id.FL_calf_site, mr_info.id.FL_foot_site,
+        mr_info.id.RR_hip_site, mr_info.id.RR_calf_site, mr_info.id.RR_foot_site,
+        mr_info.id.RL_hip_site, mr_info.id.RL_calf_site, mr_info.id.RL_foot_site,
+        ]
+    mujoco_idx = [3,4,5,6, 7,8,9, 10,11,12, 13,14,15, 16,17,18]
+    amp_idx    = [6,3,4,5, 10,11,12, 7,8,9, 16,17,18, 13,14,15]
+
+    target_qpos_total = np.array(target_ls)
+    target_qpos_total[:,mujoco_idx] = target_qpos_total[:,amp_idx].copy()
+
+    deploy_qpos_total = np.array(deploy_ls)
+    deploy_qpos_total[:,mujoco_idx] = deploy_qpos_total[:,amp_idx].copy()
+
+    frame_number = len(target_qpos_total)
+
+    target_site_ls = []
+    deploy_site_ls = []
+    for frame_i in range(frame_number):
+        target_qpos = target_qpos_total[frame_i]
+        deploy_qpos = deploy_qpos_total[frame_i]
+        mjdata.qpos = target_qpos.copy()
+        mujoco.mj_forward(mjmodel, mjdata)
+        for site_id in site_ids:
+            target_site_ls.append(mjdata.site_xpos[site_id].copy())
+        
+        if frame_i%render_every == 0:
+            plot_skeleton(mjmodel, mjdata, mpc_info, viewer, rgba=[1,0,0,0.5])
+
+        mjdata.qpos = deploy_qpos.copy()
+        mujoco.mj_forward(mjmodel, mjdata)
+        for site_id in site_ids:
+            deploy_site_ls.append(mjdata.site_xpos[site_id].copy())
+        if frame_i%render_every == 0:
+            viewer.render()
+    
+    target_site_array = np.array(target_site_ls).reshape(frame_number, -1)
+    deploy_site_array = np.array(deploy_site_ls).reshape(frame_number, -1)
+
+    distance, path = fastdtw(target_site_array, deploy_site_array, dist=cityblock)
+    key_point_error = distance/frame_number/len(site_ids)
+
+    return key_point_error
 
 if __name__ == '__main__':
     args = get_args()
-    args.GET_ALL = False
-    # args.task = "go1base_TO_hopturn"
-    # args.task = "a1_amp"
     play(args)
+    if GET_ALL:
+        from util_script.plot_performance import main as plot_main
+        plot_main()

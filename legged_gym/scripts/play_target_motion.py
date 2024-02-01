@@ -42,8 +42,10 @@ from isaacgym import gymtorch, gymapi, gymutil
 from isaacgym.torch_utils import quat_rotate
 from rsl_rl.datasets.motion_loader import AMPLoader
 
+NO_RAND = True
+
 def play(args):
-    register_tasks(args.task)
+    register_tasks(args.task, args.seed, NO_RAND=NO_RAND)
     env_cfg, train_cfg = task_registry.get_cfgs(name=args.task)
     # override some parameters for testing
     env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)

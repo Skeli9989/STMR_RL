@@ -1,10 +1,11 @@
 # %%
 # STMR checklist
+from legged_gym import LEGGED_GYM_ROOT_DIR
 
 def main():
     from pathlib import Path
 
-    dataset_path = Path('datasets')
+    dataset_path = Path(f'{LEGGED_GYM_ROOT_DIR}/datasets')
 
     robots = ['go1', 'a1', 'al']
     motions = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1', 'videowalk0', 'videowalk1']
@@ -13,7 +14,7 @@ def main():
     import matplotlib.pyplot as plt
     from pandas.plotting import table
 
-    MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO"]
+    MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
     data = {}
 
     for MR in MRs:
@@ -40,15 +41,14 @@ def main():
 
         # Save the image
         plt.title(f'{MR}_Motion_checklist', fontsize=16, pad=20)
-        Path('checklist').mkdir(parents=True, exist_ok=True)
-        plt.savefig(f'checklist/{MR}_Motion_checklist.png', bbox_inches='tight', pad_inches=0.05)
+        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist').mkdir(parents=True, exist_ok=True)
+        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/{MR}_Motion_checklist.png', bbox_inches='tight', pad_inches=0.05)
         # plt.show()
 
-    # %%
     # RL checklist
     import glob
 
-    log_path = Path('logs')
+    log_path = Path(f'{LEGGED_GYM_ROOT_DIR}/logs')
     data = {}
 
     break_flag = False
@@ -60,12 +60,17 @@ def main():
                 robot = robot+"base"
                 paths=log_path/"STMR"/motion/robot/MR/f"{motion}_{robot}_{MR}"
 
-                # if "model_10000.pt" exists in recusive paths
-                if glob.glob(str(paths/"**/model_8000.pt"), recursive=True):
-                    data[MR][motion][robot] = 'O'
-                else:
-                    data[MR][motion][robot] = 'X'
+                if robot not in data[MR][motion].keys():
+                    data[MR][motion][robot] = ""
 
+                if not paths.exists():
+                    continue
+                for seed_path in paths.iterdir():
+                    seed_name = seed_path.name
+
+                    if glob.glob(str(paths/"**/model_10000.pt"), recursive=True):
+                        seed_num = seed_name.split("seed")[-1]
+                        data[MR][motion][robot] += f"{seed_num}/"
                 
         df = pd.DataFrame(data[MR])
         df.index = robots
@@ -80,8 +85,7 @@ def main():
 
         # Save the image
         plt.title(f'{MR}_RL_checklist', fontsize=16, pad=20)
-        plt.savefig(f'checklist/{MR}_RL_checklist.png', bbox_inches='tight', pad_inches=0.05)
-    # %%
+        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/{MR}_RL_checklist.png', bbox_inches='tight', pad_inches=0.05)
 
 if __name__ == '__main__':
     main()
