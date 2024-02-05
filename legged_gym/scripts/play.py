@@ -86,6 +86,8 @@ def play(args):
     #     0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8, 0, 0.9, -1.8
     # ])
     actions_ls = []
+    obs_ls = []
+    time_ls = []
     for repeat_n in range(100):
         for i in range(int(env.max_episode_length)):
             # env.reset()
@@ -95,8 +97,11 @@ def play(args):
             #     env.reset(random_time=False)
             #     obs = env.get_observations()
             #     # env.reset(random_time=True)
+
+            obs_ls.append(obs[0].detach().cpu().numpy().flatten().tolist())
             actions = policy(obs.detach())
-            actions_ls.append(actions.detach().cpu().numpy().flatten())
+            actions_ls.append(actions[0].detach().cpu().numpy().flatten().tolist())
+            time_ls.append(env.times[0])
             # obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=False)
             # actions = policy(obs.detach())
             # env.default_dof_pos[:] = torch.tensor([
@@ -111,10 +116,22 @@ def play(args):
             # actions = torch.zeros_like(actions)       
             obs, _, rews, dones, infos, _, _ = env.step(actions.detach(), RESET_ABLED=True)
             if dones.any():
+                
                 # from matplotlib import pyplot as plt
                 # plt.plot(actions_ls)
                 # plt.show()
-                actions_ls =[]
+
+                # logs_dict = {}
+                # logs_dict['obs'] = obs_ls
+                # logs_dict['actions'] = actions_ls
+                # logs_dict["Timeframe"] = time_ls
+                # # save as json
+                # import json
+                # with open('logs.json', 'w') as f:
+                #     json.dump(logs_dict, f)
+                actions_ls = []
+                # obs_ls = []
+                # time_ls = []
             # env.root_states[0][0] += 0.01
             # env_ids_int32 = torch.tensor([0]).to(dtype=torch.int32)
             # env.gym.set_actor_root_state_tensor_indexed(env.sim,
@@ -132,6 +149,6 @@ if __name__ == '__main__':
     RECORD_FRAMES = True
     MOVE_CAMERA = False
     args = get_args()
-    args.task = "go1base_NMR_hopturn"
-    args.seed = 1
+    # args.task = "go1base_STMR_trot0"
+    # args.seed = 1
     play(args)

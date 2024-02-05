@@ -7,8 +7,8 @@ if 'base' in ROBOT:
 	raw_robot_name = ROBOT.split("base")[0]
 else:
 	raw_robot_name = ROBOT
-NO_RAND = True
-MOTION = "trot0"
+NO_RAND = False
+MOTION = "sidesteps"
 MR = "STMR"
 task = f"{ROBOT}_{MR}_{MOTION}"	
 
