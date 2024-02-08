@@ -36,8 +36,6 @@ ROBOT = "A1"
 ROBOT = ROBOT.lower()
 
 class A1base_CfgPPO( LeggedRobotCfg ):
-    def __init__(self, MOTION):
-        super().__init__(MOTION)
     class env( LeggedRobotCfg.env ):
         num_envs = 5480
         include_history_steps = 1  # Number of steps of history to include.
