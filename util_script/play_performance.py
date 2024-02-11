@@ -1,8 +1,8 @@
 # %%
-ROBOT = "go1".lower()
+ROBOT = "a1".lower()
 MOTION = 'hopturn'
-seed = 1
-MR = "TO"
+seed = 0
+MR = "STMR"
 # MR = "NMR"
 # MR = "STMR"
 # MR = "AMP"
@@ -101,6 +101,9 @@ deploy_qpos_total = np.array(motion_data['deploy'])
 
 target_qpos_total[:,:,mujoco_idx] = target_qpos_total[:,:,amp_idx].copy()
 deploy_qpos_total[:,:,mujoco_idx] = deploy_qpos_total[:,:,amp_idx].copy()
+
+target_qpos_total[:,:, 7:] +=  model.qpos0[7:] 
+deploy_qpos_total[:,:, 7:] +=  model.qpos0[7:]
 
 model_number = len(target_qpos_total)
 frame_number = len(target_qpos_total[0])

@@ -19,7 +19,7 @@ def create_symbolic_link(source_folder, target_folder):
         print(f"Error creating symbolic link: {e}")
 
 
-logs_names = ["logs50", "logs63", "logs64"]
+logs_names = ["logs50", "logs63", "logs64", "logs65"]
 
 for logs_name in logs_names:
     logs_dir_path = Path(f"{LEGGED_GYM_ROOT_DIR}/{logs_name}")
@@ -40,7 +40,7 @@ for logs_name in logs_names:
                             # move date_path to logs/STMR/{motion}/{robot}/{mr}/{date_path.name}
                             if (date_path/'model_10000.pt').exists():
                                 move_path = Path(f"{LEGGED_GYM_ROOT_DIR}/logs/{RAND_NORAND}/{motion}/{robot}/{mr}/{motion}_{robot}_{mr}/{seed_path.name}/{date_path.name}")
-                                if move_path.exists():
+                                if os.path.islink(move_path):
                                     os.unlink(move_path)
                                 move_path.parent.mkdir(parents=True, exist_ok=True)
                                 # soft link date_path to move_path
