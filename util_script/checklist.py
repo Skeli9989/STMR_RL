@@ -14,7 +14,8 @@ def main():
     import matplotlib.pyplot as plt
     from pandas.plotting import table
 
-    MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
+    # MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
+    MRs = ['NMR', "STMR", "TO", "AMP"]
     data = {}
 
     for MR in MRs:
