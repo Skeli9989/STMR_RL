@@ -14,6 +14,6 @@ task = f"{ROBOT}_{MR}_{MOTION}"
 
 export_onnx(task, seed=1, NO_RAND=NO_RAND, device = 'cpu')
 export_json_files(raw_robot_name, MOTION, MR, PLOT=True)
-
+print('done')
 # %%
 	

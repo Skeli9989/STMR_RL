@@ -56,7 +56,7 @@ from fastdtw import fastdtw
 from scipy.spatial.distance import cityblock
 
 NO_RAND = True
-GET_ALL = False
+GET_ALL = True
 RENDER = False
 
 def get_target_deploy_array(env, model, train_cfg, obs):
@@ -126,6 +126,10 @@ def play(args):
             mjmodel,mjdata,mode='window',title="MPC",
             width=1200,height=800,hide_menus=True
         )
+        args.headless = False
+    else:
+        viewer = None
+        args.headless = True
     mr_info   = RetargetInfo(mjmodel, mjdata)
     mpc_info = MPCInfo(mjmodel, mjdata)
 
