@@ -1215,7 +1215,7 @@ class LeggedRobot(BaseTask):
         frames = frames.to(self.device)
         dof_pos = AMPLoader.get_joint_pose_batch(frames)
         dof_pos_error = torch.sum(torch.square(dof_pos - self.dof_pos), dim=1)
-        return torch.exp(-0.02 * 100 * dof_pos_error)
+        return torch.exp(-self.cfg.rewards.scales.exp_dof_pos_motion * dof_pos_error)
 
     def _reward_dof_vel_motion(self):
         # reward for qvel motion
@@ -1260,7 +1260,7 @@ class LeggedRobot(BaseTask):
         root_pos = AMPLoader.get_root_pos_batch(frames)
         root_pos[:,:2] += self.env_origins[:, :2]
         root_pos_error = torch.sum(torch.square(root_pos - self.root_states[:, 0:3]), dim=1)
-        return torch.exp(-1 * 5 * root_pos_error)
+        return torch.exp(-self.cfg.rewards.scales.exp_pos_motion * root_pos_error)
 
     def _reward_ang_motion(self):
         # reward for root ang
@@ -1287,7 +1287,7 @@ class LeggedRobot(BaseTask):
         # inner_product = torch.sum(root_rot_cur * root_rot, dim=1)
         # ang_error =  1 - inner_product ** 2
 
-        return torch.exp(-1 * ang_error)
+        return torch.exp(-self.cfg.rewards.scales.exp_ang_motion * ang_error)
 
     def _reward_EE_motion(self):
         self.times = np.clip(self.times, 0, self.amp_loader.trajectory_lens[0] - self.amp_loader.trajectory_frame_durations[0])
@@ -1323,7 +1323,8 @@ class LeggedRobot(BaseTask):
         cur_key_pos = get_global_keypoints(self.chain_ee, cur_dof_pos, cur_rot, cur_pos, self.cfg.env.total_ee_names)
 
         key_pos_error = torch.sum(torch.square(target_key_pos - cur_key_pos), dim=[1,2])
-        return torch.exp(-10 * key_pos_error)
+        return torch.exp(-self.cfg.rewards.scales.exp_EE_motion * key_pos_error)
+        # return torch.exp(-30 * key_pos_error)
 
     def update(self):
         self.gym.simulate(self.sim)

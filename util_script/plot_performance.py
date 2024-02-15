@@ -108,41 +108,87 @@ def plot_last():
     import numpy as np
     df = pd.DataFrame.from_dict(res_dict, orient='index', columns=['dtw_distance'])
 
-    res_dict_mean = {}
-    res_dict_std  = {}
+
+    # res_dict_mean = {}
+    # res_dict_std  = {}
+    res_dict_save = {}
     for row,col in res_dict.items():
-        if row not in res_dict_mean.keys():
-            res_dict_mean[row] = {}
-            res_dict_std[row] = {}
+        if row not in res_dict_save.keys():
+            res_dict_save[row] = {}
         for MR, distance_ls in col.items():
-            res_dict_mean[row][MR] = np.mean(distance_ls)
-            res_dict_std[row][MR] = np.std(distance_ls)
+            mean = np.round(np.mean(distance_ls),3)
+            std  = np.round(np.std(distance_ls),3)
+            res_dict_save[row][MR] = f"{mean}±{std}"
     
-    res_dict_dict = dict(
-        mean = res_dict_mean,
-        std = res_dict_std
-    )
-    for key, res_dict in res_dict_dict.items():
+    df = pd.DataFrame(res_dict_save.values(), index=res_dict_save.keys())
+    desired_col_order = ["NMR", "AMP", "TO", "STMR"]
+    df = df[desired_col_order]
+
+    desired_row_order = []
+    for motion in ['trot0', 'trot1', 'pace0', 'pace1', 'sidesteps', 'hopturn']:
+        for robot_name in ['go1', 'a1', 'al']:
+            desired_row_order.append(f"{robot_name}_{motion}")
+
+    desired_row_order = [label for label in desired_row_order if label in df.index]
+    df = df.reindex(desired_row_order)
+    # for col in df.columns:
+    #     df[col] = df[col].round(3)
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.axis('off')
+    tab = table(ax, df, loc='center', cellLoc='center')
+
+    # Style the table
+    tab.auto_set_font_size(False)
+    tab.set_fontsize(12)
+    tab.scale(1.2, 1.2)
+
+    # Save the image
+    plt.tight_layout()
+    plt.title("DTW distance", fontsize=16, pad=20)
+
+    save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_distance.png")
+    save_name.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_name)
+
+
+    # res_dict_mean = {}
+    # res_dict_std  = {}
+    # for row,col in res_dict.items():
+    #     if row not in res_dict_mean.keys():
+    #         res_dict_mean[row] = {}
+    #         res_dict_std[row] = {}
+    #     for MR, distance_ls in col.items():
+    #         res_dict_mean[row][MR] = np.mean(distance_ls)
+    #         res_dict_std[row][MR] = np.std(distance_ls)
+    
+    # res_dict_dict = dict(
+    #     mean = res_dict_mean,
+    #     std = res_dict_std
+    # )
+    # for key, res_dict in res_dict_dict.items():
         
-        df = pd.DataFrame(res_dict.values(), index=res_dict.keys())
-        for col in df.columns:
-            df[col] = df[col].round(3)
+    #     df = pd.DataFrame(res_dict.values(), index=res_dict.keys())
+    #     desired_order = ["NMR", "AMP", "TO", "STMR"]
+    #     df = df[desired_order]
+    #     for col in df.columns:
+    #         df[col] = df[col].round(3)
 
-        fig, ax = plt.subplots(figsize=(8, 4))
-        ax.axis('off')
-        tab = table(ax, df, loc='center', cellLoc='center')
+    #     fig, ax = plt.subplots(figsize=(8, 4))
+    #     ax.axis('off')
+    #     tab = table(ax, df, loc='center', cellLoc='center')
 
-        # Style the table
-        tab.auto_set_font_size(False)
-        tab.set_fontsize(12)
-        tab.scale(1.2, 1.2)
+    #     # Style the table
+    #     tab.auto_set_font_size(False)
+    #     tab.set_fontsize(12)
+    #     tab.scale(1.2, 1.2)
 
-        # Save the image
-        plt.tight_layout()
-        plt.title("DTW distance", fontsize=16, pad=20)
+    #     # Save the image
+    #     plt.tight_layout()
+    #     plt.title("DTW distance", fontsize=16, pad=20)
 
-        save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_distance_{key}.png")
-        save_name.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(save_name)
+    #     save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_distance_{key}.png")
+    #     save_name.parent.mkdir(parents=True, exist_ok=True)
+    #     plt.savefig(save_name)
 
 plot_last()

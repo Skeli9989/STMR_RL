@@ -118,6 +118,18 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
         Cfg.env.reference_state_initialization = True
     Cfg.MR = MR
 
+    if MOTION != "sidesteps":
+        Cfg.rewards.scales.exp_dof_pos_motion = 2
+        Cfg.rewards.scales.exp_pos_motion     = 5
+        Cfg.rewards.scales.exp_ang_motion     = 1
+        Cfg.rewards.scales.exp_EE_motion      = 10
+    else:
+        Cfg.rewards.scales.exp_dof_pos_motion = 2
+        Cfg.rewards.scales.exp_pos_motion     = 5
+        Cfg.rewards.scales.exp_ang_motion     = 1
+        Cfg.rewards.scales.exp_EE_motion      = 30
+
+
     if NO_RAND:
         CfgPPO.runner.experiment_name = 'STMR/'+CfgPPO.runner.experiment_name
         Cfg.terrain.curriculum = False

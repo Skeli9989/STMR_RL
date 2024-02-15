@@ -57,7 +57,7 @@ from scipy.spatial.distance import cityblock
 
 NO_RAND = True
 GET_ALL = False
-RENDER = True
+RENDER = False
 
 def get_target_deploy_array(env, model, train_cfg, obs):
     iternum = str.split(str.split(model,"_")[1], ".pt")[0]
