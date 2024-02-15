@@ -23,6 +23,7 @@ for logs_name in logs_names:
                     mr = mr_path.name
                     
                     last_path = mr_path/f"{motion}_{robot}_{mr}"
+                    if not last_path.exists(): continue
                     for seed_path in last_path.iterdir():
                         if seed_path.name == SEED_NAME_TO_DELETE:
                             print('deleting', seed_path)
