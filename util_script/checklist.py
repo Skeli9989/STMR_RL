@@ -14,7 +14,8 @@ def main():
     import matplotlib.pyplot as plt
     from pandas.plotting import table
 
-    MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
+    # MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
+    MRs = ['NMR', "STMR", "TO", "AMP"]
     data = {}
 
     for MR in MRs:
@@ -41,8 +42,8 @@ def main():
 
         # Save the image
         plt.title(f'{MR}_Motion_checklist', fontsize=16, pad=20)
-        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist').mkdir(parents=True, exist_ok=True)
-        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/{MR}_Motion_checklist.png', bbox_inches='tight', pad_inches=0.05)
+        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist/motion_checklist').mkdir(parents=True, exist_ok=True)
+        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/motion_checklist/{MR}.png', bbox_inches='tight', pad_inches=0.05)
         # plt.show()
 
     # RL checklist
@@ -85,7 +86,8 @@ def main():
 
         # Save the image
         plt.title(f'{MR}_RL_checklist', fontsize=16, pad=20)
-        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/{MR}_RL_checklist.png', bbox_inches='tight', pad_inches=0.05)
+        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist/RL_checklist').mkdir(parents=True, exist_ok=True)
+        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/RL_checklist/{MR}.png', bbox_inches='tight', pad_inches=0.05)
 
 if __name__ == '__main__':
     main()

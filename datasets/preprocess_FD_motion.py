@@ -22,17 +22,17 @@ from datasets.retarget_utils import *
 import numpy as np
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
-ROBOT = "go1"
+ROBOT = "al"
 ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
-# MOTIONS = ['sidesteps']
+# MOTIONS = ['hopturn']
 
 for MOTION in MOTIONS:
-  MR_LS = ['NMR', "SMR","STMR", 'TO']
+  # MR_LS = ['NMR', "SMR","STMR", 'TO']
   # MR_LS = ['TO']
   # MR_LS = ["NMR"]
-  # MR_LS = ["NMR"]
+  MR_LS = ["STMR"]
 
   for MR in MR_LS:
     class A1config:
@@ -101,11 +101,11 @@ for MOTION in MOTIONS:
       for i in range(num_markers):
         if (i == REF_NECK_JOINT_ID) or (i == REF_PELVIS_JOINT_ID)\
             or (i in REF_HIP_JOINT_IDS):
-          col = [0, 0, 1, 1]
+          col = [0, 0, 1, 1]  # hip:BLUE
         elif (i in REF_TOE_JOINT_IDS):
-          col = [1, 0, 0, 1]
+          col = [1, 0, 0, 1]  # toe:RED
         else:
-          col = [0, 1, 0, 1]
+          col = [0, 1, 0, 1]  # other:GREEN
 
         virtual_shape_id = pybullet.createVisualShape(
             shapeType=pybullet.GEOM_SPHERE, radius=marker_radius, rgbaColor=col)

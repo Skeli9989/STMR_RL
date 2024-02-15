@@ -56,7 +56,8 @@ from fastdtw import fastdtw
 from scipy.spatial.distance import cityblock
 
 NO_RAND = True
-GET_ALL = False
+GET_ALL = True
+RENDER = False
 
 def get_target_deploy_array(env, model, train_cfg, obs):
     iternum = str.split(str.split(model,"_")[1], ".pt")[0]
@@ -114,15 +115,21 @@ def play(args):
     mjmodel = mujoco.MjModel.from_xml_path(xml_path.as_posix())
     mjdata  = mujoco.MjData(mjmodel)
     reset(mjmodel, mjdata)
-    try:
-        viewer.close()
-    except Exception:
-        pass
 
-    viewer = MujocoViewer(
-        mjmodel,mjdata,mode='window',title="MPC",
-        width=1200,height=800,hide_menus=True
-    )
+    if RENDER:
+        try:
+            viewer.close()
+        except Exception:
+            pass
+
+        viewer = MujocoViewer(
+            mjmodel,mjdata,mode='window',title="MPC",
+            width=1200,height=800,hide_menus=True
+        )
+        args.headless = False
+    else:
+        viewer = None
+        args.headless = True
     mr_info   = RetargetInfo(mjmodel, mjdata)
     mpc_info = MPCInfo(mjmodel, mjdata)
 
@@ -189,6 +196,9 @@ def calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy
     deploy_qpos_total = np.array(deploy_ls)
     deploy_qpos_total[:,mujoco_idx] = deploy_qpos_total[:,amp_idx].copy()
 
+    target_qpos_total[:, 7:] +=  mjmodel.qpos0[7:] 
+    deploy_qpos_total[:, 7:] +=  mjmodel.qpos0[7:]
+
     frame_number = len(target_qpos_total)
 
     target_site_ls = []
@@ -202,14 +212,14 @@ def calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy
             target_site_ls.append(mjdata.site_xpos[site_id].copy())
         
         if frame_i%render_every == 0:
-            plot_skeleton(mjmodel, mjdata, mpc_info, viewer, rgba=[1,0,0,0.5])
+            if RENDER: plot_skeleton(mjmodel, mjdata, mpc_info, viewer, rgba=[1,0,0,0.5])
 
         mjdata.qpos = deploy_qpos.copy()
         mujoco.mj_forward(mjmodel, mjdata)
         for site_id in site_ids:
             deploy_site_ls.append(mjdata.site_xpos[site_id].copy())
         if frame_i%render_every == 0:
-            viewer.render()
+            if RENDER: viewer.render()
     
     target_site_array = np.array(target_site_ls).reshape(frame_number, -1)
     deploy_site_array = np.array(deploy_site_ls).reshape(frame_number, -1)
@@ -222,6 +232,6 @@ def calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy
 if __name__ == '__main__':
     args = get_args()
     play(args)
-    if GET_ALL:
-        from util_script.plot_performance import main as plot_main
-        plot_main()
+    # if GET_ALL:
+    #     from util_script.plot_performance import main as plot_main
+    #     plot_main()
