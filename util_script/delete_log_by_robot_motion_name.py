@@ -6,7 +6,7 @@ from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
 
 ROBOT_NAME_TO_DELETE = "go1base"
-MOTION_NAME_TO_DELETE = ["trot0", "pace0"]
+MOTION_NAME_TO_DELETE = ["trot0", "pace0", "trot1", "pace1"]
 logs_names = ["logs50", "logs63", "logs64", "logs65", 'logs']
 
 for logs_name in logs_names:
