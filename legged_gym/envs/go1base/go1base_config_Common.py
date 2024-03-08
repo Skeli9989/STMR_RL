@@ -74,7 +74,7 @@ class Go1base_Cfg_PPO( LeggedRobotCfg ):
         control_type = 'P'
         stiffness = {'joint': 30.}  # [N*m/rad]
         # stiffness = {'joint': 60.}  # [N*m/rad]
-        damping = {'joint': 0.5}     # [N*m*s/rad]
+        damping = {'joint': 1.0}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT

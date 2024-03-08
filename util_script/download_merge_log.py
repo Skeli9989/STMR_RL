@@ -38,7 +38,13 @@ for logs_name in logs_names:
                     for seed_path in last_path.iterdir():
                         for date_path in seed_path.iterdir():
                             # move date_path to logs/STMR/{motion}/{robot}/{mr}/{date_path.name}
-                            if (date_path/'model_10000.pt').exists():
+                            
+                            if mr == "AMP":
+                                last_iter_num = 25000
+                            else:
+                                last_iter_num = 10000
+
+                            if (date_path/f'model_{last_iter_num}.pt').exists():
                                 move_path = Path(f"{LEGGED_GYM_ROOT_DIR}/logs/{RAND_NORAND}/{motion}/{robot}/{mr}/{motion}_{robot}_{mr}/{seed_path.name}/{date_path.name}")
                                 if os.path.islink(move_path):
                                     os.unlink(move_path)
