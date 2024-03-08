@@ -26,7 +26,7 @@ for logs_name in logs_names:
                     for mr_path in robot_path.iterdir():
                         if mr_path.name in MR_NAME_TO_DELETE:
                             print('deteleting', mr_path)
-                            # shutil.rmtree(robot_path)
+                            shutil.rmtree(robot_path)
 
 
 from util_script.checklist import main
