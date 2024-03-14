@@ -8,7 +8,7 @@ import os
 os.chdir(LEGGED_GYM_ROOT_DIR)
 # run download_log.sh
 sh_path = Path(f"{LEGGED_GYM_ROOT_DIR}/util_script/download_log.sh")
-os.system(f"sh {sh_path}")
+os.system(f"bash {sh_path}")
 
 # %%
 def create_symbolic_link(source_folder, target_folder):
@@ -35,6 +35,7 @@ for logs_name in logs_names:
                     mr = mr_path.name
                     
                     last_path = mr_path/f"{motion}_{robot}_{mr}"
+                    if not last_path.exists(): continue
                     for seed_path in last_path.iterdir():
                         for date_path in seed_path.iterdir():
                             # move date_path to logs/STMR/{motion}/{robot}/{mr}/{date_path.name}

@@ -161,6 +161,8 @@ def plot_last():
     # for col in df.columns:
     #     df[col] = df[col].round(3)
 
+    print(df)
+    
     fig, ax = plt.subplots(figsize=(16, 10))
     ax.axis('off')
     tab = table(ax, df, loc='center', cellLoc='center')

@@ -11,7 +11,7 @@ robots = ['go1', 'a1', 'al']
 motions = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1', 'videowalk0', 'videowalk1']
 MRs = ['NMR', "STMR", "TO", "AMP"]
 
-def main(log_path):
+def main(log_path=None):
     motion_checklist()
     RL_checklist(log_path)
 

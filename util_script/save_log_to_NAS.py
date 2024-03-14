@@ -33,9 +33,8 @@ for logs_name in logs_names:
                                 # warning
                                 print(f"{save_path} already exists. skipping...")
                             else:
-                                print('copying', robot_path, "to", save_path)
-                                shutil.copytree(robot_path, save_path)
-
+                                print('copying', seed_path, "to", save_path)
+                                shutil.copytree(seed_path, save_path)
 from util_script.checklist import RL_checklist
 RL_checklist(log_path = save_log_dir, save_name = "NAS_RL_checklist")
 

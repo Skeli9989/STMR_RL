@@ -3,7 +3,7 @@
 ROBOT="albase"
 declare -a SEEDS=("1" "2" "3" "4" "5")
 # declare -a MOTIONS=("trot0" "trot1" "pace0" "pace1" "hopturn" "sidesteps")
-declare -a MOTIONS=("hopturn")
+declare -a MOTIONS=("hopturn" "sidesteps")
 
 for SEED in "${SEEDS[@]}"; do
     for MOTION in "${MOTIONS[@]}"; do
