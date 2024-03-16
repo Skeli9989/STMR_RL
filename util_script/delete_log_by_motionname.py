@@ -5,7 +5,7 @@ import shutil
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
 
-MOTION_NAME_TO_DELETE = "sidesteps"
+MOTION_NAME_TO_DELETE = "pace0"
 
 logs_names = ["logs50", "logs63", "logs64", "logs65", 'logs']
 

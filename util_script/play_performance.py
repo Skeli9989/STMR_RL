@@ -1,14 +1,15 @@
 # %%
-ROBOT = "a1".lower()
-MOTION = 'hopturn'
-seed = 0
+ROBOT = "al".lower()
+MOTION = 'sidesteps'
+seed = 1
 MR = "STMR"
 # MR = "NMR"
-# MR = "STMR"
+# MR = "TO"
 # MR = "AMP"
 
 GET_ALL = False
-
+fps = 30
+EXTRACT_VIDEO = fps is not None
 # %%
 import mujoco
 from mujoco_viewer.mujoco_viewer import MujocoViewer
@@ -46,6 +47,22 @@ viewer = MujocoViewer(
    width=1200,height=800,hide_menus=True
    )
 mr_info   = RetargetInfo(model, data)
+
+import cv2
+def grab_image(viewer, resize_rate=None,interpolation=cv2.INTER_NEAREST):
+   """
+      Grab the rendered iamge
+   """
+   img = np.zeros((viewer.viewport.height,viewer.viewport.width,3),dtype=np.uint8)
+   mujoco.mjr_render(viewer.viewport,viewer.scn,viewer.ctx)
+   mujoco.mjr_readPixels(img, None,viewer.viewport,viewer.ctx)
+   img = np.flipud(img) # flip image
+   # Resize
+   if resize_rate is not None:
+      h = int(img.shape[0]*resize_rate)
+      w = int(img.shape[1]*resize_rate)
+      img = cv2.resize(img,(w,h),interpolation=interpolation)
+   return img
 
 # %%
 from mjpc.task.Quadruped.play import plot_skeleton
@@ -112,6 +129,9 @@ print(model_number)
 
 if GET_ALL:
     render_every = 10
+elif EXTRACT_VIDEO:
+    dt = 0.005 * 6
+    render_every = int(1/fps/dt)
 else:
     render_every = 1
 key_point_error_ls = []
@@ -143,6 +163,31 @@ for model_i in range(model_number):
                 deploy_site_ls.append(data.site_xpos[site_i].copy())
             if frame_i%render_every == 0:
                 viewer.render()    
+
+            if not GET_ALL and EXTRACT_VIDEO:
+                image_dir = Path(LEGGED_GYM_ROOT_DIR)/f"performance/video/{MOTION}/{ROBOT_base}/{MR}/{seed}/image"
+                image_name = image_dir/f"image_{frame_i}.png"
+                image_name.parent.mkdir(exist_ok=True, parents=True)
+                plt.figure()
+                plt.axis('off')
+                image = grab_image(viewer)
+                plt.imsave(image_name, image)
+    if not GET_ALL and EXTRACT_VIDEO:
+        image_files = [path for path in image_dir.iterdir() if path.name.endswith(".png")]
+        idx_ls = [int(path.stem.split('_')[-1]) for path in image_files]
+        idx_array = np.array(idx_ls)
+        idx_sorted = np.argsort(idx_array)
+        image_files_sorted = [image_files[idx] for idx in idx_sorted]
+
+        output_file = image_dir/f"../{MOTION}_{ROBOT}_{MR}.mp4"
+        import imageio
+         # Create the video using imageio
+        with imageio.get_writer(output_file, mode="I", fps=fps) as writer:
+            for image_file in image_files_sorted:
+                frame = imageio.imread(image_file)
+                writer.append_data(frame)
+        print(f"Video created: {output_file}")
+
 
     target_site_array = np.array(target_site_ls).reshape(frame_number, -1)
     deploy_site_array = np.array(deploy_site_ls).reshape(frame_number, -1)

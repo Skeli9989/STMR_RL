@@ -2,7 +2,7 @@
 from legged_gym import LEGGED_GYM_ROOT_DIR
 from pathlib import Path
 from matplotlib import pyplot as plt
-
+import numpy as np
 
 def plot_all():
     result_path = Path(LEGGED_GYM_ROOT_DIR) / 'performance' / "STMR"
@@ -15,9 +15,13 @@ def plot_all():
             if 'base' in ROBOT:
                 raw_ROBOT = ROBOT.split('base')[0]
             
+            plt.figure(figsize=(10,10))
+            plt.title(f"{raw_ROBOT}_{MOTION}")
+            plt.tight_layout()
             for mr_path in robot_path.iterdir():
                 MR = mr_path.name
 
+                distance_per_seed_ls= []
                 for experiment_path in mr_path.iterdir():
                     # if experiment_path is not dir
                     if not experiment_path.is_dir():
@@ -36,18 +40,41 @@ def plot_all():
                             print(f"{ROBOT}_{MR}_{seed} does not exist")
                             continue
                         import json
-                        with open(json_path) as f:
-                            data = json.load(f)
-                        
+                        try:
+                            with open(json_path) as f:
+                                data = json.load(f)
+                        except:
+                            print(f"failed to read {json_path}")
+                            continue
                         dtw_distance = data['dtw_distance']
+                        
+                        if len(distance_per_seed_ls) >0:
+                            if len(dtw_distance) != len(distance_per_seed_ls[-1]):
+                                print(f"somthing wrong with {ROBOT}_{MR}_{MOTION}_{seed}")
+                                continue
+                                # if MR == "AMP":
+                                    # continue
+                                # else:
+                                    # raise Exception(f"somthing wrong with {ROBOT}_{MR}_{MOTION}_{seed}")
+                        
+                        distance_per_seed_ls.append(dtw_distance)
                         # len(xrange) is len(dtw_distance) and interval is 50
-                        xrange = [i*50 for i in range(len(dtw_distance))]
-                        plt.plot(xrange, dtw_distance, label=f"{ROBOT}_{MR}_{MOTION}_{seed}")
-            plt.legend()
-            save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/fig/{ROBOT}/{MOTION}/{ROBOT}_{MOTION}.png")
+
+                if distance_per_seed_ls == []:
+                    continue
+
+                distance_per_seed = np.array(distance_per_seed_ls)
+                mean = np.mean(distance_per_seed, axis=0)
+                std  = np.std(distance_per_seed, axis=0)
+                xrange = [i*50 for i in range(len(mean))]
+                plt.plot(xrange, mean, label=f"{MR}")
+                plt.fill_between(xrange, mean-std, mean+std, alpha=0.3)
+                plt.legend()
+            save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/fig/{ROBOT}/{MOTION}.png")
             save_name.parent.mkdir(parents=True, exist_ok=True)
             plt.savefig(save_name)
-            plt.show()
+            print(f"save {save_name}")
+                # plt.show()
 
 
 def plot_last():
@@ -116,8 +143,8 @@ def plot_last():
         if row not in res_dict_save.keys():
             res_dict_save[row] = {}
         for MR, distance_ls in col.items():
-            mean = np.round(np.mean(distance_ls),3)
-            std  = np.round(np.std(distance_ls),3)
+            mean = np.round(1000*np.mean(distance_ls),3)
+            std  = np.round(1000*np.std(distance_ls),3)
             res_dict_save[row][MR] = f"{mean}±{std}"
     
     df = pd.DataFrame(res_dict_save.values(), index=res_dict_save.keys())
@@ -134,7 +161,9 @@ def plot_last():
     # for col in df.columns:
     #     df[col] = df[col].round(3)
 
-    fig, ax = plt.subplots(figsize=(8, 4))
+    print(df)
+    
+    fig, ax = plt.subplots(figsize=(16, 10))
     ax.axis('off')
     tab = table(ax, df, loc='center', cellLoc='center')
 
@@ -192,3 +221,4 @@ def plot_last():
     #     plt.savefig(save_name)
 
 plot_last()
+# plot_all()

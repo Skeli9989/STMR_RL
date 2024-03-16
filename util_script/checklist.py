@@ -1,20 +1,28 @@
 # %%
 # STMR checklist
 from legged_gym import LEGGED_GYM_ROOT_DIR
+from pathlib import Path
+import pandas as pd
+import matplotlib.pyplot as plt
+from pandas.plotting import table
+import glob
 
-def main():
-    from pathlib import Path
+robots = ['go1', 'a1', 'al']
+motions = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1', 'videowalk0', 'videowalk1']
+MRs = ['NMR', "STMR", "TO", "AMP"]
 
+NAS_log_dir_default = Path("/media/terry/2884e2c7-1c7d-44b1-ab18-7f2b199dd676/taerim/log")
+
+def main(log_path=None, NAS_log_dir=NAS_log_dir_default):
+    motion_checklist()
+    RL_checklist(log_path = log_path)
+    RL_checklist(log_path = NAS_log_dir, save_name = "NAS_RL_checklist")
+
+def motion_checklist():
     dataset_path = Path(f'{LEGGED_GYM_ROOT_DIR}/datasets')
 
     robots = ['go1', 'a1', 'al']
     motions = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1', 'videowalk0', 'videowalk1']
-
-    import pandas as pd
-    import matplotlib.pyplot as plt
-    from pandas.plotting import table
-
-    # MRs = ['NMR', 'SMR', 'TMR', "STMR", "TO", "AMP"]
     MRs = ['NMR', "STMR", "TO", "AMP"]
     data = {}
 
@@ -46,10 +54,12 @@ def main():
         plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/motion_checklist/{MR}.png', bbox_inches='tight', pad_inches=0.05)
         # plt.show()
 
+def RL_checklist(log_path = None, save_name = "NAS_RL_checklist"):
     # RL checklist
-    import glob
+    if log_path is None:
+        log_path = Path(f'{LEGGED_GYM_ROOT_DIR}/logs')
+        save_name = "RL_checklist"
 
-    log_path = Path(f'{LEGGED_GYM_ROOT_DIR}/logs')
     data = {}
 
     break_flag = False
@@ -85,9 +95,9 @@ def main():
         tab.scale(1.2, 1.2)
 
         # Save the image
-        plt.title(f'{MR}_RL_checklist', fontsize=16, pad=20)
-        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist/RL_checklist').mkdir(parents=True, exist_ok=True)
-        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/RL_checklist/{MR}.png', bbox_inches='tight', pad_inches=0.05)
+        plt.title(f'{MR}_{save_name}', fontsize=16, pad=20)
+        Path(f'{LEGGED_GYM_ROOT_DIR}/checklist/{save_name}').mkdir(parents=True, exist_ok=True)
+        plt.savefig(f'{LEGGED_GYM_ROOT_DIR}/checklist/{save_name}/{MR}.png', bbox_inches='tight', pad_inches=0.05)
 
 if __name__ == '__main__':
     main()

@@ -65,4 +65,6 @@ unused/*
 logs*/*
 *.zip
 checklist/*
-performance/*
+# performance/*
+# exclude json files named "pose_all.json" in all subdirectories
+**/pose_all.json

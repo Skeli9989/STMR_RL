@@ -22,11 +22,12 @@ from datasets.retarget_utils import *
 import numpy as np
 from legged_gym import LEGGED_GYM_ROOT_DIR
 
-ROBOT = "al"
+ROBOT = "go1"
 ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
-# MOTIONS = ['hopturn']
+MOTIONS = ['pace0', 'pace1', 'trot0', 'trot1']
+# MOTIONS = ['pace1', 'trot1']
 
 for MOTION in MOTIONS:
   # MR_LS = ['NMR', "SMR","STMR", 'TO']
