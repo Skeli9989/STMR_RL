@@ -1,6 +1,6 @@
 # %%
-ROBOT = "go1".lower()
-MOTION = 'pace1'
+ROBOT = "al".lower()
+MOTION = 'sidesteps'
 seed = 1
 MR = "STMR"
 # MR = "NMR"

@@ -11,9 +11,12 @@ robots = ['go1', 'a1', 'al']
 motions = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1', 'videowalk0', 'videowalk1']
 MRs = ['NMR', "STMR", "TO", "AMP"]
 
-def main(log_path=None):
+NAS_log_dir_default = Path("/media/terry/2884e2c7-1c7d-44b1-ab18-7f2b199dd676/taerim/log")
+
+def main(log_path=None, NAS_log_dir=NAS_log_dir_default):
     motion_checklist()
-    RL_checklist(log_path)
+    RL_checklist(log_path = log_path)
+    RL_checklist(log_path = NAS_log_dir, save_name = "NAS_RL_checklist")
 
 def motion_checklist():
     dataset_path = Path(f'{LEGGED_GYM_ROOT_DIR}/datasets')

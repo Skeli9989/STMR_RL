@@ -5,7 +5,7 @@ import shutil
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
 save_log_dir = Path("/media/terry/2884e2c7-1c7d-44b1-ab18-7f2b199dd676/taerim/log")
-MOTION_NAME_TO_MOVE = "hopturn"
+MOTION_NAME_TO_MOVE = "pace0"
 logs_names = ["logs50", "logs63", "logs64", "logs65"]
 for logs_name in logs_names:
     logs_dir_path = Path(f"{LEGGED_GYM_ROOT_DIR}/{logs_name}")
@@ -35,6 +35,8 @@ for logs_name in logs_names:
                             else:
                                 print('copying', seed_path, "to", save_path)
                                 shutil.copytree(seed_path, save_path)
+
+save_log_dir = Path("/media/terry/2884e2c7-1c7d-44b1-ab18-7f2b199dd676/taerim/log")
 from util_script.checklist import RL_checklist
 RL_checklist(log_path = save_log_dir, save_name = "NAS_RL_checklist")
 
