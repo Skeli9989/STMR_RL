@@ -8,7 +8,7 @@ if 'base' in ROBOT:
 else:
 	raw_robot_name = ROBOT
 NO_RAND = False
-MOTION = "trot0"
+MOTION = "pace1"
 SEED = 5
 MR = "STMR"
 task = f"{ROBOT}_{MR}_{MOTION}"	

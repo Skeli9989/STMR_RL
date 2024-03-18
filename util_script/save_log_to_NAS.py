@@ -5,7 +5,7 @@ import shutil
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
 save_log_dir = Path("/media/terry/2884e2c7-1c7d-44b1-ab18-7f2b199dd676/taerim/log")
-MOTION_NAME_TO_MOVE = "pace0"
+MOTION_NAME_TO_MOVE = "sidesteps"
 logs_names = ["logs50", "logs63", "logs64", "logs65"]
 for logs_name in logs_names:
     logs_dir_path = Path(f"{LEGGED_GYM_ROOT_DIR}/{logs_name}")
