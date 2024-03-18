@@ -123,6 +123,12 @@ def get_cfg(ROBOT, MOTION, MR, NO_RAND=True):
         Cfg.rewards.exp_pos_motion     = 5
         Cfg.rewards.exp_ang_motion     = 1
         Cfg.rewards.exp_EE_motion      = 10
+    elif raw_robot_name == 'al' and not NO_RAND:
+        Cfg.rewards.exp_dof_pos_motion = 2
+        Cfg.rewards.exp_pos_motion     = 5
+        Cfg.rewards.exp_ang_motion     = 1
+        Cfg.rewards.exp_EE_motion      = 60
+
     else:
         Cfg.rewards.exp_dof_pos_motion = 2
         Cfg.rewards.exp_pos_motion     = 5

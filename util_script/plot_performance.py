@@ -143,8 +143,8 @@ def plot_last():
         if row not in res_dict_save.keys():
             res_dict_save[row] = {}
         for MR, distance_ls in col.items():
-            mean = np.round(1000*np.mean(distance_ls),3)
-            std  = np.round(1000*np.std(distance_ls),3)
+            mean = np.round(1000*np.mean(distance_ls),1)
+            std  = np.round(1000*np.std(distance_ls),1)
             res_dict_save[row][MR] = f"{mean}±{std}"
     
     df = pd.DataFrame(res_dict_save.values(), index=res_dict_save.keys())
