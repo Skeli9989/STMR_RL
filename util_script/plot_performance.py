@@ -158,8 +158,6 @@ def plot_last():
 
     desired_row_order = [label for label in desired_row_order if label in df.index]
     df = df.reindex(desired_row_order)
-    # for col in df.columns:
-    #     df[col] = df[col].round(3)
 
     print(df)
     
@@ -180,45 +178,4 @@ def plot_last():
     save_name.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(save_name)
 
-
-    # res_dict_mean = {}
-    # res_dict_std  = {}
-    # for row,col in res_dict.items():
-    #     if row not in res_dict_mean.keys():
-    #         res_dict_mean[row] = {}
-    #         res_dict_std[row] = {}
-    #     for MR, distance_ls in col.items():
-    #         res_dict_mean[row][MR] = np.mean(distance_ls)
-    #         res_dict_std[row][MR] = np.std(distance_ls)
-    
-    # res_dict_dict = dict(
-    #     mean = res_dict_mean,
-    #     std = res_dict_std
-    # )
-    # for key, res_dict in res_dict_dict.items():
-        
-    #     df = pd.DataFrame(res_dict.values(), index=res_dict.keys())
-    #     desired_order = ["NMR", "AMP", "TO", "STMR"]
-    #     df = df[desired_order]
-    #     for col in df.columns:
-    #         df[col] = df[col].round(3)
-
-    #     fig, ax = plt.subplots(figsize=(8, 4))
-    #     ax.axis('off')
-    #     tab = table(ax, df, loc='center', cellLoc='center')
-
-    #     # Style the table
-    #     tab.auto_set_font_size(False)
-    #     tab.set_fontsize(12)
-    #     tab.scale(1.2, 1.2)
-
-    #     # Save the image
-    #     plt.tight_layout()
-    #     plt.title("DTW distance", fontsize=16, pad=20)
-
-    #     save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_distance_{key}.png")
-    #     save_name.parent.mkdir(parents=True, exist_ok=True)
-    #     plt.savefig(save_name)
-
 plot_last()
-# plot_all()
