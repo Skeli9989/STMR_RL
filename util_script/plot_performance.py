@@ -4,6 +4,11 @@ from pathlib import Path
 from matplotlib import pyplot as plt
 import numpy as np
 
+import mujoco
+from mujoco_viewer.mujoco_viewer import MujocoViewer
+from mjmr.util import reset, get_mr_info, get_xml_path, plot_contact_schedule, get_vel_contact_boolean, get_mujoco_contact_boolean,get_vel_contact_boolean_from_pos, get_key_id, output_amp_motion
+from mjmr.task.Quadruped.info import QuadrupedRetargetInfo as RetargetInfo
+
 def plot_all():
     result_path = Path(LEGGED_GYM_ROOT_DIR) / 'performance' / "STMR"
 
@@ -78,9 +83,13 @@ def plot_all():
 
 
 def plot_last():
+    import numpy as np
+
     result_path = Path(LEGGED_GYM_ROOT_DIR) / 'performance' / "STMR"
 
     res_dict = {}
+    normalized_res_dict = {}
+
     for motion_path in result_path.iterdir():
         MOTION = motion_path.name
 
@@ -95,6 +104,7 @@ def plot_last():
             row_column_name = f"{raw_ROBOT}_{MOTION}"
             if MOTION not in res_dict.keys():
                 res_dict[row_column_name] = {}
+                normalized_res_dict[row_column_name] = {}
             
             
             for mr_path in robot_path.iterdir():
@@ -122,13 +132,52 @@ def plot_last():
                             data = json.load(f)
                         
                         dtw_distance = data['dtw_distance']
-                        # len(xrange) is len(dtw_distance) and interval is 50
+
+
+                        ## Normalize the distance
+                        raw_ROBOT = ROBOT.split('base')[0]
+                        xml_path = get_xml_path(raw_ROBOT)
+                        model = mujoco.MjModel.from_xml_path(xml_path.as_posix())
+                        mjdata  = mujoco.MjData(model)
+
+                        mr_info   = RetargetInfo(model, mjdata)
+                        site_ids = [
+                            mr_info.id.trunk_site,
+                            mr_info.id.FR_hip_site, mr_info.id.FR_calf_site, mr_info.id.FR_foot_site,
+                            mr_info.id.FL_hip_site, mr_info.id.FL_calf_site, mr_info.id.FL_foot_site,
+                            mr_info.id.RR_hip_site, mr_info.id.RR_calf_site, mr_info.id.RR_foot_site,
+                            mr_info.id.RL_hip_site, mr_info.id.RL_calf_site, mr_info.id.RL_foot_site,
+                            ]
+
+                        target_traj = np.array(data['target'])[0]
+
+                        def get_keypoint_position_array(mjdata, qpos):
+                            mjdata.qpos = qpos
+                            mujoco.mj_forward(model, mjdata)
+                            target_site_ls = []
+                            for site_id in site_ids:
+                                target_site_ls.append(mjdata.site_xpos[site_id].copy())
+                            point = np.array(target_site_ls)
+                            return point 
+
+                        from_point = get_keypoint_position_array(mjdata, target_traj[0])
+                        total_keypoint_distance = 0
+
+                        for traj_i in range(1,len(target_traj)):
+                            from scipy.spatial.distance import cityblock
+                            to_point = get_keypoint_position_array(mjdata, target_traj[traj_i])
+                            total_keypoint_distance += cityblock(from_point.flatten(), to_point.flatten())
+                            from_point = to_point
+
+                        mean_keypoint_distance = total_keypoint_distance / len(site_ids)
                         
 
                         if MR not in res_dict[row_column_name].keys():
                             res_dict[row_column_name][MR] = []
+                            normalized_res_dict[row_column_name][MR] = []
+
                         res_dict[row_column_name][MR].append(dtw_distance[-1])
-    
+                        normalized_res_dict[row_column_name][MR].append(dtw_distance[-1]/mean_keypoint_distance)
     # plot table using pandas
     import pandas as pd
     from pandas.plotting import table
@@ -139,17 +188,26 @@ def plot_last():
     # res_dict_mean = {}
     # res_dict_std  = {}
     res_dict_save = {}
+    normalized_res_dict_save = {}
     for row,col in res_dict.items():
         if row not in res_dict_save.keys():
             res_dict_save[row] = {}
+            normalized_res_dict_save[row] = {}
         for MR, distance_ls in col.items():
             mean = np.round(1000*np.mean(distance_ls),1)
             std  = np.round(1000*np.std(distance_ls),1)
             res_dict_save[row][MR] = f"{mean}±{std}"
+
+            mean = np.round(np.mean(normalized_res_dict[row][MR])*100,1)
+            std  = np.round(np.std(normalized_res_dict[row][MR])*100,1)
+            normalized_res_dict_save[row][MR] = f"{mean}±{std}"
     
     df = pd.DataFrame(res_dict_save.values(), index=res_dict_save.keys())
+    df_normalized = pd.DataFrame(normalized_res_dict_save.values(), index=normalized_res_dict_save.keys())
+
     desired_col_order = ["NMR", "AMP", "TO", "STMR"]
     df = df[desired_col_order]
+    df_normalized = df_normalized[desired_col_order]
 
     desired_row_order = []
     for motion in ['trot0', 'trot1', 'pace0', 'pace1', 'sidesteps', 'hopturn']:
@@ -158,8 +216,9 @@ def plot_last():
 
     desired_row_order = [label for label in desired_row_order if label in df.index]
     df = df.reindex(desired_row_order)
-
+    df_normalized = df_normalized.reindex(desired_row_order)
     print(df)
+    print(df_normalized)
     
     fig, ax = plt.subplots(figsize=(16, 10))
     ax.axis('off')
@@ -175,6 +234,23 @@ def plot_last():
     plt.title("DTW distance", fontsize=16, pad=20)
 
     save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_distance.png")
+    save_name.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(save_name)
+
+    fig, ax = plt.subplots(figsize=(16, 10))
+    ax.axis('off')
+    tab = table(ax, df_normalized, loc='center', cellLoc='center')
+
+    # Style the table
+    tab.auto_set_font_size(False)
+    tab.set_fontsize(12)
+    tab.scale(1.2, 1.2)
+
+    # Save the image
+    plt.tight_layout()
+    plt.title("DTW distance", fontsize=16, pad=20)
+
+    save_name = Path(f"{LEGGED_GYM_ROOT_DIR}/performance/table/dtw_normalized_distance.png")
     save_name.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(save_name)
 
