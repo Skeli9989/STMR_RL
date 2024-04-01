@@ -1,6 +1,6 @@
 # %%
-ROBOT = "al".lower()
-MOTION = 'sidesteps'
+ROBOT = "go1".lower()
+MOTION = 'videowalk0'
 seed = 1
 MR = "STMR"
 # MR = "NMR"
@@ -21,10 +21,6 @@ from mjmr.util import reset, get_mr_info, get_xml_path, plot_contact_schedule, g
 from mjmr.task.Quadruped.info import QuadrupedRetargetInfo as RetargetInfo
 
 from MotionBO.MotionBO import compute_cost
-from bayes_opt import BayesianOptimization
-from bayes_opt.util import UtilityFunction
-from bayes_opt.logger import JSONLogger
-from bayes_opt.event import Events
 
 from matplotlib import pyplot as plt
 import copy

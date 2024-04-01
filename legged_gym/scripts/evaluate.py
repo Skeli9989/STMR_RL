@@ -231,6 +231,8 @@ def calculate_dtw_distance(mjmodel, mjdata, mr_info, mpc_info, target_ls, deploy
 
 if __name__ == '__main__':
     args = get_args()
+    args.task="go1base_STMR_videowalk0"
+    args.seed=1
     play(args)
     # if GET_ALL:
     #     from util_script.plot_performance import main as plot_main

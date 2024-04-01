@@ -4,9 +4,18 @@ import glob
 import shutil
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
+logs_names = ["logs50", "logs63", "logs64", "logs65"]
 
 os.chdir(LEGGED_GYM_ROOT_DIR)
 # run download_log.sh
+
+for logs_name in logs_names:
+    logs_dir_path = Path(f"{LEGGED_GYM_ROOT_DIR}/{logs_name}")
+    for RAND_NORAND in ["RAND", "STMR"]:
+        RAND_NORAND_path = logs_dir_path/RAND_NORAND
+        if not RAND_NORAND_path.exists():
+            RAND_NORAND_path.mkdir(parents=True, exist_ok=True)
+
 sh_path = Path(f"{LEGGED_GYM_ROOT_DIR}/util_script/download_log.sh")
 os.system(f"bash {sh_path}")
 
@@ -19,7 +28,6 @@ def create_symbolic_link(source_folder, target_folder):
         print(f"Error creating symbolic link: {e}")
 
 
-logs_names = ["logs50", "logs63", "logs64", "logs65"]
 
 for logs_name in logs_names:
     logs_dir_path = Path(f"{LEGGED_GYM_ROOT_DIR}/{logs_name}")
