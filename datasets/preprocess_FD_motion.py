@@ -27,6 +27,7 @@ ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['pace0', 'pace1', 'trot0', 'trot1']
+MOTIONS = ['videowalk0', 'videowalk1']
 # MOTIONS = ['pace1', 'trot1']
 
 for MOTION in MOTIONS:
