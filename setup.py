@@ -13,5 +13,5 @@ setup(
                       'rsl-rl',
                       'matplotlib',
                       'pygame',
-                      ]
+                      'transformations',]
 )
