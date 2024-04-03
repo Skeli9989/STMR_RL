@@ -8,12 +8,12 @@ if 'base' in ROBOT:
 else:
 	raw_robot_name = ROBOT
 NO_RAND = False
-MOTION = "videowalk1"
+MOTION = "videowalk0"
 SEED = 2
 MR = "STMR"
 task = f"{ROBOT}_{MR}_{MOTION}"	
 
-# export_onnx(task, seed=SEED, NO_RAND=NO_RAND, device = 'cpu')
+export_onnx(task, seed=SEED, NO_RAND=NO_RAND, device = 'cpu')
 export_json_files(raw_robot_name, MOTION, MR, PLOT=True)
 print('done')
 # %%
