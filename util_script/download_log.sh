@@ -1,7 +1,8 @@
 # declare -a MOTIONS=("trot0" "trot1" "pace0" "pace1" "hopturn" "sidesteps")
-declare -a MOTIONS=("trot0" "trot1" "pace0" "pace1" "sidesteps")
+declare -a MOTIONS=("videowalk0" "videowalk1")
 # declare -a MOTIONS=("pace0")
-declare -a IPS=("50" "63" "64" "65")
+declare -a IPS=("63" "64" "65")
+# declare -a IPS=("50")
 # declare -a IPS=("64")
 
 

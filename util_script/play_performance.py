@@ -1,11 +1,13 @@
 # %%
-ROBOT = "al".lower()
-MOTION = 'sidesteps'
-seed = 1
+ROBOT = "go1".lower()
+MOTION = 'videowalk1'
+seed = 2
 MR = "STMR"
 # MR = "NMR"
 # MR = "TO"
 # MR = "AMP"
+
+NO_RAND = False
 
 GET_ALL = False
 fps = 30
@@ -21,10 +23,6 @@ from mjmr.util import reset, get_mr_info, get_xml_path, plot_contact_schedule, g
 from mjmr.task.Quadruped.info import QuadrupedRetargetInfo as RetargetInfo
 
 from MotionBO.MotionBO import compute_cost
-from bayes_opt import BayesianOptimization
-from bayes_opt.util import UtilityFunction
-from bayes_opt.logger import JSONLogger
-from bayes_opt.event import Events
 
 from matplotlib import pyplot as plt
 import copy
@@ -78,10 +76,15 @@ from scipy.spatial.distance import cityblock
 # load motion
 ROBOT_base = ROBOT + 'base'
 
-if GET_ALL:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_all.json"
+if NO_RAND:
+    RAND = "STMR"
 else:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_1k.json"
+    RAND = "RAND"
+
+if GET_ALL:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{RAND}/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_all.json"
+else:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{RAND}/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_1k.json"
 import json
 # load json
 with open(path) as json_file:
@@ -165,7 +168,7 @@ for model_i in range(model_number):
                 viewer.render()    
 
             if not GET_ALL and EXTRACT_VIDEO:
-                image_dir = Path(LEGGED_GYM_ROOT_DIR)/f"performance/video/{MOTION}/{ROBOT_base}/{MR}/{seed}/image"
+                image_dir = Path(LEGGED_GYM_ROOT_DIR)/f"performance/video/{MOTION}/{ROBOT_base}/{RAND}/{MR}/{seed}/image"
                 image_name = image_dir/f"image_{frame_i}.png"
                 image_name.parent.mkdir(exist_ok=True, parents=True)
                 plt.figure()

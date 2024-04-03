@@ -27,8 +27,7 @@ ROBOT = ROBOT.lower()
 MOTIONS = ['go1trot', 'hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['hopturn', 'pace0', 'pace1', 'sidesteps', 'trot0', 'trot1']
 MOTIONS = ['pace0', 'pace1', 'trot0', 'trot1']
-MOTIONS = ['videowalk0', 'videowalk1']
-# MOTIONS = ['pace1', 'trot1']
+MOTIONS = ['videowalk0']
 
 for MOTION in MOTIONS:
   # MR_LS = ['NMR', "SMR","STMR", 'TO']
@@ -376,7 +375,8 @@ for MOTION in MOTIONS:
 
         num_frames = retarget_frames.shape[0]
         
-        for repeat in range(1 * num_frames):
+        render_every = 5
+        for repeat in range(1 * int(num_frames/render_every)):
           time_start = time.time()
 
           f_idx = f % num_frames
@@ -397,7 +397,7 @@ for MOTION in MOTIONS:
 
           update_camera(robot)
           p.configureDebugVisualizer(p.COV_ENABLE_SINGLE_STEP_RENDERING, 1)
-          f += 1
+          f += render_every
 
           time_end = time.time()
           sleep_dur = FRAME_DURATION - (time_end - time_start)
