@@ -2,14 +2,14 @@
 from util_script.export_onnx import export_onnx
 from util_script.export_json import export_json_files
 
-ROBOT = "albase".lower()
+ROBOT = "go1base".lower()
 if 'base' in ROBOT:
 	raw_robot_name = ROBOT.split("base")[0]
 else:
 	raw_robot_name = ROBOT
 NO_RAND = False
-MOTION = "sidesteps"
-SEED = 3
+MOTION = "videowalk1"
+SEED = 2
 MR = "STMR"
 task = f"{ROBOT}_{MR}_{MOTION}"	
 

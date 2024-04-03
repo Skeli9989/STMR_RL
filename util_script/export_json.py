@@ -80,6 +80,8 @@ def export_json_files(ROBOT, MOTION, MR, PLOT=False):
 
 	if ROBOT == 'al':
 		mr_info.size.contact_criteria = mr_info.size.foot * 1.5
+	elif ROBOT == 'go1':
+		mr_info.size.contact_criteria = mr_info.size.foot * 0.95
 
 	thres_dist = mr_info.size.contact_criteria
 	mj_contact_boolean = get_mujoco_contact_boolean(model, data, mr_info, qpos_np, thres_dist)

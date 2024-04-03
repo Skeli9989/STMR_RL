@@ -1,11 +1,13 @@
 # %%
 ROBOT = "go1".lower()
-MOTION = 'videowalk0'
-seed = 1
+MOTION = 'videowalk1'
+seed = 2
 MR = "STMR"
 # MR = "NMR"
 # MR = "TO"
 # MR = "AMP"
+
+NO_RAND = False
 
 GET_ALL = False
 fps = 30
@@ -74,10 +76,15 @@ from scipy.spatial.distance import cityblock
 # load motion
 ROBOT_base = ROBOT + 'base'
 
-if GET_ALL:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_all.json"
+if NO_RAND:
+    RAND = "STMR"
 else:
-    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/STMR/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_1k.json"
+    RAND = "RAND"
+
+if GET_ALL:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{RAND}/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_all.json"
+else:
+    path = Path(LEGGED_GYM_ROOT_DIR)/f"performance/{RAND}/{MOTION}/{ROBOT_base}/{MR}/{MOTION}_{ROBOT_base}_{MR}/seed{seed}/pose_1k.json"
 import json
 # load json
 with open(path) as json_file:
@@ -161,7 +168,7 @@ for model_i in range(model_number):
                 viewer.render()    
 
             if not GET_ALL and EXTRACT_VIDEO:
-                image_dir = Path(LEGGED_GYM_ROOT_DIR)/f"performance/video/{MOTION}/{ROBOT_base}/{MR}/{seed}/image"
+                image_dir = Path(LEGGED_GYM_ROOT_DIR)/f"performance/video/{MOTION}/{ROBOT_base}/{RAND}/{MR}/{seed}/image"
                 image_name = image_dir/f"image_{frame_i}.png"
                 image_name.parent.mkdir(exist_ok=True, parents=True)
                 plt.figure()
