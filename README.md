@@ -14,10 +14,10 @@
    - `cd ../ && pip install -e .`
 
 ### Generating referece data ###
-1. Spatial Motion Retargeting (SMR): https://github.com/terry97-guel/Quadruped_Retargeting
-2. Temporal Motion Retargeting (TMR): https://github.com/terry97-guel/Quadruped-Motion-Timing
 git clone both and this repositories **in the same directory**
 
+1. Spatial Motion Retargeting (SMR): https://github.com/terry97-guel/Quadruped_Retargeting
+2. Temporal Motion Retargeting (TMR): https://github.com/terry97-guel/Quadruped-Motion-Timing
 
 ### Usage in simulation ###
 1. Train:
