@@ -1,4 +1,4 @@
-### Spatial-Temporal Motion Retargeting ###
+### Spatial-Temporal Motion Retargeting (Control policy Learning) ###
 
 1. Install pytorch 1.13 with cuda-11.6:
 `pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116`
@@ -12,6 +12,12 @@
    -  `cd AMP_for_hardware/rsl_rl && pip install -e .`
 4. Install legged_gym
    - `cd ../ && pip install -e .`
+
+### Generating referece data ###
+1. Spatial Motion Retargeting (SMR): https://github.com/terry97-guel/Quadruped_Retargeting
+2. Temporal Motion Retargeting (TMR): https://github.com/terry97-guel/Quadruped-Motion-Timing
+git clone both and this repositories **in the same directory**
+
 
 ### Usage in simulation ###
 1. Train:
