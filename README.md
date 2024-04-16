@@ -1,4 +1,4 @@
-Spatial-Temporal Motion Retargeting
+### Spatial-Temporal Motion Retargeting ###
 
 1. Install pytorch 1.13 with cuda-11.6:
 `pip install torch==1.13.1+cu116 torchvision==0.14.1+cu116 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu116`
@@ -37,9 +37,6 @@ Spatial-Temporal Motion Retargeting
 `cd ~/go1_gym/go1_gym_deploy/docker && sudo make autostart`
 5. run deploy script
 `python go1_gym_deploy/scripts/deploy_policy.py`
-
-### Pretrained model ###
-https://www.notion.so/Real-World-be9b4a2e91b34d689f4a4de1932b5e53
 
 ### License ###
 This repository and its code are referred from
